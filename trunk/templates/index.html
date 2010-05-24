@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block body %}
+{% if not subscription %}
+<section class="step centered">
+    <p class="centered">Seriesly provides you with links to torrents and streams of new episodes of your selected TV shows via:</p>
+    <ul class="subscriptions">
+        <li><div class="sprite-mail sprite"></div>Email</li>
+        <li><div class="sprite-feed sprite"></div>Feeds</li>
+        <li><div class="sprite-ical sprite"></div>iCalendar</li>
+        <li><div class="sprite-guide sprite"></div>Episode Guide</li>
+        <li><div class="sprite-xmpp sprite"></div>XMPP Chat</li>
+        <li><div class="sprite-webhook sprite"></div>Web Hook</li>
+    </ul>
+</section>
+{% endif %}
+<form action="{% url seriesly-subscribe %}" method="post">
+    <fieldset class="step">
+        {% if subscription %}
+        <legend class="step-label">2. Change the shows you watch:</legend>
+        {% else %}
+        <legend class="step-label">1. Choose the shows you watch:</legend>
+        {% endif %}
+        <div class="select-shows clearfix">
+            {% if form.shows.errors %}
+            {{ form.shows.errors }}
+            {% endif %}
+            <div style="float:left;width:49%;">
+                <p id="search-fields" style="display:none"><label class="smaller" for="search">Search: </label><input type="search" name="search" id="search" value="" autofocus="autofocus"/><input type="button" value="Clear" style="display:none" id="clear-search"/></p>
+                <ul id="allshows-list" class="show-list">
+                    {{ form.shows }}
+                </ul>
+            </div>
+            <div style="display:none" id="chosenshows">
+                <p id="chosenshows-label">You haven't chosen any shows yet.</p>
+                <ul id="chosenshows-list" class="show-list">
+                </ul>
+            </div>
+        </div>
+        <p class="barely-visible"><a href="#show-missing" class="toggle">Show is missing?</a></p>
+        <div id="show-missing" class="hide-me">
+            <small>If there is a show missing then please send a mail to mail@seriesly.com with the name of the show.</small>
+        </div>
+    </fieldset>
+    <fieldset class="step">
+        <span class="smaller"><a href="#advanced" class="toggle">Show advanced settings</a></span>
+        <div id="advanced" class="hide-me">
+            <div class="multi-checkbox">
+                <p>You want: {{ form.torrent }}{{ form.torrent.label_tag}}
+                    {{ form.stream }}{{ form.stream.label_tag}}
+                </p>
+            </div>
+            <p>{{ form.quality.label_tag }}: 
+                {{ form.quality }}
+                <small>When not available another quality will be chosen (beta)</small>
+            </p>
+            </div>
+    </fieldset>
+    <fieldset class="step">
+        {% if subscription %}
+        <legend class="step-label">2. Save your changes.</legend>
+        {% else %}
+        <legend class="step-label">2. Get links to new episodes!</legend>
+        {% endif %}
+        <div class="centered">
+            <p class="full centered">
+            {{ form.subkey }}
+            {% if subscription %}
+            <button class="big-button" type="submit">Save!</button><br/>
+            <a href="{% url seriesly-subscription-show subscription.subkey %}">Don't save, just go back</a>
+            {% else %}
+            <button class="big-button" type="submit">Get it. It's free.</button>
+            {% endif %}
+            </p>
+        </div>
+    </fieldset>
+</form>
+{% endblock %}
+{% block extra_js %}
+{% if not subscription %}
+<script type="text/javascript" charset="utf-8">
+    $(document).ready(function(){checkSubscriptionCookie();});
+</script>
+{% endif %}
+{% endblock %}

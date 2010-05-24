@@ -1,0 +1,9 @@
+{% include "announcement.txt" %}
+
+{% for item in items %}{{ item.show.name }} - {{ item.title }} ({{ item.season_number }}x{{ item.number }})
+{% for release in item.releases %} - {{ release.url }} ({{ release.which }}, Quality: {{ release.quality|join:", " }})
+{% empty %} - No releases found for this episode
+{% endfor %}{% if item.next %}{% if item.next.date %}The next episode "{{ item.next.title }}" ({{ item.next.season_number }}x{{ item.next.number }}) will air on {{ item.next.date|date:"d.m.Y - H:i" }}.
+{% else %}The airdate of the next episode "{{ item.next.title }}" ({{ item.next.season_number }}x{{ item.next.number }}) is unkown.
+{% endif %}{% else %}{% if not item.show.active %}This show has ended.{% else %}{% endif %}{% endif %}
+{% endfor %}

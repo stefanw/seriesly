@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}Web Hook XML - Seriesly!{% endblock %}
+
+{% block body %}
+<section class="step">
+    <h3>Web Hook XML</h3>
+    <p>The following XML will be POSTed to you:</p>
+    <p>
+<pre>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;seriesly&gt;
+ &lt;link rel="source" href="{ Your Subscription URL }"/&gt;
+ &lt;announcement&gt;
+    may contain Seriesly announcement.
+    may be mostly empty.
+ &lt;/announcement&gt;
+ &lt;episodes&gt;
+  &lt;episode&gt;
+   &lt;show&gt; show name &lt;/show&gt;
+   &lt;title&gt;title &lt;/title&gt;
+   &lt;seasonnr&gt; season number&lt;/seasonnr&gt;
+   &lt;episodenr&gt; episode number &lt;/episodenr&gt;
+   &lt;airtime&gt; date as in <a href="http://tools.ietf.org/html/rfc3339">RFC 3339</a> &lt;/airtime&gt;
+   &lt;releases&gt;
+     &lt;release&gt; &lt;!-- may appear multiple times, may not exist --&gt;
+      &lt;url&gt; release url &lt;/url&gt;
+      &lt;kind&gt; release kind (stream, torrent) &lt;/kind&gt;
+      &lt;quality&gt;comma separated list of qualities&lt;/quality&gt;
+      &lt;date&gt; release date formatted as in <a href="http://tools.ietf.org/html/rfc3339">RFC 3339</a>&lt;/date&gt;
+     &lt;/release&gt;
+   &lt;/releases&gt;
+   &lt;next&gt; &lt;!-- may not exist --&gt;
+    &lt;title&gt; next episode's title &lt;/title&gt;
+    &lt;seasonnr&gt; next episode's season number &lt;/seasonnr&gt;
+    &lt;episodenr&gt; next episode's episode number &lt;/episodenr&gt;
+    &lt;!-- next airtime may not exist --&gt;
+    &lt;airtime&gt; next episode's date  as in <a href="http://tools.ietf.org/html/rfc3339">RFC 3339</a> &lt;/airtime&gt;
+    &lt;/next&gt;
+  &lt;/episode&gt;
+ &lt;/episodes&gt;
+&lt;/seriesly&gt;</pre>
+    </p>
+    <p>This may be extended in the future. Do not rely on positions but on tag names (duh!).</p>
+</section>
+
+<section class="step">
+    <h3>The Rules</h3>
+    <ul class="normal-list">
+        <li>Your callback URL must be a HTTP or HTTPS URL and must use port 80 or 443 either implicitly or explicitly. If it doesn't it will result in an error.</li>
+        <li>You may redirect your URL up to 5 times. More will result in an error.</li>
+        <li>You must send an empty response body (length=0). Any related headers are disregarded, but the body of the request will be checked. It is an error, if your response body is of non-zero length.</li>
+        <li>If the final answer to the POST request is not a 2XX status code, it results in an error.</li>
+        <li>Your request must finish fast enough (if in doubt, think about processing the XML asynchronously), since Google App Engine may cancel the request if it takes too long, which will result in an error.</li>
+        <li>Any error will result in your callback being deleted. You will not receive any more callbacks unless you enter a new URL. It is your responsibility to keep your callback URL working according to these rules.</li>
+        <li>Seriesly might drop your callback accidentally because another kind of error occured. Bad luck.</li>
+    </ul>
+    <p>These rules are largely taken from <a href="http://code.google.com/appengine/docs/python/urlfetch/overview.html">the URL Fetch API from Google App Engine</a>. Others were made up to prevent POSTing to URLs that don't expect Seriesly notifications. This is how it works for now, but if you know of a more clever way, send a mail to mail [at] seriesly.com.</p>
+</section>
+{% endblock %}
+{% block extra_js %}{% endblock  %}

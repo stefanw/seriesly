@@ -1,0 +1,16 @@
+queue:
+- name: default
+  rate: 1/s
+- name: series
+  rate: 1/s
+- name: releases
+  rate: 4/m
+- name: mail-queue
+  rate: 2000/d
+  bucket_size: 10
+- name: xmpp-queue
+  rate: 2000/d
+  bucket_size: 10
+- name: webhook-queue
+  rate: 2000/d
+  bucket_size: 10

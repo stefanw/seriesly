@@ -1,0 +1,18 @@
+<p>"{{ item.title }}" aired on {{ item.date|date:"d.m.Y - H:i" }} (GMT).</p>
+<ul>{% for release in item.releases %}<li><a href="{% url seriesly-releases-redirect release.idnr %}" title="{{ release.url }}">{{ release.url|slice:":15" }}</a> ({{ release.which }}, Quality: {{ release.quality|join:", " }})</li>{% empty %}<li>No releases found for this episode</li>{% endfor %}</ul>
+<br/>
+{% if item.next %}
+{% if item.next.date %}
+<p>The next episode "{{ item.next.title }}" ({{ item.next.season_number }}x{{ item.next.number }}) will air on {{ item.next.date|date:"d.m.Y - H:i" }} (GMT).</p>
+{% else %}
+<p>The airdate of the next episode "{{ item.next.title }}" ({{ item.next.season_number }}x{{ item.next.number }}) is unkown.</p>
+{% endif %}
+{% else %}
+{% if not item.show.active %}
+<p>This show has ended.</p>
+{% else %}
+<p>There is no information about the next episode.</p>
+{% endif %}
+{% endif %}
+<hr/>
+<a href="{{ DOMAIN_URL }}{% url seriesly-subscription-show subscription.subkey %}">Your Subscription on Seriesly.com</a>

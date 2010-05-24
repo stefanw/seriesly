@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <title>{% block title %}Seriesly!{% endblock %}</title>
+        <link rel="stylesheet" href="{{ MEDIA_URL }}css/seriesly.css" type="text/css"/>
+        <!--[if IE]><style type="text/css">
+          .clearfix {zoom: 1; display: block;}
+        </style>
+        <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
+       {% block rss %}{% endblock %}
+       <link rel="icon" type="image/png" href="{{ MEDIA_URL }}img/favicon.png" />
+       <meta name="robots" content="index, follow" />
+       <meta name="keywords" content="tv show series episode guide calendar rss atom xml email" />
+       <meta name="description" content="Seriesly provides you with torrent/streaming links for your favorite TV shows." />
+       <script src="{{ MEDIA_URL }}js/jquery.js" type="text/javascript" charset="utf-8"></script>
+    </head>
+    
+    <body>
+        <nav class="skipLink">
+            <ul>
+                {% block skiplinks %}<li><a href="#content">to main content</a></li>{% endblock %}
+            </ul>
+        </nav>
+        <header role="banner" id="header">
+            <h1 class="logo"><a href="{{ DOMAIN_URL }}/">Seriesly</a></h1>
+            <h2 class="strapline">Taking your addiction seriesly.</h2>
+        </header>
+        
+        <article id="content">
+            {% block body %}
+            {% endblock %}
+        </article>
+        {% if not subscription %}
+        <aside id="twitter"></aside>
+        {% endif %}
+        <footer id="footer">
+            <ul>
+                <li><a href="{% url seriesly-about %}">About</a></li>
+                <li><a href="{% url seriesly-faq %}">FAQ</a></li>
+                <li><a href="{% url seriesly-about %}#impressum">Impressum</a></li>
+                <li><a href="{% url seriesly-terms %}">Terms</a></li>
+                <li><a href="{% url seriesly-privacy %}">Privacy</a></li>
+                <li><a href="http://stefanwehrmeyer.com">StefanWehrmeyer.com</a></li>
+            </ul>
+        </footer>
+       <script src="{{ MEDIA_URL }}js/seriesly.js" type="text/javascript" charset="utf-8"></script>
+       {% block extra_js %}{% endblock %}
+       <script type="text/javascript">
+       var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+       document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+       </script>
+       <script type="text/javascript">
+       try {
+       var pageTracker = _gat._getTracker("UA-12418396-1");
+       pageTracker._trackPageview();
+       } catch(err) {}</script>
+    </body>
+</html>
