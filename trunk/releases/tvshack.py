@@ -14,15 +14,15 @@ from helper.html import unescape
 from releases import ReleaseData
     
 class TVShack(object):
-    feed_url = "http://tvshack.net/rss/television.xml"
+    feed_url = "http://tvshack.cc/rss/television.xml"
     title_regex = re.compile("(.*?) - [Ss]([0-9]{1,3})[Ee]([0-9]{1,3})")
     def get_info(self):
         """<item>
             <title>King of the Hill - S7E13</title>
-            <link>http://tvshack.net/tv/King_of_the_Hill/season_7/episode_13/</link>
+            <link>http://tvshack.cc/tv/King_of_the_Hill/season_7/episode_13/</link>
             <description>After going to couples&#x2019; therapy, Hank and Peggy realize that they need some excitement in their life -- a motorcycle. Hank enjoys driving the bike, but when Peggy wants to drive it, he is hesitant to give her the front seat for the sake of manliness.</description>
             <pubDate>Fri, 01 Jan 2010 18:17:12 +0000</pubDate>
-            <guid isPermaLink="true">http://tvshack.net/tv/King_of_the_Hill/season_7/episode_13/</guid>
+            <guid isPermaLink="true">http://tvshack.cc/tv/King_of_the_Hill/season_7/episode_13/</guid>
         </item>
         episode =       db.ReferenceProperty(Episode)
         which    =       db.StringProperty() # torrent, stream, magnet etc.
