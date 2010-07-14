@@ -204,14 +204,12 @@ def guide(request, subkey):
     sub_settings = subscription.get_settings()
     subscription.put()
     the_shows = subscription.get_shows()
+    episodes = Episode.get_for_shows(the_shows, order="date")
     now = datetime.datetime.now()
+    twentyfour_hours_ago = now - datetime.timedelta(hours=24)
     recently = []
     last_week = []
     upcoming = []
-    one_week_ago = now - datetime.timedelta(days=7)
-    twentyfour_hours_ago = now - datetime.timedelta(hours=24)
-    next_week = now + datetime.timedelta(days=7)
-    episodes = Episode.get_for_shows(the_shows, order="date")
     for episode in episodes:
         if episode.date < now:
             releases = Release.filter(episode.releases, sub_settings)
