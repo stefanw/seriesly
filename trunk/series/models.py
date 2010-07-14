@@ -284,7 +284,7 @@ class Episode(db.Model):
                 if before is not None and ep.date > before:
                     upper = i
                     break
-            elif lower > 0 or upper < len(episode_list):
+            if lower > 0 or upper < len(episode_list):
                 episode_list = episode_list[lower:upper]
         if order is not None and order.startswith("-"):
             episode_list.reverse()
