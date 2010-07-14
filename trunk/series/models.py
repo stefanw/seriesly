@@ -228,11 +228,14 @@ class Episode(db.Model):
             return episode_dict
         now = datetime.datetime.now()
         one_week_ago = now - datetime.timedelta(days=8)
-        in_one_week = now + datetime.timedelta(days=8)
-        episodes = Episode.all().filter("date >",one_week_ago).filter("date <",in_one_week).fetch(1000)
+#        in_one_week = now + datetime.timedelta(days=8)
+        episodes = Episode.all().filter("date >",one_week_ago)
+        # removed this: .filter("date <",in_one_week).fetch(1000)
         episode_dict = {}
         for ep in episodes:
-            episode_dict.setdefault(str(ep._show), []).append(ep)
+            if len(episode_dict.get(str(ep._show),[])) < 20:
+                # store max of 20 episodes per show
+                episode_dict.setdefault(str(ep._show), []).append(ep)
         memcache.set(key=cls._memkey_episode_dict, value=episode_dict)
         return episode_dict
 
@@ -281,9 +284,7 @@ class Episode(db.Model):
                 if before is not None and ep.date > before:
                     upper = i
                     break
-            if lower is None:
-                lower = 0
-            if lower > 0 or upper < len(episode_list):
+            elif lower > 0 or upper < len(episode_list):
                 episode_list = episode_list[lower:upper]
         if order is not None and order.startswith("-"):
             episode_list.reverse()
