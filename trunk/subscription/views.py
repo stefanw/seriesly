@@ -6,7 +6,7 @@ from google.appengine.api import xmpp
 from google.appengine.api import mail
 
 from django.shortcuts import render_to_response
-from django.http import HttpResponse,HttpResponseRedirect,Http404
+from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.template import RequestContext
 from django.template.loader import render_to_string
 from django.conf import settings
@@ -143,13 +143,12 @@ def feed(request, subkey, template="atom.xml"):
     subscription.updated = now.strftime('%Y-%m-%dT%H:%M:%SZ')
     subscription.expires = (now + datetime.timedelta(days=1)).strftime('%Y-%m-%dT%H:%M:%SZ')
     the_shows = subscription.get_shows()
-    two_weeks_ago = now - datetime.timedelta(days=28)
-    five_hours = datetime.timedelta(hours=5)
+    wait_time = datetime.timedelta(hours=6)
     episodes = Episode.get_for_shows(the_shows, before=now, order="-date")
     items = []
     for episode in episodes:
         releases = Release.filter(episode.releases, sub_settings)
-        if len(releases) > 0 or now > episode.date + five_hours:
+        if len(releases) > 0 or now > episode.date + wait_time:
             torrenturl = False
             torrentlen = 0
             pub_date = episode.date
@@ -214,7 +213,7 @@ def guide(request, subkey):
         if episode.date < now:
             releases = Release.filter(episode.releases, sub_settings)
         else:
-             releases = []
+            releases = []
         episode.releases = releases
         if episode.date < twentyfour_hours_ago:
             last_week.append(episode)
@@ -232,9 +231,11 @@ def guide(request, subkey):
 
 def email_task(request):
     subscriptions = Subscription.all().filter("activated_mail =", True)
+    counter = 0
     for s in subscriptions:
         s.add_email_task()
-    return HttpResponse("Done: \n%s, %d" % (subscriptions, len(subscriptions)))
+        counter += 1
+    return HttpResponse("Done: \n%s, %d" % (subscriptions, counter))
 
 @is_post
 def send_mail(request):
@@ -263,9 +264,11 @@ def send_mail(request):
         
 def xmpp_task(request):
     subscriptions = Subscription.all().filter("activated_xmpp =", True)
+    counter = 0
     for s in subscriptions:
         s.add_xmpp_task()
-    return HttpResponse("Done: \n%s, %d" % (subscriptions, len(subscriptions)))
+        counter += 1
+    return HttpResponse("Done: \n%s, %d" % (subscriptions, counter))
 
 @is_post
 def send_xmpp(request):
@@ -342,9 +345,11 @@ def edit_webhook(request):
 
 def webhook_task(request):
     subscriptions = Subscription.all().filter("webhook !=", None)
+    counter = 0
     for s in subscriptions:
         s.add_webhook_task()
-    return HttpResponse("Done: \n%s, %d" % (subscriptions, len(subscriptions)))
+        counter += 1
+    return HttpResponse("Done: \n%s, %d" % (subscriptions, counter))
 
 @is_post
 def post_to_callback(request):

@@ -7,9 +7,13 @@ cron:
   url: /releases/update/
   schedule: every day 06:45
   
+ - description: daily updates of new releases (0.5)
+  url: /releases/update/
+  schedule: every day 07:45
+
 - description: daily updates of new releases (1)
   url: /releases/update/
-  schedule: every day 11:45
+  schedule: every day 09:45
 
 - description: daily updates of new releases (2)
   url: /releases/update/
@@ -21,8 +25,8 @@ cron:
 
 - description: daily mail sending
   url: /subscription/mail-task/
-  schedule: every day 07:00
+  schedule: every day 08:00
   
 - description: daily xmpp sending
   url: /subscription/xmpp-task/
-  schedule: every day 07:00
+  schedule: every day 08:00
