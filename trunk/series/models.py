@@ -301,7 +301,7 @@ class Episode(db.Model):
                 q = q.order(order)
             return q
             
-        if len(shows) == 0:
+        if not len(shows):
             return []
             
         if len(shows) <= 28:
@@ -332,6 +332,6 @@ class Episode(db.Model):
         vevent.add('dtstart').value = self.date
         vevent.add('dtend').value = self.date + datetime.timedelta(minutes=self.show.runtime)
         vevent.add('summary').value = "%s - %s (%dx%d)" % (self.show.name, self.title, 
-                                                                self.number, self.season_number)
+                                                                self.season_number, self.number)
         vevent.add('location').value = self.show.network
         return vevent
