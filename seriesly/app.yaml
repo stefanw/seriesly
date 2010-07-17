@@ -1,0 +1,52 @@
+﻿application: serieslycom
+version: 2-2
+runtime: python
+api_version: 1
+
+default_expiration: '3650d'
+
+handlers:
+- url: /favicon.ico
+  static_files: media/img/favicon.ico
+  upload: media/img/favicon.ico
+
+- url: /robots.txt
+  static_files: media/robots.txt
+  upload: media/robots.txt
+  
+- url: /media
+  static_dir: media
+  
+- url: /seriesly-remote_api
+  script: $PYTHON_LIB/google/appengine/ext/remote_api/handler.py
+  login: admin
+  
+- url: /shows/clear/cache/
+  script: main.py
+  login: admin
+
+- url: /shows/import_show/
+  script: main.py
+  login: admin
+  
+- url: /shows/update/
+  script: main.py
+  login: admin
+
+- url: /releases/update/
+  script: main.py
+  login: admin
+
+- url: /subscriptions/mail-task/
+  script: main.py
+  login: admin
+
+- url: /subscriptions/xmpp-task/
+  script: main.py
+  login: admin
+
+- url: /.*
+  script: main.py
+  
+inbound_services:
+- xmpp_message
