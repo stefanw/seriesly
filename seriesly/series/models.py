@@ -52,7 +52,7 @@ class Show(db.Model):
         shows = memcache.get(cls._memkey_all_shows_ordered)
         if shows is not None:
             return shows
-        shows = Show.all()
+        shows = Show.all().filter("active =", True)
         show_list = []
         for show in shows:
             if len(show.name) > 33:
