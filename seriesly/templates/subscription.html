@@ -104,10 +104,31 @@
 </section>
 
 <section class="step">
-    <h3 id="subscription-settings">Your Shows</h3>
-    <p>You can <a href="{% url seriesly-subscription-edit subscription.subkey %}">edit your subscription settings here</a>.</p>
+    <h3 id="subscription-settings">Edit Your Shows</h3>
+    <p>You can <a href="{% url seriesly-subscription-edit subscription.subkey %}">edit your shows and subscription settings here</a>.</p>
+    <p>{% if subscription.want_releases %}
+    You are currently receiving links to
+        {% if subscription.sub_settings.torrent %}torrents{% endif %}
+        {% if subscription.sub_settings.torrent and subscription.sub_settings.stream %} and {% endif %}
+        {% if subscription.sub_settings.stream %}streaming sites{% endif %}.
+        
+    {% else %}
+    You are currently <em>not</em> receiving any links to torrents or streaming sites.
+    {% endif %}</p>
     <p>You should not give any of your subscription links away, because others will then be able to change your settings, too.</p>
     <p>If you have questions, consult the <a href="{% url seriesly-faq %}">FAQ</a>.</p>
+</section>
+
+<section class="step">
+    <h3 id="subscription-secure">Secure URLs</h3>
+    <p>The following secure URLs are available:</p>
+    <ul class="normal-list">
+        <li><a href="{{ SECURE_DOMAIN_URL }}{% url seriesly-subscription-show subscription.subkey %}">A secure version of this page</a></li>
+        <li><a href="{{ SECURE_DOMAIN_URL }}{% url seriesly-subscription-guide subscription.subkey %}">Secure Episode Guide</a></li>
+        <li><a href="{{ SECURE_DOMAIN_URL }}{% url seriesly-subscription-atom subscription.subkey %}">Secure Feed URL</a></li>
+        <li><a href="{{ SECURE_DOMAIN_URL }}{% url seriesly-subscription-caldav subscription.subkey %}">Secure Calendar URL</a></li>
+    </ul>
+    <p>See also this <a href="{% url seriesly-faq %}#q-7">FAQ entry</a>.
 </section>
 {% endblock %}
 {% block extra_js %}{% endblock  %}

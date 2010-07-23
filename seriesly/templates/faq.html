@@ -6,10 +6,16 @@
 <section class="step">
     <h3>Frequently Asked Questions</h3>
     <ul class="faq-list normal-list">
+        <li><p><a href="#q-6" class="toggle">My show is missing!</a></p>
+        <div id="q-6" class="hide-me">Write a quick email with the shows you need to mail [at] seriesly.com.</div></li>
         <li><p><a class="toggle" href="#q-3">I lost my subscription link! What should I do?</a></p>
         <div id="q-3" class="hide-me">If you are still getting notifications somewhere you have not lost your subscription URL. A link to your subscription page is available in email and feed notifications. For calendars you can find the calendar URL in your calendar application and remove the "calendar/" part at the end and have your subscription URL. If you have XMPP Chat notifications, talk to the Seriesly Bot and he will tell you your subscription URL.<br/>If you are not getting any notifications anywhere you can still look in your browser's history.</div></li>
+        <li><p><a class="toggle" href="#q-7">I want to use your site securely via SSL, but how?</a></p>
+        <div id="q-7" class="hide-me">Unfortunately Google (hoster of Seriesly) currently does not support SSL for Google App Domains.<br/>
+            However, you can still use Seriesly via SSL by replacing <a href="http://www.seriesly.com">http://www.seriesly.com</a> with <a href="https://serieslycom.appspot.com">https://serieslycom.appspot.com</a> in your subscription URL.<br/>
+            This is recommended if you use unsecure networks like public wifi connections. If you use Seriesly on an unsecure network without SSL encryption, your secret Seriesly URL can become known to others.</div></li>
         <li><p><a href="#q-1" class="toggle">How do I use the Calendar URL with Google Calendar?</a></p>
-            <div id="q-1" class="hide-me">Go to <a href="http://www.google.com/calendar/">Google Calendar</a>, log in and click on "Add" in the left column under "Other calendars", then click on "Add by URL". Copy the Seriesly Calendar URL, paste the URL into the URL field on the Google Calendar dialog and click "Add Calendar". You are done.</div></li>
+        <div id="q-1" class="hide-me">Go to <a href="http://www.google.com/calendar/">Google Calendar</a>, log in and click on "Add" in the left column under "Other calendars", then click on "Add by URL". Copy the Seriesly Calendar URL, paste the URL into the URL field on the Google Calendar dialog and click "Add Calendar". You are done.</div></li>
         <li><p><a href="#q-2" class="toggle">How do I use the Calendar URL with Apple's iCal?</a></p>
         <div id="q-2" class="hide-me">Copy the Seriesly Calendar URL. Go to iCal and click on Calendar in the Menubar and choose "Subscribe...". Paste the URL into the URL field and click "Subscribe". Choose a name for the calendar (e.g. "Seriesly"), a color and set the auto-refresh to "daily". Refresh once in the late morning in a European time zone to sync up with the Seriesly publishing time. You are done.</div></li>
         <li><p><a href="#q-4" class="toggle">My XMPP subscription is not working, what can I do?</a></p>
@@ -20,4 +26,7 @@
         <div id="q-9999" class="hide-me">Write an email with your question to mail [at] seriesly.com.</div></li>
     </ul>
 </section>
+{% endblock %}
+{% block extra_js %}
+<script src="{{ MEDIA_URL }}js/seriesly.min.js" type="text/javascript" charset="utf-8"></script>
 {% endblock %}

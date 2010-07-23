@@ -23,7 +23,9 @@
                     </div>
                     <span title="Season {{ episode.season_number }}, Episode {{ episode.number }}" class="summary">{{ episode.show.name }}: &ldquo;{{ episode.title }}&rdquo;</span>
                 </div>
+                {% if subscription.want_releases %}
                 <ul class="right description">{% for release in episode.releases %}<li><a href="{% url seriesly-releases-redirect release.idnr %}" title="{{ release.url }}">{{ release.url|slice:"7:25" }}</a> ({{ release.which }}, Quality: {{ release.quality|join:", " }})</li>{% empty %}<li>No releases for this episode yet</li>{% endfor %}</ul>
+                {% endif %}
             </div>
         </li>
         {% empty %}
@@ -43,7 +45,9 @@
                         <time class="dtend" datetime="{{ episode.date_end|date:"Y-m-d\TH:i:s" }}"></time> <span class="location">on {{ episode.show.network }}</span>, {{ episode.season_number }}x{{ episode.number }}
                     </div>
                     <span title="Season {{ episode.season_number }}, Episode {{ episode.number }}" class="summary">{{ episode.show.name }}: &ldquo;{{ episode.title }}&rdquo;</span>
+                    {% if subscription.want_releases %}
                     <ul class="description">{% for release in episode.releases %}<li><a href="{% url seriesly-releases-redirect release.idnr %}" title="{{ release.url }}">{{ release.url|slice:"7:25" }}</a> ({{ release.which }}, Quality: {{ release.quality|join:", " }})</li>{% empty %}<li>No releases found for this episode</li>{% endfor %}</ul>    
+                    {% endif %}
                 </li>
                 {% empty %}
                 <li>No episodes last week</li>
