@@ -30,6 +30,7 @@ DEFAULT_FROM_EMAIL = 'mail@seriesly.com'
 SERVER_EMAIL = DEFAULT_FROM_EMAIL
     
 DOMAIN_URL = "http://www.seriesly.com"
+SECURE_DOMAIN_URL = "https://serieslycom.appspot.com"
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = '02ca0jaadlbjk;.93nfnvopm 40mu4w0daadlclm fniemcoia984<mHMImlkFUHA=")JRFP"Om'
@@ -43,6 +44,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 )
 
 MIDDLEWARE_CLASSES = (
+   'google.appengine.ext.appstats.recording.AppStatsDjangoMiddleware',
    'django.middleware.common.CommonMiddleware',
 #    'django.contrib.sessions.middleware.SessionMiddleware',
 #    'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -62,6 +64,7 @@ INSTALLED_APPS = (
     'releases',
     'subscription',
     'helper',
+    'statistics',
 #    'mediautils',
 )
 
