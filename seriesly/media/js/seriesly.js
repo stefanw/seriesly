@@ -1,8 +1,9 @@
+var checkSubscriptionCookie;
 $(document).ready(function(){
     var SHOW_ITEM = '<li><a href="#toggle-{1}" class="label-minus">{0}</a></li>';
     var SUBSCRIPTION_MADE = '<section id="subscription-note" style="display:none" class="step">Note: You created a subscribtion recently. <a href="/{0}/">Go there now!</a></section>';
 
-    filter_list = function(e){
+    var filter_list = function(e){
       var query = $("#search").val().toLowerCase();
       if (query == ""){
         $("#clear-search").hide();
@@ -24,20 +25,21 @@ $(document).ready(function(){
       });
     };
 
-    clear_search = function(e){
+    var clear_search = function(e){
       if(e){e.preventDefault();}
       $("#search").val("");
       filter_list(e);
     };
 
-    toggle_show = function(e){
+    var toggle_show = function(e){
+      var show_id;
       if(e){e.preventDefault();}
       var li = $(this);
       var list_id = li.parent().attr("id");
       if (list_id == "chosenshows-list"){
         // Deselect clicked show
         // Show ID is temp-stored in href-attribute after a -
-        var show_id = li.find("a").attr("href").split("-")[1];
+        show_id = li.find("a").attr("href").split("-")[1];
         var real_li = $("#id_shows_"+show_id).attr("checked", "").parent().parent().show();
         li.remove();
         // No more shows selected:
@@ -57,7 +59,7 @@ $(document).ready(function(){
       } else {
         // Select clicked show
         var label = li.find("label").text();
-        var show_id = li.find("label").attr("for").split("_")[2];
+        show_id = li.find("label").attr("for").split("_")[2];
         $("#chosenshows-list").append(SHOW_ITEM.replace(/\{0\}/,label).replace(/\{1\}/, show_id));
         li.hide();
         li.find("input").attr("checked", "checked");
@@ -91,7 +93,7 @@ $(document).ready(function(){
       }
     };
 
-    readCookie = function (name){
+    var readCookie = function (name){
         /* Too lazy to use a jquery plugin for this */
         var nameEQ = name + "=";
         var ca = document.cookie.split(';');
@@ -154,9 +156,9 @@ $(document).ready(function(){
     $("#allshows-list li input:checked").each(function(i, el){
       toggle_show.apply($(el).parent().parent(),[]);
     });
-    if($("#twitter").length == 1){
+    if($("#twitter").length == 1 && document.location.protocol != "https:"){
       // This is a packed function from twitter for displaying relative time
-      function relative_time(C){var A=Date.parse(C);var D=(arguments.length>1)?arguments[1]:new Date();var E=parseInt((D.getTime()-A)/1000);E=E+(D.getTimezoneOffset()*60);if(E<60){return"less than a minute ago";}else{if(E<120){return"about a minute ago";}else{if(E<(60*60)){return(parseInt(E/60)).toString()+" minutes ago";}else{if(E<(120*60)){return"about an hour ago";}else{if(E<(24*60*60)){return"about "+(parseInt(E/3600)).toString()+" hours ago";}else{if(E<(48*60*60)){return"1 day ago";}else{return(parseInt(E/86400)).toString()+" days ago";}}}}}}}
+      function relative_time(C){var A=Date.parse(C);var D=(arguments.length>1)?arguments[1]:new Date();var E=parseInt((D.getTime()-A)/1000,10);E=E+(D.getTimezoneOffset()*60);if(E<60){return"less than a minute ago";}else{if(E<120){return"about a minute ago";}else{if(E<(60*60)){return(parseInt(E/60,10)).toString()+" minutes ago";}else{if(E<(120*60)){return"about an hour ago";}else{if(E<(24*60*60)){return"about "+(parseInt(E/3600,10)).toString()+" hours ago";}else{if(E<(48*60*60)){return"1 day ago";}else{return(parseInt(E/86400,10)).toString()+" days ago";}}}}}}}
       $.getJSON("http://twitter.com/statuses/user_timeline/seriesly.json?callback=?", {}, function(data){
           $("#twitter").html('<p id="tweets" style="display:none"></p>');
           $(data.slice(0,1)).each(function(i, el){
