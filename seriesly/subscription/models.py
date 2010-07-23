@@ -87,6 +87,10 @@ By the way: your Seriesly subscription URL is: %s
                 self._cached_settings[k] = True
         return self._cached_settings
     
+    @property
+    def want_releases(self):
+        return self.get_settings()["stream"] or self.get_settings()["torrent"]
+    
     @classmethod
     def generate_subkey(cls):
         CHARS = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -105,12 +109,14 @@ By the way: your Seriesly subscription URL is: %s
     def set_shows(self, shows, old_shows=None):
         if old_shows is None:
             old_shows = []
+        old_show_ids = [show.key() for show in old_shows]
+        show_ids = [show.key() for show in shows]
         for show in shows:
-            if not show in old_shows:
+            if not show.key() in old_show_ids:
                 s = SubscriptionItem(subscription=self, show=show)
                 s.put()
         for old_show in old_shows:
-            if not old_show in shows:
+            if not old_show.key() in show_ids:
                 s = SubscriptionItem.all().filter("subscription =",self).filter("show =", old_show).get()
                 s.delete()
                 
@@ -136,7 +142,6 @@ By the way: your Seriesly subscription URL is: %s
             raise ValueError, "Returned content, is defined illegal"
         
     def get_message_context(self):
-        sub_settings = self.get_settings()
         the_shows = self.get_shows()
         now = datetime.datetime.now()
         twentyfour_hours_ago = now - datetime.timedelta(hours=24)
@@ -146,7 +151,9 @@ By the way: your Seriesly subscription URL is: %s
             return None
         context = {"subscription": self, "items": []}
         for episode in episodes:
-            episode.releases = Release.filter(episode.releases, sub_settings)
+            episode.releases = []
+            if self.want_releases:
+                episode.releases = Release.filter(episode.releases, self.get_settings())
             context["items"].append(episode)
         return context
         

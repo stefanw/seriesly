@@ -27,10 +27,8 @@ def index(request, form=None, extra_context=None):
     
 @is_post
 def subscribe(request):
-    logging.warn(request.POST)
     form = SubscriptionForm(request.POST)
     if not form.is_valid():
-        logging.warn(form.errors)
         return index(request, form=form)
     editing = False
     if form.cleaned_data["subkey"] == "":
@@ -40,8 +38,6 @@ def subscribe(request):
         editing = True
         subkey = form.cleaned_data["subkey"]
         subscription = form._subscription
-    logging.warn("Torrent %s" % str(form.cleaned_data["torrent"]))
-    logging.warn("Stream %s" % str(form.cleaned_data["stream"]))
     settings = {"quality": form.cleaned_data["quality"],
                 "torrent": str(form.cleaned_data["torrent"]),
                 "stream" : str(form.cleaned_data["stream"])
@@ -80,6 +76,7 @@ def show(request, subkey, extra_context=None):
         subscription.webhook_form = extra_context["webhook_form"]
     else:
         subscription.webhook_form = WebHookSubscriptionForm({"webhook": subscription.webhook, "subkey": subkey})
+    subscription.sub_settings = subscription.get_settings()
     response = render_to_response("subscription.html", RequestContext(request, {"subscription":subscription}))
     response.set_cookie("subkey", subkey, max_age=31536000)
     return response
@@ -146,15 +143,11 @@ def feed(request, subkey, template="atom.xml"):
     wait_time = datetime.timedelta(hours=6)
     episodes = Episode.get_for_shows(the_shows, before=now, order="-date")
     items = []
-    want_releases = False
-    if sub_settings["torrent"] or sub_settings["stream"]:
-        want_releases = True
-    subscription.want_releases = want_releases
     for episode in episodes:
         releases = []
-        if want_releases:
+        if subscription.want_releases:
             releases = Release.filter(episode.releases, sub_settings)
-        if not want_releases or releases or now > episode.date + wait_time:
+        if not subscription.want_releases or releases or now > episode.date + wait_time:
             torrenturl = False
             torrentlen = 0
             pub_date = episode.date
@@ -179,9 +172,6 @@ def calendar(request, subkey):
         raise Http404
     subscription.last_visited = datetime.datetime.now()
     sub_settings = subscription.get_settings()
-    want_releases = False
-    if sub_settings["torrent"] or sub_settings["stream"]:
-        want_releases = True
     subscription.put()
     the_shows = subscription.get_shows()
     now = datetime.datetime.now()
@@ -195,11 +185,11 @@ def calendar(request, subkey):
     for episode in episodes:
         vevent = episode.create_event_details(cal)
         releases = []
-        if want_releases:
+        if subscription.want_releases:
             releases = Release.filter(episode.releases, sub_settings)
-        if want_releases and releases:
-            vevent.add('url').value = releases[0].url
-            vevent.add('description').value = u"\n".join(map(unicode, releases))
+            if releases:
+                vevent.add('url').value = releases[0].url
+                vevent.add('description').value = u"\n".join(map(unicode, releases))
     icalstream = cal.serialize()
     response = HttpResponse(icalstream, mimetype='text/calendar')
     response['Filename'] = 'seriesly-calendar.ics'  # IE needs this
@@ -221,11 +211,12 @@ def guide(request, subkey):
     last_week = []
     upcoming = []
     for episode in episodes:
-        if episode.date < now:
-            releases = Release.filter(episode.releases, sub_settings)
-        else:
-            releases = []
-        episode.releases = releases
+        if subscription.want_releases:
+            if episode.date < now:
+                releases = Release.filter(episode.releases, sub_settings)
+            else:
+                releases = []
+            episode.releases = releases
         if episode.date < twentyfour_hours_ago:
             last_week.append(episode)
         elif episode.date <= now:

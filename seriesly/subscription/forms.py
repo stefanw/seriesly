@@ -75,12 +75,6 @@ class SubscriptionForm(forms.Form):
             self.cleaned_data[key] = False
         return self.cleaned_data[key]
         
-    def clean_stream(self):
-        return self.checkboxclean("stream")
-
-    def clean_stream(self):
-        return self.checkboxclean("stream")
-        
 class MailSubscriptionForm(forms.Form):
     email = HTML5EmailField(required=False, label="Email", 
             error_messages={'invalid': "This isn't a valid email address."})
