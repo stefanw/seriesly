@@ -28,7 +28,7 @@
             {{ form.shows.errors }}
             {% endif %}
             <div style="float:left;width:49%;">
-                <p id="search-fields" style="display:none"><label class="smaller" for="search">Search: </label><input type="search" name="search" id="search" value="" autofocus="autofocus"/><input type="button" value="Clear" style="display:none" id="clear-search"/></p>
+                <p id="search-fields" style="display:none"><label class="smaller" for="search">Search: </label><input type="search" name="search" id="search" value="" autofocus="autofocus" autocomplete="off"/><input type="button" value="Clear" style="display:none" id="clear-search"/></p>
                 <ul id="allshows-list" class="show-list">
                     {{ form.shows }}
                 </ul>
