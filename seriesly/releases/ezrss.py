@@ -6,6 +6,10 @@ from email.utils import parsedate_tz, mktime_tz
 import urllib
 import re
 
+if __name__ == '__main__':
+    import sys
+    sys.path.insert(0,"/Users/sw/Sites/seriesly/seriesly")
+
 from pytz import timezone
 
 from helper.http import get as http_get
@@ -89,3 +93,44 @@ class EZRSS(object):
                 logging.warn(str(e))
                 continue
         return release_items
+        
+if __name__ == '__main__':
+    http_get = lambda x: """<rss version="2.0">
+	<channel>
+		<title>ezRSS - Search Results</title>
+		<ttl>15</ttl>
+		<link>http://ezrss.it/search/index.php</link>
+		<image>
+			<title>ezRSS - Search Results</title>
+
+			<url>http://ezrss.it/images/ezrssit.png</url>
+			<link>http://ezrss.it/search/index.php</link>
+		</image>
+		<description>Custom RSS feed based off search filters.</description>
+		<item>
+			<title><![CDATA[Penn & Teller: Bullshit! 8x7 [HDTV - SYS]]]></title>
+			<link>http://torrent.zoink.it/Penn.and.Teller.Bullshit.S08E07.HDTV.XviD-SYS.[eztv].torrent</link>
+
+			<category domain="http://eztv.it/shows/211/penn-and-teller-bullshit/"><![CDATA[TV Show / Penn And Teller: Bullshit!]]></category>
+			<pubDate>Thu, 22 Jul 2010 22:46:16 -0500</pubDate>
+			<description><![CDATA[Show Name: Penn & Teller: Bullshit!; Episode Title: N/A; Season: 8; Episode: 7]]></description>
+			<enclosure url="http://torrent.zoink.it/Penn.and.Teller.Bullshit.S08E07.HDTV.XviD-SYS.[eztv].torrent" length="244353024" type="application/x-bittorrent" />
+			<comments>http://eztv.it/forum/discuss/21595/</comments>
+			<guid>http://eztv.it/ep/21595/penn-and-teller-bullshit-s08e07-hdtv-xvid-sys/</guid>
+		</item>
+
+		<item>
+			<title><![CDATA[Boston Med 1x5 [HDTV - 2HD]]]></title>
+			<link>http://torrent.zoink.it/Boston.Med.S01E05.HDTV.XviD-2HD.[eztv].torrent</link>
+			<category><![CDATA[TV Show]]></category>
+			<pubDate>Thu, 22 Jul 2010 22:17:15 -0500</pubDate>
+			<description><![CDATA[Show Name: Boston Med; Episode Title: N/A; Season: 1; Episode: 5]]></description>
+			<enclosure url="http://torrent.zoink.it/Boston.Med.S01E05.HDTV.XviD-2HD.[eztv].torrent" length="366965376" type="application/x-bittorrent" />
+			<comments>http://eztv.it/forum/discuss/21594/</comments>
+
+			<guid>http://eztv.it/ep/21594/boston-med-s01e05-hdtv-xvid-2hd/</guid>
+		</item>
+	</channel>
+</rss>"""
+    ezrss = EZRSS()
+    print ezrss.get_info()
