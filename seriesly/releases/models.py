@@ -7,9 +7,9 @@ from django.core.urlresolvers import reverse
 from releases.ezrss import EZRSS
 from releases.tvshack import TVShack
 #from releases.btchat import BTChatEZTV, BTChatVTV
-from releases.surfthechannel import SurfTheChannel
-from releases.piratebayez import PirateBayEZ
-from releases.piratebaytvteam import PirateBayTVTeam
+#from releases.surfthechannel import SurfTheChannel
+#from releases.piratebayez import PirateBayEZ
+#from releases.piratebaytvteam import PirateBayTVTeam
 from series.models import Show, Episode
 from helper.string_utils import normalize
 
@@ -33,8 +33,10 @@ class Release(db.Model):
         return "releases_release"
     
     quality_map = {"default": 0, "Stream": 0, "WS": 1, "HDTV": 1, "720p": 2, "DVDRIP": 2,"DVDSCR": 2, "1080p":3, "PDTV": 1}
-    providers = {"ezrss": EZRSS, "tvshack": TVShack, "surfthechannel": SurfTheChannel, 
-        "piratebayez": PirateBayEZ, "piratebaytvteam": PirateBayTVTeam}
+    providers = {"ezrss": EZRSS, "tvshack": TVShack} 
+    #, "surfthechannel": SurfTheChannel, 
+    #"piratebayez": PirateBayEZ, 
+    #"piratebaytvteam": PirateBayTVTeam}
     
     def __unicode__(self):
         return u"%s (%s, %s)" % (self.url, self.which, ", ".join(self.quality))
