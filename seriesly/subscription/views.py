@@ -33,19 +33,19 @@ def subscribe(request):
     editing = False
     if form.cleaned_data["subkey"] == "":
         subkey = Subscription.generate_subkey()
-        subscription = Subscription(last_changed=datetime.datetime.now(),subkey=subkey)
+        subscription = Subscription(last_changed=datetime.datetime.now(), subkey=subkey)
     else:
         editing = True
         subkey = form.cleaned_data["subkey"]
         subscription = form._subscription
-    settings = {"quality": form.cleaned_data["quality"],
+    sub_settings = {"quality": form.cleaned_data["quality"],
                 "torrent": str(form.cleaned_data["torrent"]),
                 "stream" : str(form.cleaned_data["stream"])
             }
-    subscription.set_settings(settings)
+    subscription.set_settings(sub_settings)
     
     try:
-        selected_shows = Show.get_by_id(map(int,form.cleaned_data["shows"]))
+        selected_shows = Show.get_by_id(map(int, form.cleaned_data["shows"]))
     except ValueError:
         return index(request, form=form)
     subscription.put()
@@ -133,10 +133,10 @@ def feed(request, subkey, template="atom.xml"):
     subscription = Subscription.all().filter("subkey =", subkey).get()
     if subscription is None:
         raise Http404
-    subscription.last_visited = datetime.datetime.now()
     sub_settings = subscription.get_settings()
-    subscription.put()
     now = datetime.datetime.now()
+    if subscription.check_beacon_status(now):
+        subscription.put()
     subscription.updated = now.strftime('%Y-%m-%dT%H:%M:%SZ')
     subscription.expires = (now + datetime.timedelta(days=1)).strftime('%Y-%m-%dT%H:%M:%SZ')
     the_shows = subscription.get_shows()
@@ -170,18 +170,16 @@ def calendar(request, subkey):
     subscription = Subscription.all().filter("subkey =", subkey).get()
     if subscription is None:
         raise Http404
-    subscription.last_visited = datetime.datetime.now()
     sub_settings = subscription.get_settings()
-    subscription.put()
-    the_shows = subscription.get_shows()
     now = datetime.datetime.now()
-    two_weeks_ago = now - datetime.timedelta(days=7)
-    five_hours = datetime.timedelta(hours=5)
+    if subscription.check_beacon_status(now):
+        subscription.put()
+    the_shows = subscription.get_shows()
+    # two_weeks_ago = now - datetime.timedelta(days=7)
+    # five_hours = datetime.timedelta(hours=5)
     episodes = Episode.get_for_shows(the_shows, order="date")
     cal = vobject.iCalendar()
     cal.add('method').value = 'PUBLISH'  # IE/Outlook needs this
-    utc = vobject.icalendar.utc
-    items = []
     for episode in episodes:
         vevent = episode.create_event_details(cal)
         releases = []
@@ -200,12 +198,12 @@ def guide(request, subkey):
     subscription = Subscription.all().filter("subkey =", subkey).get()
     if subscription is None:
         raise Http404
-    subscription.last_visited = datetime.datetime.now()
     sub_settings = subscription.get_settings()
-    subscription.put()
+    now = datetime.datetime.now()
+    if subscription.check_beacon_status(now):
+        subscription.put()
     the_shows = subscription.get_shows()
     episodes = Episode.get_for_shows(the_shows, order="date")
-    now = datetime.datetime.now()
     twentyfour_hours_ago = now - datetime.timedelta(hours=24)
     recently = []
     last_week = []
@@ -249,8 +247,10 @@ def send_mail(request):
         subscription = Subscription.get(key)
         if subscription is None:
             raise Http404
-        subscription.last_visited = datetime.datetime.now()
-        subscription.put()
+        
+        if subscription.check_beacon_status(datetime.datetime.now()):
+            subscription.put()
+        
         context = subscription.get_message_context()
         if context is None:
             return HttpResponse("Nothing to do.")
@@ -282,7 +282,9 @@ def send_xmpp(request):
         subscription = Subscription.get(key)
         if subscription is None:
             raise Http404
-        subscription.last_visited = datetime.datetime.now()
+        needs_put = False
+        if subscription.check_beacon_status(datetime.datetime.now()):
+            needs_put = True
         context = subscription.get_message_context()
         if context is None:
             return HttpResponse("Nothing to do.")
@@ -291,7 +293,9 @@ def send_xmpp(request):
         chat_message_sent = (status_code != xmpp.NO_ERROR)
         if not chat_message_sent:
             subscription.xmpp_activated = False
-        subscription.put()
+            needs_put = True
+        if needs_put:
+            subscription.put()
     except Exception, e:
         logging.error(e)
         return HttpResponse("Done (with errors): %s" % key)
@@ -363,7 +367,11 @@ def post_to_callback(request):
         subscription = Subscription.get(key)
         if subscription is None:
             raise Http404
-        subscription.last_visited = datetime.datetime.now()
+        needs_put = False
+
+        if subscription.check_beacon_status(datetime.datetime.now()):
+            needs_put = True
+            
         context = subscription.get_message_context()
         if context is None:
             return HttpResponse("Nothing to do.")
@@ -372,8 +380,11 @@ def post_to_callback(request):
             subscription.post_to_callback(body)
         except Exception, e:
             subscription.webhook = None
+            needs_put = True
             logging.warn("Webhook failed (%s): %s" % (key, e))
-        subscription.put()
+            
+        if needs_put:
+            subscription.put()
     except Exception, e:
         logging.error(e)
         return HttpResponse("Done (with errors): %s" % key)

@@ -28,6 +28,8 @@ class Subscription(db.Model):
     settings =      db.TextProperty()
     webhook =       db.StringProperty()
     
+    BEACON_TIME = datetime.timedelta(days=30)
+    
     @classmethod
     def kind(cls):
         return "subscription_subscription"
@@ -37,6 +39,12 @@ class Subscription(db.Model):
         
     def get_domain_absolute_url(self):
         return settings.DOMAIN_URL + reverse("seriesly-subscription-show", args=(self.subkey,))
+
+    def check_beacon_status(self, time):
+        if time - self.last_visited > self.BEACON_TIME:
+            self.last_visited = time
+            return True
+        return False
     
     def check_confirmation_key(self, confirmkey):
         shouldbe = hmac.new(settings.SECRET_KEY, self.subkey, digestmod=hashlib.sha1).hexdigest()
@@ -47,9 +55,8 @@ class Subscription(db.Model):
         
     def send_confirmation_mail(self):
         confirmation_key = hmac.new(settings.SECRET_KEY, self.subkey, digestmod=hashlib.sha1).hexdigest()
-        confirmation_url = settings.DOMAIN_URL + reverse("seriesly-subscription-confirm_mail", args=(self.subkey,confirmation_key))
+        confirmation_url = settings.DOMAIN_URL + reverse("seriesly-subscription-confirm_mail", args=(self.subkey, confirmation_key))
         sub_url = settings.DOMAIN_URL + reverse("seriesly-subscription-show", args=(self.subkey,))
-        sender_address = "Seriesly <do_not_reply@seriesly.com>"
         subject = "Confirm your seriesly.com email notifications"
         body = """Please confirm your email notifications for your favorite TV-Shows from seriesly.com by clicking the link below:
 
@@ -67,7 +74,7 @@ By the way: your Seriesly subscription URL is: %s
     def set_settings(self, d):
         self._cached_settings = d
         l = []
-        for k,v in d.items():
+        for k, v in d.items():
             l.append("%s\t%s" % (k,v))
         self.settings = "\n".join(l)
     
