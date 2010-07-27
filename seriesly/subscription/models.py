@@ -41,7 +41,7 @@ class Subscription(db.Model):
         return settings.DOMAIN_URL + reverse("seriesly-subscription-show", args=(self.subkey,))
 
     def check_beacon_status(self, time):
-        if time - self.last_visited > self.BEACON_TIME:
+        if self.last_visited is None or time - self.last_visited > self.BEACON_TIME:
             self.last_visited = time
             return True
         return False
