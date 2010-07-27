@@ -1,10 +1,15 @@
 import logging
 import datetime
 
+from google.appengine.api.memcache import get_stats
+
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 
 from subscription.models import Subscription, SubscriptionItem
 from series.models import Show
+
+def memcache(request):
+    return HttpResponse("%s" % get_stats())
 
 def subscriptions(request):
     now = datetime.datetime.now()
