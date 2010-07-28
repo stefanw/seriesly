@@ -133,7 +133,7 @@ def feed_atom(request, subkey, template="atom.xml"):
     cache_time = datetime.timedelta(hours=1)
     if subscription.feed_stamp is None or (now - subscription.feed_stamp) > cache_time:
         subscription.check_beacon_status(now)
-        subscription.feed_cache = db.Text(_feed(request, subscription, template))
+        subscription.feed_cache = db.Text(_feed(request, subscription, template), encoding="utf8")
         subscription.feed_stamp = now
         subscription.put()
     return HttpResponse(subscription.feed_cache, mimetype="application/atom+xml")
@@ -206,10 +206,14 @@ def _calendar(request, subscription, public=False):
     now = datetime.datetime.now()
     cache_time = datetime.timedelta(hours=1)
     if subscription.calendar_stamp is None or (now - subscription.calendar_stamp) > cache_time:
-        subscription.check_beacon_status(now)
-        subscription.calendar_stamp = now
-        subscription.calendar_cache = db.Text(subscription.get_icalendar(public))
-        subscription.put()
+        try:
+            subscription.check_beacon_status(now)
+            subscription.calendar_stamp = now
+            subscription.calendar_cache = db.Text(subscription.get_icalendar(public), encoding="utf8")
+            subscription.put()
+        except Exception, e:
+            logging.error(e)
+            subscription.calendar_cache = ""
     response = HttpResponse(subscription.calendar_cache, mimetype='text/calendar')
     response['Filename'] = 'seriesly-calendar.ics'  # IE needs this
     response['Content-Disposition'] = 'attachment; filename=seriesly-calendar.ics'
