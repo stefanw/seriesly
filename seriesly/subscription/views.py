@@ -13,7 +13,8 @@ from django.conf import settings
 
 from helper import is_post
 from series.models import Show, Episode
-from subscription.forms import SubscriptionForm, MailSubscriptionForm, XMPPSubscriptionForm, WebHookSubscriptionForm
+from subscription.forms import SubscriptionForm, MailSubscriptionForm, \
+    XMPPSubscriptionForm, WebHookSubscriptionForm, SubscriptionKeyForm
 from subscription.models import Subscription
 from releases.models import Release
 
@@ -76,37 +77,22 @@ def show(request, subkey, extra_context=None):
         subscription.webhook_form = extra_context["webhook_form"]
     else:
         subscription.webhook_form = WebHookSubscriptionForm({"webhook": subscription.webhook, "subkey": subkey})
+    if "public_id_form" in extra_context:
+        subscription.public_id_form = extra_context["public_id_form"]
+    else:
+        subscription.public_id_form = SubscriptionKeyForm({"subkey": subkey})
     subscription.sub_settings = subscription.get_settings()
     response = render_to_response("subscription.html", RequestContext(request, {"subscription":subscription}))
     response.set_cookie("subkey", subkey, max_age=31536000)
     return response
     
-@is_post
-def edit_mail(request):
-    form = MailSubscriptionForm(request.POST)
-    if not form.is_valid():
-        return show(request, request.POST.get("subkey", ""), extra_context={"mail_form":form})
-    subscription = form._subscription
-    if subscription.email != form.cleaned_data["email"]:
-        subscription.activated_mail = False
-    subscription.email = form.cleaned_data["email"]
-    subscription.last_changed = datetime.datetime.now()
-    subscription.put()
-    if subscription.email != "" and subscription.activated_mail == False:
-        subscription.send_confirmation_mail()
-    return HttpResponseRedirect(subscription.get_absolute_url() + "#email-subscription")
-    
-def confirm_mail(request, subkey, confirmkey):
-    subscription = Subscription.all().filter("subkey =", subkey).get()
+def show_public(request, public_id):
+    subscription = Subscription.all().filter("public_id =", public_id).get()
     if subscription is None:
-        raise Http404
-    if subscription.check_confirmation_key(confirmkey):
-        subscription.activated_mail = True
-        subscription.put()
-        return HttpResponseRedirect(subscription.get_absolute_url() + "#email-subscription")
-    else:
-        raise Http404
-        
+        raise Http404        
+    response = render_to_response("subscription_public.html", RequestContext(request, {"shows":subscription.get_shows(), "subscription": subscription}))
+    return response
+
 def edit(request, subkey):
     subscription = Subscription.all().filter("subkey =", subkey).get()
     if subscription is None:
@@ -122,17 +108,46 @@ def edit(request, subkey):
         form = SubscriptionForm(sub_dict)
         return index(request, form=form, extra_context={"subscription": subscription})
     return HttpResponseRedirect(subscription.get_absolute_url())
-        
+
+@is_post
+def edit_public_id(request):
+    form = SubscriptionKeyForm(request.POST)
+    if not form.is_valid():
+        return show(request, request.POST.get("subkey", ""), extra_context={"public_id_form":form})
+    subscription = form._subscription
+    if subscription.public_id is None:
+        subscription.public_id = Subscription.generate_key("public_id")
+    else:
+        subscription.public_id = None
+    subscription.put()
+    return HttpResponseRedirect(subscription.get_absolute_url() + "#subscription-public-urls")
+
+
 def feed_rss(request, subkey):
     return feed(request, subkey, template="rss.xml")
     
 def feed_atom(request, subkey):
     return feed(request, subkey, template="atom.xml")
     
-def feed(request, subkey, template="atom.xml"):
+def feed(request, subkey, template):
     subscription = Subscription.all().filter("subkey =", subkey).get()
     if subscription is None:
         raise Http404
+    return _feed(request, subscription, template)
+    
+def feed_atom_public(request, public_id):
+    return feed_public(request, public_id, template="atom_public.xml")
+
+def feed_rss_public(request, public_id):
+    return feed_public(request, public_id, template="rss_public.xml")
+    
+def feed_public(request, public_id, template):
+    subscription = Subscription.all().filter("public_id =", public_id).get()
+    if subscription is None:
+        raise Http404
+    return _feed(request, subscription, template, public=True)
+    
+def _feed(request, subscription, template, public=False):
     sub_settings = subscription.get_settings()
     now = datetime.datetime.now()
     if subscription.check_beacon_status(now):
@@ -163,13 +178,25 @@ def feed(request, subkey, template="atom.xml"):
             items.append(episode)
     
     body = render_to_string(template, RequestContext(request, {"subscription":subscription, "items": items}))
-    return HttpResponse(body, mimetype="application/atom+xml")    
+    mimetype = "application/atom+xml"
+    if "rss" in template:
+        mimetype = "application/rss+xml"
+    return HttpResponse(body, mimetype=mimetype)
     
 def calendar(request, subkey):
-    """Nice hints from here: http://blog.thescoop.org/archives/2007/07/31/django-ical-and-vobject/"""
     subscription = Subscription.all().filter("subkey =", subkey).get()
     if subscription is None:
         raise Http404
+    return _calendar(subscription)
+
+def calendar_public(request, public_id):
+    subscription = Subscription.all().filter("public_id =", public_id).get()
+    if subscription is None:
+        raise Http404
+    return _calendar(request, subscription, public=True)
+
+def _calendar(request, subscription, public=False):
+    """Nice hints from here: http://blog.thescoop.org/archives/2007/07/31/django-ical-and-vobject/"""
     sub_settings = subscription.get_settings()
     now = datetime.datetime.now()
     if subscription.check_beacon_status(now):
@@ -198,6 +225,16 @@ def guide(request, subkey):
     subscription = Subscription.all().filter("subkey =", subkey).get()
     if subscription is None:
         raise Http404
+    return _guide(subscription)
+    
+def guide_public(request, public_id):
+    subscription = Subscription.all().filter("public_id =", public_id).get()
+    if subscription is None:
+        raise Http404
+    return _guide(request, subscription, template="guide_public.html", public=True)
+        
+def _guide(request, subscription, template="guide.html", public=False):
+    subscription.is_public = public
     sub_settings = subscription.get_settings()
     now = datetime.datetime.now()
     if subscription.check_beacon_status(now):
@@ -221,13 +258,40 @@ def guide(request, subkey):
             recently.append(episode)
         else:
             upcoming.append(episode)
-    response = render_to_response("guide.html", RequestContext(request, {"subscription":subscription, 
+    response = render_to_response(template, RequestContext(request, {"subscription":subscription, 
                                 "recently": recently, 
                                 "upcoming": upcoming, 
                                 "last_week": last_week
                             }))
-    response.set_cookie("subkey", subkey)
+    if not public:
+        response.set_cookie("subkey", subscription.subkey)
     return response
+
+@is_post
+def edit_mail(request):
+    form = MailSubscriptionForm(request.POST)
+    if not form.is_valid():
+        return show(request, request.POST.get("subkey", ""), extra_context={"mail_form":form})
+    subscription = form._subscription
+    if subscription.email != form.cleaned_data["email"]:
+        subscription.activated_mail = False
+    subscription.email = form.cleaned_data["email"]
+    subscription.last_changed = datetime.datetime.now()
+    subscription.put()
+    if subscription.email != "" and subscription.activated_mail == False:
+        subscription.send_confirmation_mail()
+    return HttpResponseRedirect(subscription.get_absolute_url() + "#email-subscription")
+    
+def confirm_mail(request, subkey, confirmkey):
+    subscription = Subscription.all().filter("subkey =", subkey).get()
+    if subscription is None:
+        raise Http404
+    if subscription.check_confirmation_key(confirmkey):
+        subscription.activated_mail = True
+        subscription.put()
+        return HttpResponseRedirect(subscription.get_absolute_url() + "#email-subscription")
+    else:
+        raise Http404
 
 def email_task(request):
     subscriptions = Subscription.all().filter("activated_mail =", True)

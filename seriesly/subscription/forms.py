@@ -155,3 +155,14 @@ class WebHookSubscriptionForm(forms.Form):
         else:
             webhook = None
         return webhook
+        
+class SubscriptionKeyForm(forms.Form):
+    subkey = forms.CharField(required=True, widget=forms.HiddenInput)
+
+    def clean_subkey(self):
+        subkey = self.cleaned_data["subkey"]
+        sub = Subscription.all().filter("subkey =", subkey).get()
+        if sub is None:
+            raise forms.ValidationError("You don't have a valid Seriesly Subscription Key")
+        self._subscription = sub
+        return subkey

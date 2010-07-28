@@ -156,6 +156,16 @@ $(document).ready(function(){
     $("#allshows-list li input:checked").each(function(i, el){
       toggle_show.apply($(el).parent().parent(),[]);
     });
+    if(document.location.hash !== "" && document.location.hash.indexOf("shows=") != -1){
+        var shows = document.location.hash;
+        shows = shows.replace(/#?shows=/,'');
+        shows = shows.split(',');
+        $('#allshows-list input').each(function(){
+            if($.inArray($(this).val(), shows) != -1){
+                toggle_show.apply($(this).parent().parent(),[]);
+            }
+        });
+    }
     if($("#twitter").length == 1 && document.location.protocol != "https:"){
       // This is a packed function from twitter for displaying relative time
       function relative_time(C){var A=Date.parse(C);var D=(arguments.length>1)?arguments[1]:new Date();var E=parseInt((D.getTime()-A)/1000,10);E=E+(D.getTimezoneOffset()*60);if(E<60){return"less than a minute ago";}else{if(E<120){return"about a minute ago";}else{if(E<(60*60)){return(parseInt(E/60,10)).toString()+" minutes ago";}else{if(E<(120*60)){return"about an hour ago";}else{if(E<(24*60*60)){return"about "+(parseInt(E/3600,10)).toString()+" hours ago";}else{if(E<(48*60*60)){return"1 day ago";}else{return(parseInt(E/86400,10)).toString()+" days ago";}}}}}}}

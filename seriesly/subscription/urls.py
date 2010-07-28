@@ -13,4 +13,5 @@ urlpatterns = patterns('',
     (r'^webhook-task/$', 'subscription.views.webhook_task', {}, "seriesly-subscription-webhook_task"),
     (r'^webhook/$', 'subscription.views.post_to_callback', {}, "seriesly-subscription-webhook"),
     
+    (r'^toggle/public-urls$', 'subscription.views.edit_public_id', {}, "seriesly-subscription-edit_public_id"),
 )

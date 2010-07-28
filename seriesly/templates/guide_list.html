@@ -1,0 +1,62 @@
+    {% include "announcement.txt" %}
+    <h3>Recently</h3>
+    <ul class="episode-list">
+        {% for episode in recently %}
+        <li class="vevent">
+            <div class="clearfix" style="width:100%">
+                <div class="left">
+                    <div class="vevent-meta">
+                        <time class="dtstart" datetime="{{ episode.date|date:"Y-m-d\TH:i:s" }}">{{ episode.date|timesince }} ago</time>
+                        <time class="dtend" datetime="{{ episode.date_end|date:"Y-m-d\TH:i:s" }}"></time> <span class="location">on {{ episode.show.network }}</span>, {{ episode.season_number }}x{{ episode.number }}
+                    </div>
+                    <span title="Season {{ episode.season_number }}, Episode {{ episode.number }}" class="summary">{{ episode.show.name }}: &ldquo;{{ episode.title }}&rdquo;</span>
+                </div>
+                {% if subscription.want_releases %}
+                <ul class="right description">{% for release in episode.releases %}<li><a href="{% url seriesly-releases-redirect release.idnr %}" title="{{ release.url }}">{{ release.url|slice:"7:25" }}</a> ({{ release.which }}, Quality: {{ release.quality|join:", " }})</li>{% empty %}<li>No releases for this episode yet</li>{% endfor %}</ul>
+                {% endif %}
+            </div>
+        </li>
+        {% empty %}
+        <li>No recent episodes</li>
+        {% endfor %}
+    </ul>
+</section>
+<section class="step">
+    <div class="split">
+        <div class="left halfsize">
+            <h3>Last Seven Days</h3>
+            <ul class="episode-list">
+                {% for episode in last_week reversed %}
+                <li class="vevent">
+                    <div class="vevent-meta">
+                        <time class="dtstart" datetime="{{ episode.date|date:"Y-m-d\TH:i:s" }}">{{ episode.date|timesince }} ago</time>
+                        <time class="dtend" datetime="{{ episode.date_end|date:"Y-m-d\TH:i:s" }}"></time> <span class="location">on {{ episode.show.network }}</span>, {{ episode.season_number }}x{{ episode.number }}
+                    </div>
+                    <span title="Season {{ episode.season_number }}, Episode {{ episode.number }}" class="summary">{{ episode.show.name }}: &ldquo;{{ episode.title }}&rdquo;</span>
+                    {% if subscription.want_releases %}
+                    <ul class="description">{% for release in episode.releases %}<li><a href="{% url seriesly-releases-redirect release.idnr %}" title="{{ release.url }}">{{ release.url|slice:"7:25" }}</a> ({{ release.which }}, Quality: {{ release.quality|join:", " }})</li>{% empty %}<li>No releases found for this episode</li>{% endfor %}</ul>    
+                    {% endif %}
+                </li>
+                {% empty %}
+                <li>No episodes last week</li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="right halfsize">
+            <h3>Coming Up Soon</h3>
+            <ul class="episode-list">
+                {% for episode in upcoming %}
+                <li class="vevent">
+                    <div class="vevent-meta">
+                        <time class="dtstart" datetime="{{ episode.date|date:"Y-m-d\TH:i:s" }}">in {{ episode.date|timeuntil }}</time>
+                        <time class="dtend" datetime="{{ episode.date_end|date:"Y-m-d\TH:i:s" }}"></time> <span class="location">on {{ episode.show.network }}</span>, {{ episode.season_number }}x{{ episode.number }}
+                    </div>
+                    <span title="Season {{ episode.season_number }}, Episode {{ episode.number }}" class="summary">{{ episode.show.name }}: &ldquo;{{ episode.title }}&rdquo;</span>
+                </li>
+                {% empty %}
+                <li>No upcoming episodes</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    <div class="clear"></div>

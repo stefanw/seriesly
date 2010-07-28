@@ -27,6 +27,7 @@ class Subscription(db.Model):
     xmpp =          db.StringProperty()
     settings =      db.TextProperty()
     webhook =       db.StringProperty()
+    public_id =      db.StringProperty(default=None)
     
     BEACON_TIME = datetime.timedelta(days=30)
     
@@ -97,16 +98,20 @@ By the way: your Seriesly subscription URL is: %s
     @property
     def want_releases(self):
         return self.get_settings()["stream"] or self.get_settings()["torrent"]
-    
+        
     @classmethod
     def generate_subkey(cls):
+        return cls.generate_key("subkey")
+        
+    @classmethod
+    def generate_key(cls, field="subkey"):
         CHARS = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
         wtf = False
         while wtf is not None:
             key = ""
             for i in range(32):
                 key += random.choice(CHARS)
-            wtf = Subscription.all().filter("subkey =", key).get()
+            wtf = Subscription.all().filter("%s =" % field, key).get()
         return key
         
     def get_shows(self):
