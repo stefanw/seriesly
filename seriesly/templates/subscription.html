@@ -59,7 +59,7 @@
 <section class="step">
     <h3 id="ical-subscription">iCalendar<div class="right sprite-big sprite-ical_big"></div></h3>
     <p>This is your personal iCalendar URL:<br/>
-        <input type="text" readonly="readonly" value="{{ DOMAIN_URL }}{% url seriesly-subscription-caldav subscription.subkey %}" style="width:75%"/></p>
+        <input type="text" readonly="readonly" value="{{ DOMAIN_URL }}{% url seriesly-subscription-calendar subscription.subkey %}" style="width:75%"/></p>
     <p>You can add it to <a href="{% url seriesly-faq %}#q-2">Google Calendar</a>, <a href="{% url seriesly-faq %}#q-1">iCal</a> and other calendar applications.</p>
 </section>
 
@@ -120,13 +120,38 @@
 </section>
 
 <section class="step">
+    <h3 id="subscription-public-urls">Public URLs</h3>
+    {% if subscription.public_id %}
+        <p>You are currently sharing your shows through the following public URLs:</p>
+        <ul class="normal-list">
+            <li><a href="{% url seriesly-subscription-show_public subscription.public_id %}">Public Subscription Page</a></li>
+            <li><a href="{% url seriesly-subscription-guide_public subscription.public_id %}">Public Episode Guide</a></li>
+            <li><a href="{% url seriesly-subscription-atom_public subscription.public_id %}">Public Feed URL</a></li>
+            <li><a href="{% url seriesly-subscription-calendar_public subscription.public_id %}">Public Calendar URL</a></li>
+        </ul>
+        <br/>
+        <p>You can always destroy these URLs and return to privacy.</p>
+        <form action="{% url seriesly-subscription-edit_public_id %}" method="post">
+            <p><input type="submit" value="Destroy Public URLs"/>{{ subscription.webhook_form.subkey }}</p>
+            <p><strong>Warning:</strong> destroying the URLs cannot be undone.</p>
+        </form>
+    {% else %}
+        <p>You can share your subscription with others.<br/>They will only see your shows and will not be able to change them.</p>
+        <form action="{% url seriesly-subscription-edit_public_id %}" method="post">
+            <p><input type="submit" value="Generate Public URLs"/>{{ subscription.webhook_form.subkey }}</p>
+        </form>
+    {% endif %}
+
+</section>
+
+<section class="step">
     <h3 id="subscription-secure">Secure URLs</h3>
     <p>The following secure URLs are available:</p>
     <ul class="normal-list">
         <li><a href="{{ SECURE_DOMAIN_URL }}{% url seriesly-subscription-show subscription.subkey %}">A secure version of this page</a></li>
         <li><a href="{{ SECURE_DOMAIN_URL }}{% url seriesly-subscription-guide subscription.subkey %}">Secure Episode Guide</a></li>
         <li><a href="{{ SECURE_DOMAIN_URL }}{% url seriesly-subscription-atom subscription.subkey %}">Secure Feed URL</a></li>
-        <li><a href="{{ SECURE_DOMAIN_URL }}{% url seriesly-subscription-caldav subscription.subkey %}">Secure Calendar URL</a></li>
+        <li><a href="{{ SECURE_DOMAIN_URL }}{% url seriesly-subscription-calendar subscription.subkey %}">Secure Calendar URL</a></li>
     </ul>
     <p>See also this <a href="{% url seriesly-faq %}#q-7">FAQ entry</a>.
 </section>
