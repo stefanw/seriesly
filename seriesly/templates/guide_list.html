@@ -2,7 +2,7 @@
     <h3>Recently</h3>
     <ul class="episode-list">
         {% for episode in recently %}
-        <li class="vevent">
+        <li class="vevent episode-item">
             <div class="clearfix" style="width:100%">
                 <div class="left">
                     <div class="vevent-meta">
@@ -27,7 +27,7 @@
             <h3>Last Seven Days</h3>
             <ul class="episode-list">
                 {% for episode in last_week reversed %}
-                <li class="vevent">
+                <li class="vevent episode-item">
                     <div class="vevent-meta">
                         <time class="dtstart" datetime="{{ episode.date|date:"Y-m-d\TH:i:s" }}">{{ episode.date|timesince }} ago</time>
                         <time class="dtend" datetime="{{ episode.date_end|date:"Y-m-d\TH:i:s" }}"></time> <span class="location">on {{ episode.show.network }}</span>, {{ episode.season_number }}x{{ episode.number }}
@@ -46,7 +46,7 @@
             <h3>Coming Up Soon</h3>
             <ul class="episode-list">
                 {% for episode in upcoming %}
-                <li class="vevent">
+                <li class="vevent episode-item">
                     <div class="vevent-meta">
                         <time class="dtstart" datetime="{{ episode.date|date:"Y-m-d\TH:i:s" }}">in {{ episode.date|timeuntil }}</time>
                         <time class="dtend" datetime="{{ episode.date_end|date:"Y-m-d\TH:i:s" }}"></time> <span class="location">on {{ episode.show.network }}</span>, {{ episode.season_number }}x{{ episode.number }}
