@@ -290,8 +290,9 @@ def send_xmpp(request):
             return HttpResponse("Nothing to do.")
         body = render_to_string("subscription_xmpp.txt", RequestContext(request, context))
         status_code = xmpp.send_message(subscription.xmpp, body)
-        chat_message_sent = (status_code != xmpp.NO_ERROR)
-        if not chat_message_sent:
+        jid_broken = (status_code == xmpp.INVALID_JID)
+        if jid_broken:
+            subscription.xmpp = None
             subscription.xmpp_activated = False
             needs_put = True
         if needs_put:
