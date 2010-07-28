@@ -136,9 +136,9 @@
             <p><strong>Warning:</strong> destroying the URLs cannot be undone.</p>
         </form>
     {% else %}
-        <p>You can share your subscription with others.<br/>They will only see your shows and will not be able to change them.</p>
+        <p>You can share public URLs with others.<br/>They will only see your shows and will not be able to change your subscriptions.</p>
         <form action="{% url seriesly-subscription-edit_public_id %}" method="post">
-            <p><input type="submit" value="Generate Public URLs"/>{{ subscription.webhook_form.subkey }}</p>
+            <p><input type="submit" value="Generate public URLs"/>{{ subscription.webhook_form.subkey }}</p>
         </form>
     {% endif %}
 
