@@ -355,7 +355,7 @@ def webhook_task(request):
     for s in subscriptions:
         s.add_webhook_task()
         counter += 1
-    return HttpResponse("Done: \n%s, %d" % (subscriptions, counter))
+    return HttpResponse("Done: \n%d" % counter)
 
 @is_post
 def post_to_callback(request):

@@ -12,5 +12,5 @@ def get(url):
     return response.content
     
 def post(url, content):
-    return urlfetch_fetch(url, payload=content, method=urlfetch.POST, follow_redirects=True)
+    return urlfetch_fetch(url, payload=content, method="POST", follow_redirects=True)
     

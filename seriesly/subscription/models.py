@@ -130,12 +130,12 @@ By the way: your Seriesly subscription URL is: %s
     def add_email_task(self):
         return self.add_task('seriesly-subscription-mail', "mail-queue")
 
-    def add_webhook_task(self):
-        return self.add_task('seriesly-subscription-webhook', "webhook-queue")
-        
     def add_xmpp_task(self):
         return self.add_task('seriesly-subscription-xmpp', "xmpp-queue")
-            
+
+    def add_webhook_task(self):
+        return self.add_task('seriesly-subscription-webhook', "webhook-queue")
+
     def add_task(self, url_name, queue_name):
         t = taskqueue.Task(url=reverse(url_name), params={"key": str(self.key())})
         t.add(queue_name=queue_name)

@@ -30,3 +30,7 @@ cron:
 - description: daily xmpp sending
   url: /subscription/xmpp-task/
   schedule: every day 08:00
+  
+- description: daily web hook task
+  url: /subscription/webhook-task/
+  schedule: every day 08:00

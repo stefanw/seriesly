@@ -1,5 +1,4 @@
 import logging, os, sys
-import traceback
 os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
 
 from google.appengine.dist import use_library
@@ -20,7 +19,6 @@ import django.core.handlers.wsgi
  
  
 def log_exception(sender, **kwargs):
-    logging.exception('Exception in request:\n' + ''.join(traceback.format_exception(*sys.exc_info())))
     if 'request' in kwargs:
         try:
             repr_request = repr(kwargs['request'])
@@ -39,6 +37,22 @@ def main():
     application = django.core.handlers.wsgi.WSGIHandler()
     # Run the WSGI CGI handler with that application.
     run_wsgi_app(application)
+    
+def profile_main():
+    # This is the main function for profiling
+    # We've renamed our original main() above to real_main()
+    import cProfile, pstats, StringIO
+    prof = cProfile.Profile()
+    prof = prof.runctx("main()", globals(), locals())
+    stream = StringIO.StringIO()
+    stats = pstats.Stats(prof, stream=stream)
+    stats.sort_stats("time")  # Or cumulative
+    stats.print_stats(80)  # 80 = how many to print
+    # The rest is optional.
+    # stats.print_callees()
+    # stats.print_callers()
+    logging.info("Profile data:\n%s", stream.getvalue())
 
 if __name__ == '__main__':
+    # profile_main()
     main()

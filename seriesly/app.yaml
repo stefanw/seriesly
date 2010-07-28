@@ -48,6 +48,10 @@ handlers:
   script: main.py
   login: admin
 
+- url: /subscriptions/webhook-task/
+  script: main.py
+  login: admin
+
 - url: /statistics/.*
   script: main.py
   login: admin
