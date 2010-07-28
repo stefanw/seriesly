@@ -220,7 +220,7 @@ def guide(request, subkey):
     subscription = Subscription.all().filter("subkey =", subkey).get()
     if subscription is None:
         raise Http404
-    return _guide(subscription)
+    return _guide(request, subscription)
     
 def guide_public(request, public_id):
     subscription = Subscription.all().filter("public_id =", public_id).get()
