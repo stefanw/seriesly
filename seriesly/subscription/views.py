@@ -1,9 +1,9 @@
 import datetime
 import logging
-import vobject
 
 from google.appengine.api import xmpp
 from google.appengine.api import mail
+from google.appengine.ext import db
 
 from django.shortcuts import render_to_response
 from django.http import HttpResponse, HttpResponseRedirect, Http404
@@ -122,18 +122,32 @@ def edit_public_id(request):
     subscription.put()
     return HttpResponseRedirect(subscription.get_absolute_url() + "#subscription-public-urls")
 
-
 def feed_rss(request, subkey):
     return feed(request, subkey, template="rss.xml")
     
-def feed_atom(request, subkey):
-    return feed(request, subkey, template="atom.xml")
+def feed_atom(request, subkey, template="atom.xml"):
+    subscription = Subscription.all().filter("subkey =", subkey).get()
+    if subscription is None:
+        raise Http404
+    now = datetime.datetime.now()
+    cache_time = datetime.timedelta(hours=1)
+    if subscription.feed_stamp is None or (now - subscription.feed_stamp) > cache_time:
+        subscription.check_beacon_status(now)
+        subscription.feed_cache = db.Text(_feed(request, subscription, template))
+        subscription.feed_stamp = now
+        subscription.put()
+    return HttpResponse(subscription.feed_cache, mimetype="application/atom+xml")
     
 def feed(request, subkey, template):
     subscription = Subscription.all().filter("subkey =", subkey).get()
     if subscription is None:
         raise Http404
-    return _feed(request, subscription, template)
+    body = _feed(request, subscription, template)
+    mimetype = "application/atom+xml"
+    if "rss" in template:
+        mimetype = "application/rss+xml"
+    return HttpResponse(body, mimetype=mimetype)
+
     
 def feed_atom_public(request, public_id):
     return feed_public(request, public_id, template="atom_public.xml")
@@ -148,10 +162,8 @@ def feed_public(request, public_id, template):
     return _feed(request, subscription, template, public=True)
     
 def _feed(request, subscription, template, public=False):
-    sub_settings = subscription.get_settings()
     now = datetime.datetime.now()
-    if subscription.check_beacon_status(now):
-        subscription.put()
+    sub_settings = subscription.get_settings()
     subscription.updated = now.strftime('%Y-%m-%dT%H:%M:%SZ')
     subscription.expires = (now + datetime.timedelta(days=1)).strftime('%Y-%m-%dT%H:%M:%SZ')
     the_shows = subscription.get_shows()
@@ -176,51 +188,34 @@ def _feed(request, subscription, template, public=False):
             episode.pub_date = pub_date
             episode.releases = releases
             items.append(episode)
-    
-    body = render_to_string(template, RequestContext(request, {"subscription":subscription, "items": items}))
-    mimetype = "application/atom+xml"
-    if "rss" in template:
-        mimetype = "application/rss+xml"
-    return HttpResponse(body, mimetype=mimetype)
+    return render_to_string(template, RequestContext(request, {"subscription":subscription, "items": items}))
     
 def calendar(request, subkey):
     subscription = Subscription.all().filter("subkey =", subkey).get()
     if subscription is None:
         raise Http404
-    return _calendar(subscription)
+    return _calendar(request, subscription)
 
 def calendar_public(request, public_id):
     subscription = Subscription.all().filter("public_id =", public_id).get()
     if subscription is None:
         raise Http404
     return _calendar(request, subscription, public=True)
-
+    
 def _calendar(request, subscription, public=False):
-    """Nice hints from here: http://blog.thescoop.org/archives/2007/07/31/django-ical-and-vobject/"""
-    sub_settings = subscription.get_settings()
     now = datetime.datetime.now()
-    if subscription.check_beacon_status(now):
+    cache_time = datetime.timedelta(hours=1)
+    if subscription.calendar_stamp is None or (now - subscription.calendar_stamp) > cache_time:
+        subscription.check_beacon_status(now)
+        subscription.calendar_stamp = now
+        subscription.calendar_cache = db.Text(subscription.get_icalendar(public))
         subscription.put()
-    the_shows = subscription.get_shows()
-    # two_weeks_ago = now - datetime.timedelta(days=7)
-    # five_hours = datetime.timedelta(hours=5)
-    episodes = Episode.get_for_shows(the_shows, order="date")
-    cal = vobject.iCalendar()
-    cal.add('method').value = 'PUBLISH'  # IE/Outlook needs this
-    for episode in episodes:
-        vevent = episode.create_event_details(cal)
-        releases = []
-        if subscription.want_releases:
-            releases = Release.filter(episode.releases, sub_settings)
-            if releases:
-                vevent.add('url').value = releases[0].url
-                vevent.add('description').value = u"\n".join(map(unicode, releases))
-    icalstream = cal.serialize()
-    response = HttpResponse(icalstream, mimetype='text/calendar')
+    response = HttpResponse(subscription.calendar_cache, mimetype='text/calendar')
     response['Filename'] = 'seriesly-calendar.ics'  # IE needs this
     response['Content-Disposition'] = 'attachment; filename=seriesly-calendar.ics'
     return response
-    
+
+
 def guide(request, subkey):
     subscription = Subscription.all().filter("subkey =", subkey).get()
     if subscription is None:

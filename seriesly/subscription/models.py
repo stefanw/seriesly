@@ -3,6 +3,7 @@ import hashlib
 import hmac
 import logging
 import datetime
+import vobject
 
 from google.appengine.ext import db
 from google.appengine.api import mail
@@ -28,6 +29,11 @@ class Subscription(db.Model):
     settings =      db.TextProperty()
     webhook =       db.StringProperty()
     public_id =      db.StringProperty(default=None)
+    
+    feed_cache =    db.TextProperty()
+    feed_stamp =  db.DateTimeProperty()
+    calendar_cache = db.TextProperty()
+    calendar_stamp =  db.DateTimeProperty()
     
     BEACON_TIME = datetime.timedelta(days=30)
     
@@ -168,6 +174,25 @@ By the way: your Seriesly subscription URL is: %s
                 episode.releases = Release.filter(episode.releases, self.get_settings())
             context["items"].append(episode)
         return context
+        
+    def get_icalendar(self, public):
+        """Nice hints from here: http://blog.thescoop.org/archives/2007/07/31/django-ical-and-vobject/"""
+        the_shows = self.get_shows()
+        # two_weeks_ago = now - datetime.timedelta(days=7)
+        # five_hours = datetime.timedelta(hours=5)
+        sub_settings = self.get_settings()
+        episodes = Episode.get_for_shows(the_shows, order="date")
+        cal = vobject.iCalendar()
+        cal.add('method').value = 'PUBLISH'  # IE/Outlook needs this
+        for episode in episodes:
+            vevent = episode.create_event_details(cal)
+            releases = []
+            if self.want_releases:
+                releases = Release.filter(episode.releases, sub_settings)
+                if releases:
+                    vevent.add('url').value = releases[0].url
+                    vevent.add('description').value = u"\n".join(map(unicode, releases))
+        return cal.serialize()
         
 
 class SubscriptionItem(db.Model):
