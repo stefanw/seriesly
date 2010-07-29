@@ -3,16 +3,17 @@
   <title>Seriesly</title>
   <link rel="self" type="application/atom+xml" href="{{ DOMAIN_URL }}{% url seriesly-subscription-atom_public subscription.public_id %}"/>
   <updated>{{ subscription.updated }}</updated>
-  <icon>{{ DOMAIN_URL }}/media/img/favicon.png</icon>
   <id>{{ DOMAIN_URL }}{% url seriesly-subscription-atom_public subscription.public_id %}</id>
+  <icon>{{ DOMAIN_URL }}/media/img/favicon.png</icon>
   <author><name>Seriesly</name></author>
   <fa:max-expires>{{ subscription.expires }}</fa:max-expires>
   {% for item in items %}<entry>
       <title>{{ item.show.name }} - {{ item.title }} ({{ item.season_number }}x{{ item.number }})</title>
       {% if item.torrenturl %}<link rel="enclosure" type="application/x-bittorrent"{% if item.torrentlen %} length="{{ item.torrentlen }}"{% endif %} href="{{ item.torrenturl|fixurl }}"/>{% endif %}
-      <published>{{ item.pub_date|rfc3339 }}</published>
-      <content type="xhtml" xml:lang="en">{% include "announcement.txt" %}{% include "feed_content.html" %}
-          <a href="{{ DOMAIN_URL }}{% url seriesly-subscription-show_public subscription.public_id %}">Your Subscription on Seriesly.com</a></content>
+      <updated>{{ item.pub_date|rfc3339 }}</updated>
+      <content type="xhtml" xml:lang="en"><div>{% include "announcement.txt" %}{% include "feed_content.html" %}
+           <a href="{{ DOMAIN_URL }}{% url seriesly-subscription-show_public subscription.public_id %}">Your Subscription on Seriesly.com</a></div>
+      </content>
       <id>{{ DOMAIN_URL }}{% url seriesly-shows-episode item.key.id %}</id>
   </entry>{% endfor %}
 </feed>

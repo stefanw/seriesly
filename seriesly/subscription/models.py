@@ -34,6 +34,10 @@ class Subscription(db.Model):
     feed_stamp =  db.DateTimeProperty()
     calendar_cache = db.TextProperty()
     calendar_stamp =  db.DateTimeProperty()
+
+    public_feed_cache =    db.TextProperty()
+    public_feed_stamp =  db.DateTimeProperty()
+
     
     BEACON_TIME = datetime.timedelta(days=30)
     
