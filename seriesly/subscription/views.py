@@ -390,6 +390,7 @@ def incoming_xmpp(request):
     sender = message.sender.split("/")[0]
     subscription = Subscription.all().filter("xmpp =", sender).get()
     if subscription is None:
+        message.reply("I don't know you. Please create a Seriesly subscription at http://www.seriesly.com")
         logging.warn("Sender not found: %s" % sender)
         return HttpResponse()
     if not subscription.activated_xmpp and message.body == "OK":

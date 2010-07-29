@@ -11,6 +11,8 @@ from google.appengine.ext import db
 from django.core.urlresolvers import reverse
 
 from helper.string_utils import normalize
+from helper.dateutils import get_timezone_for_gmt_offset
+
 from series.tvrage import TVRage
 
 class Show(db.Model):
@@ -329,8 +331,13 @@ class Episode(db.Model):
     def create_event_details(self, cal):
         vevent = cal.add('vevent')
         vevent.add('uid').value = "seriesly-episode-%s" % self.key()
-        vevent.add('dtstart').value = self.date
-        vevent.add('dtend').value = self.date + datetime.timedelta(minutes=self.show.runtime)
+        try:
+            tz = get_timezone_for_gmt_offset(self.show.timezone)
+        except Exception:
+            tz = utc
+        date = utc.localize(self.date).astimezone(tz)
+        vevent.add('dtstart').value = date
+        vevent.add('dtend').value = date + datetime.timedelta(minutes=self.show.runtime)
         vevent.add('summary').value = "%s - %s (%dx%d)" % (self.show.name, self.title, 
                                                                 self.season_number, self.number)
         vevent.add('location').value = self.show.network

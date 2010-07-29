@@ -3,22 +3,12 @@ from xml.dom.minidom import parseString
 import logging
 import datetime
 import urllib
-from pytz import timezone
 
 from helper.http import get as http_get
 from helper.html import unescape
 from helper.string_utils import normalize
-    
-def get_timezone_for_gmt_offset(gmtoffset):
-    if "GMT-5" in gmtoffset:
-        return timezone('US/Eastern')
-    elif "GMT-8" in gmtoffset:
-        return timezone('US/Pacific')
-    elif "GMT+0" in gmtoffset:
-        return timezone("Europe/London")
-    else:
-        return timezone('US/Eastern')
-    
+from helper.dateutils import get_timezone_for_gmt_offset
+
 
 class TVDataClass(object):
     def __init__(self, **kwargs):
