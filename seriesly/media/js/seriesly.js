@@ -146,9 +146,10 @@ $(document).ready(function(){
     $("#search").click(filter_list); // For mac clear search
     $("#search").change(filter_list);
     $("#search").keydown(function(e){
-    // Hitting Return should not submit, but search
-    if (e.keyCode == 13){e.preventDefault();}
-    filter_list(e);
+        // Hitting Return should not submit, but search
+        if (e.keyCode == 13){e.preventDefault();}
+        if (e.keyCode == 27){$("#search").val("");}
+        filter_list(e);
     });
     $("#clear-search").click(clear_search);
     $(".show-list li").live("click",toggle_show);
