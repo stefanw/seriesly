@@ -13,10 +13,10 @@ def memcache(request):
 
 def subscriptions(request):
     now = datetime.datetime.now()
-    threshold = now - datetime.timedelta(days=30*6)
+    threshold = now - datetime.timedelta(days=30*3)
     subcount = 0
     for subscription in Subscription.all():
-        if subscription.last_visited is not None and subscription.last_visited < threshold:
+        if subscription.last_visited is not None and subscription.last_visited > threshold:
             subcount += 1
     return HttpResponse("Done: \n%d" % subcount)
     
