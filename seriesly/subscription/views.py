@@ -320,23 +320,23 @@ def send_mail(request):
         subscription = Subscription.get(key)
         if subscription is None:
             raise Http404
-        
+    
         if subscription.check_beacon_status(datetime.datetime.now()):
             subscription.put()
-        
+    
         context = subscription.get_message_context()
         if context is None:
             return HttpResponse("Nothing to do.")
         subject = "Seriesly.com - %d new episodes" % len(context["items"])
         body = render_to_string("subscription_mail.txt", RequestContext(request, context))
-        mail.send_mail(settings.DEFAULT_FROM_EMAIL, subscription.email, subject, body)
     except Exception, e:
         logging.error(e)
         return HttpResponse("Done (with errors): %s" % key)
+    # let mail sending trigger an error to allow retries
+    mail.send_mail(settings.DEFAULT_FROM_EMAIL, subscription.email, subject, body)
     logging.debug("Done sending Mail to %s" % subscription.email)
     return HttpResponse("Done: %s" % key)
 
-        
 def xmpp_task(request):
     subscriptions = Subscription.all().filter("activated_xmpp =", True)
     counter = 0
