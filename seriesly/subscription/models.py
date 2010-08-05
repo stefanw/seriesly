@@ -59,7 +59,6 @@ class Subscription(db.Model):
     
     def check_confirmation_key(self, confirmkey):
         shouldbe = hmac.new(settings.SECRET_KEY, self.subkey, digestmod=hashlib.sha1).hexdigest()
-        logging.debug("shouldbe: "+ shouldbe)
         if confirmkey == shouldbe:
             return True
         return False

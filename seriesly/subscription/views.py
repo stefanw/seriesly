@@ -296,8 +296,9 @@ def confirm_mail(request, subkey, confirmkey):
     if subscription is None:
         raise Http404
     if subscription.check_confirmation_key(confirmkey):
-        subscription.activated_mail = True
-        subscription.put()
+        if subscription.activated_mail == False and subscription.email != "":
+            subscription.activated_mail = True
+            subscription.put()
         return HttpResponseRedirect(subscription.get_absolute_url() + "#email-subscription")
     else:
         raise Http404
@@ -320,7 +321,12 @@ def send_mail(request):
         subscription = Subscription.get(key)
         if subscription is None:
             raise Http404
-    
+        
+        # quick fix for running tasks
+        if subscription.email == "":
+            subscription.activated_mail = False
+            subscription.put()
+            return HttpResponse("Nothing to do.")
         if subscription.check_beacon_status(datetime.datetime.now()):
             subscription.put()
     
