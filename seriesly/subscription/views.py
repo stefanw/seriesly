@@ -326,10 +326,10 @@ def send_mail(request):
         if subscription.email == "":
             subscription.activated_mail = False
             subscription.put()
-            return HttpResponse("Nothing to do.")
+            return HttpResponse("Skipping early.")
         if subscription.check_beacon_status(datetime.datetime.now()):
             subscription.put()
-    
+        
         context = subscription.get_message_context()
         if context is None:
             return HttpResponse("Nothing to do.")
