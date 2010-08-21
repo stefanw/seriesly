@@ -5,6 +5,24 @@ api_version: 1
 
 default_expiration: '3650d'
 
+inbound_services:
+- xmpp_message
+
+derived_file_type:
+- python_precompiled
+
+error_handlers:
+  - file: templates/error.html
+  
+  -error_code: dos_api_denial
+    file: templates/error_dos.html
+
+  - error_code: over_quota
+    file: templates/error_quota.html
+
+  - error_code: timeout
+    file: templates/error_timeout.html
+
 handlers:
 - url: /favicon.ico
   static_files: media/img/favicon.ico
@@ -58,6 +76,3 @@ handlers:
 
 - url: /.*
   script: main.py
-  
-inbound_services:
-- xmpp_message
