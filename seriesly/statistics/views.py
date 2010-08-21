@@ -1,5 +1,6 @@
 import logging
 import datetime
+import simplejson as json
 
 from google.appengine.api.memcache import get_stats
 
@@ -30,7 +31,7 @@ def subscribed_shows(request):
         # if subscription.last_visited is not None and subscription.last_visited > threshold:
         subcount += 1
         show_ranking.setdefault(subitem._show, 0)
-        show_ranking[subitem._show] += 1
+        show_ranking[subitem._show.key()] += 1
         user_ranking.setdefault(subitem._subscription, 0)
         user_ranking[subitem._subscription] += 1
     tops = []
@@ -41,3 +42,13 @@ def subscribed_shows(request):
     tops.sort(key=lambda x: x[1], reverse=True)
     top_users.sort(key=lambda x: x[1], reverse=True)
     return HttpResponse("Done: <br/>%s" % "<br/>".join(map(lambda x: "%s: %d" % (x[0], x[1]), tops)) + "<hr/>" + "<br/>".join(map(lambda x: "%s: %d" % (x[0], x[1]), top_users)))
+    
+def dump_subscriptions(request):
+    now = datetime.datetime.now()
+    threshold = now - datetime.timedelta(days=30)
+    users = {}
+    for subitem in SubscriptionItem.all():
+        # if subscription.last_visited is not None and subscription.last_visited > threshold:
+        users.setdefault(str(subitem._subscription), [])
+        users[str(subitem._subscription)].append(str(subitem._show))
+    return HttpResponse(json.dumps(users))
