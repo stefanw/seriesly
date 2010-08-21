@@ -13,13 +13,10 @@ derived_file_type:
 
 error_handlers:
   - file: templates/error.html
-  
-  -error_code: dos_api_denial
+  - error_code: dos_api_denial
     file: templates/error_dos.html
-
   - error_code: over_quota
     file: templates/error_quota.html
-
   - error_code: timeout
     file: templates/error_timeout.html
 
