@@ -1,10 +1,10 @@
 import logging
 import datetime
-import simplejson as json
 
 from google.appengine.api.memcache import get_stats
 
 from django.http import HttpResponse, HttpResponseRedirect, Http404
+from django.utils import simplejson as json
 
 from subscription.models import Subscription, SubscriptionItem
 from series.models import Show
