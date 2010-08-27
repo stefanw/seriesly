@@ -9,11 +9,11 @@ cron:
 
 - description: daily updates of new releases (1)
   url: /releases/update/
-  schedule: every day 08:30
+  schedule: every day 07:30
 
 - description: daily updates of new releases (2)
   url: /releases/update/
-  schedule: every day 11:00
+  schedule: every day 10:00
 
 - description: daily updates of new releases (3)
   url: /releases/update/
@@ -25,12 +25,12 @@ cron:
 
 - description: daily mail sending
   url: /subscription/mail-task/
-  schedule: every day 09:00
+  schedule: every day 08:15
   
 - description: daily xmpp sending
   url: /subscription/xmpp-task/
-  schedule: every day 09:00
+  schedule: every day 08:05
   
 - description: daily web hook task
   url: /subscription/webhook-task/
-  schedule: every day 09:00
+  schedule: every day 08:00
