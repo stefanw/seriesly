@@ -167,14 +167,14 @@ By the way: your Seriesly subscription URL is: %s
         now = datetime.datetime.now()
         twentyfour_hours_ago = now - datetime.timedelta(hours=24)
         episodes = Episode.get_for_shows(the_shows, before=now, after=twentyfour_hours_ago, order="date")
-        logging.debug(episodes)
         if not len(episodes):
             return None
         context = {"subscription": self, "items": []}
         for episode in episodes:
-            episode.releases = []
             if self.want_releases:
                 episode.releases = Release.filter(episode.releases, self.get_settings())
+            else:
+                episode.releases = []
             context["items"].append(episode)
         return context
         
