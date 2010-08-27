@@ -14,3 +14,6 @@ queue:
 - name: webhook-queue
   rate: 10/m
   bucket_size: 10
+- name: amazon-queue
+  rate: 50/m
+  bucket_size: 1

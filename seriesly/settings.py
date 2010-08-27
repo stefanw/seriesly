@@ -35,6 +35,15 @@ SECURE_DOMAIN_URL = "https://serieslycom.appspot.com"
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = '02ca0jaadlbjk;.93nfnvopm 40mu4w0daadlclm fniemcoia984<mHMImlkFUHA=")JRFP"Om'
 
+AMAZON_ACCESS_KEY = "AKIAJA6AP4VDXC6QW7IA"
+AMAZON_SECRET_ACCESS_KEY = "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"
+AMAZON_ASSOCIATE_TAG = "seriesly0a-20"
+AMAZON_ENABLED = True
+
+TEMPLATE_LOADERS = (
+    'django.template.loaders.filesystem.Loader',
+)
+
 TEMPLATE_CONTEXT_PROCESSORS = (
 #    'django.core.context_processors.auth',
     'django.core.context_processors.media',
@@ -65,6 +74,7 @@ INSTALLED_APPS = (
     'subscription',
     'helper',
     'statistics',
+    'amazon',
 #    'mediautils',
 )
 

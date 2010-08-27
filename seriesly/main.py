@@ -1,4 +1,6 @@
 import logging, os, sys
+logging.warn(sys.path)
+import cgi
 os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
 
 from google.appengine.dist import use_library
@@ -13,7 +15,7 @@ sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 
 # Must set this env var *before* importing any part of Django
 
-from django import db
+# from django import db
 from django.core import signals
 import django.core.handlers.wsgi
  
@@ -29,7 +31,7 @@ def log_exception(sender, **kwargs):
     logging.exception("Request: %s" % repr_request)
  
 signals.got_request_exception.connect(log_exception)
-signals.got_request_exception.disconnect(db._rollback_on_exception)
+# signals.got_request_exception.disconnect(db._rollback_on_exception)
 
 
 def main():

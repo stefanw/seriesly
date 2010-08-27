@@ -29,6 +29,9 @@ class Show(db.Model):
     timezone =      db.StringProperty(indexed=False)
     tvrage_id =     db.IntegerProperty()
     
+    amazon_title =  db.StringProperty(indexed=False)
+    amazon_url =  db.StringProperty(indexed=False)
+    
     _memkey_all_shows_ordered = "all_shows_ordered"
     _memkey_shows_dict = "all_shows_dict"
     re_find_the = re.compile("^The (.*)$")
@@ -146,6 +149,19 @@ class Show(db.Model):
                         tvrage_id=show_info.tvrage_id)
             show.put()
         show.update(show_info)
+        
+    def add_amazon_update_task(self):
+        t = taskqueue.Task(url=reverse('seriesly-amazon-product_for_show'), params={"key": str(self.key())})
+        t.add(queue_name="amazon-queue")
+        return t
+
+        
+    def update_amazon(self, url, title):
+        if self.amazon_url != url:
+            self.amazon_url = url
+            self.amazon_title = title
+            self.put()
+        
     
 class Season(db.Model):
     show =      db.ReferenceProperty(Show)

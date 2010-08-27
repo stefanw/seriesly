@@ -1,6 +1,6 @@
 <p>"{{ item.title }}" aired on {{ item.date|date:"d.m.Y - H:i" }} (GMT).</p>
 {% if subscription.want_releases %}
-<ul>{% for release in item.releases %}<li><a href="{% url seriesly-releases-redirect release.idnr %}" title="{{ release.url }}">{{ release.url|slice:":15" }}</a> ({{ release.which }}, Quality: {{ release.quality|join:", " }})</li>{% empty %}<li>No releases found now. Check <a href="{{ DOMAIN_URL }}{% url seriesly-subscription-guide subscription.subkey %}">your episode guide</a>.</li>{% endfor %}</ul>
+<ul>{% for release in item.releases %}<li><a href="{% url seriesly-releases-redirect release.idnr %}" title="{{ release.url }}">{{ release.url|slice:":15" }}</a> ({{ release.which }}, Quality: {{ release.quality|join:", " }})</li>{% empty %}<li>No releases found now. Check <a href="{{ DOMAIN_URL }}{% url seriesly-subscription-guide subscription.subkey %}">your episode guide</a>.</li>{% endfor %}{% include "amazon.html" %}</ul>
 <br/>
 {% else %}<p>You are not receiving any releases</p>{% endif %}
 {% if item.next %}
