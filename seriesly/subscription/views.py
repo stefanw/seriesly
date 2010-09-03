@@ -49,12 +49,16 @@ def subscribe(request):
         selected_shows = Show.get_by_id(map(int, form.cleaned_data["shows"]))
     except ValueError:
         return index(request, form=form)
-    subscription.put()
+
+    subscription.reset_cache()
+    subscription.put() # stay here, need key for setting shows!
     
     if editing:
         subscription.set_shows(selected_shows, old_shows=subscription.get_shows())
     else:
         subscription.set_shows(selected_shows)
+        
+
     response = HttpResponseRedirect(subscription.get_absolute_url())
     response.set_cookie("subkey", subkey, max_age=31536000)
     return response
