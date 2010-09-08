@@ -128,6 +128,7 @@ By the way: your Seriesly subscription URL is: %s
         return [show_dict[str(sub_item._show)] for sub_item in self.subscriptionitem_set if str(sub_item._show) in show_dict]
         
     def set_shows(self, shows, old_shows=None):
+        changes = False
         if old_shows is None:
             old_shows = []
         old_show_ids = [show.key() for show in old_shows]
@@ -136,10 +137,18 @@ By the way: your Seriesly subscription URL is: %s
             if not show.key() in old_show_ids:
                 s = SubscriptionItem(subscription=self, show=show)
                 s.put()
+                changes = True
         for old_show in old_shows:
             if not old_show.key() in show_ids:
                 s = SubscriptionItem.all().filter("subscription =",self).filter("show =", old_show).get()
                 s.delete()
+                changes = True
+        return changes
+        
+    def reset_cache(self):
+        self.feed_stamp = None
+        self.calendar_stamp = None
+        self.feed_public_stamp = None
                 
     def add_email_task(self):
         return self.add_task('seriesly-subscription-mail', "mail-queue")
@@ -167,14 +176,14 @@ By the way: your Seriesly subscription URL is: %s
         now = datetime.datetime.now()
         twentyfour_hours_ago = now - datetime.timedelta(hours=24)
         episodes = Episode.get_for_shows(the_shows, before=now, after=twentyfour_hours_ago, order="date")
-        logging.debug(episodes)
         if not len(episodes):
             return None
         context = {"subscription": self, "items": []}
         for episode in episodes:
-            episode.releases = []
             if self.want_releases:
                 episode.releases = Release.filter(episode.releases, self.get_settings())
+            else:
+                episode.releases = []
             context["items"].append(episode)
         return context
         
