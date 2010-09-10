@@ -67,6 +67,10 @@ handlers:
   script: main.py
   login: admin
 
+- url: /amazon/update/
+  script: main.py
+  login: admin
+
 - url: /statistics/.*
   script: main.py
   login: admin

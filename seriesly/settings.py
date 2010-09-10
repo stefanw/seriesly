@@ -40,10 +40,6 @@ AMAZON_SECRET_ACCESS_KEY = "9luLzp+iiVMQoOwhOhHCmoKHgmpXvHlFCcjBkNLE"
 AMAZON_ASSOCIATE_TAG = "seriesly0a-20"
 AMAZON_ENABLED = True
 
-TEMPLATE_LOADERS = (
-    'django.template.loaders.filesystem.Loader',
-)
-
 TEMPLATE_CONTEXT_PROCESSORS = (
 #    'django.core.context_processors.auth',
     'django.core.context_processors.media',

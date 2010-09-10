@@ -9,6 +9,7 @@ from google.appengine.api import memcache
 from google.appengine.ext import db
 
 from django.core.urlresolvers import reverse
+from django.conf import settings
 
 from helper.string_utils import normalize
 from helper.dateutils import get_timezone_for_gmt_offset
@@ -46,6 +47,10 @@ class Show(db.Model):
     @property
     def idnr(self):
         return self.key().id()
+    
+    @property
+    def amazon(self):
+        return settings.AMAZON_ENABLED and self.amazon_url
         
     def alternative_names(self):
         if self.alt_names is None:

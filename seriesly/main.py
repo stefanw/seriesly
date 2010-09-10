@@ -1,5 +1,4 @@
 import logging, os, sys
-logging.warn(sys.path)
 import cgi
 os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
 

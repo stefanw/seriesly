@@ -135,7 +135,7 @@ def feed_atom(request, subkey, template="atom.xml"):
         raise Http404
     now = datetime.datetime.now()
     cache_time = datetime.timedelta(hours=1)
-    if subscription.feed_stamp is None or (now - subscription.feed_stamp) > cache_time:
+    if True or subscription.feed_stamp is None or (now - subscription.feed_stamp) > cache_time:
         subscription.check_beacon_status(now)
         # don't specify encoding for unicode strings!
         subscription.feed_cache = db.Text(_feed(request, subscription, template)) 

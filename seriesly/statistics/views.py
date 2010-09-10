@@ -31,7 +31,7 @@ def subscribed_shows(request):
         # if subscription.last_visited is not None and subscription.last_visited > threshold:
         subcount += 1
         show_ranking.setdefault(subitem._show, 0)
-        show_ranking[subitem._show.key()] += 1
+        show_ranking[subitem._show] += 1
         user_ranking.setdefault(subitem._subscription, 0)
         user_ranking[subitem._subscription] += 1
     tops = []

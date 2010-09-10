@@ -10,5 +10,6 @@ urlpatterns = patterns('',
     (r'^update/show/$', 'series.views.update_show', {}, "seriesly-shows-update_show"),
     (r'^clear/cache/$', 'series.views.clear_cache', {}, "seriesly-shows-clear_cache"),
     (r'^episode/([0-9]+)', 'series.views.redirect_to_front', {}, "seriesly-shows-episode"),
+    (r'^amazon/(\d+)/$', 'series.views.redirect_to_amazon', {}, "seriesly-shows-redirect_to_amazon"),
 #    (r'^update/(?P<seriesid>\d)?/?$', 'series.views.update'),
 )

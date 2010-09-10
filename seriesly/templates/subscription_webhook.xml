@@ -16,7 +16,8 @@
                   <quality>{{ release.quality|join:", " }}</quality>
                   <date> {{ release.pub_date|date:"r" }}</date>
               </release>{% endfor %}
-            </releases>
+            </releases>{% if item.show.amazon %}
+            <amazon>{{ item.amazon_url }}</amazon>{% endif %}
             {% if item.next %}<next>
                 <title>{{ item.next.title }}</title>
                 <seasonnr>{{ item.next.season_number }}</seasonnr>

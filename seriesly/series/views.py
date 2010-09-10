@@ -64,3 +64,12 @@ def clear_cache(request):
     Show.clear_cache()
     Episode.clear_cache()
     return HttpResponse("Done.")
+    
+@is_get
+def redirect_to_amazon(request, show_id):
+    show = Show.get_by_id(int(show_id))
+    if show is None:
+        raise Http404
+    if not show.amazon_url:
+        raise Http404
+    return HttpResponseRedirect(show.amazon_url)
