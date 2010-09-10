@@ -43,7 +43,7 @@
     {% else %}
     <p>You don't have email notifications at the moment. You can change that by entering your email below. You will receive a confirmation email.</p>
     {% endif %}
-    <form action="{% url seriesly-subscription-edit_mail %}" method="post">
+    <form action="{% url seriesly-subscription-edit_mail %}#email-subscription" method="post">
     {% if subscription.mail_form.email.errors %}
     <small class="error">{{ subscription.mail_form.email.errors.0 }}</small>
     {% endif %}
@@ -77,7 +77,7 @@
     {% else %}
     <p>You don't have XMPP chat notifications at the moment. You can change that by entering your XMPP address below. You will receive an invitation from the Seriesly Subscription Bot.</p>
     {% endif %}
-    <form action="{% url seriesly-subscription-edit_xmpp %}" method="post">
+    <form action="{% url seriesly-subscription-edit_xmpp %}#xmpp-subscription" method="post">
     {% if subscription.xmpp_form.xmpp.errors %}
     <small class="error">{{ subscription.xmpp_form.xmpp.errors.0 }}</small>
     {% endif %}
@@ -94,7 +94,7 @@
     {% else %}
     <p>You don't have a Seriesly Web Hook callback at the moment.<br/>If you know what Web Hooks are, you can enter a callback URL below.</p>
     {% endif %}
-    <form action="{% url seriesly-subscription-edit_webhook %}" method="post">
+    <form action="{% url seriesly-subscription-edit_webhook %}#webhook-subscription" method="post">
     {% if subscription.webhook_form.webhook.errors %}
         <small class="error">{{ subscription.webhook_form.webhook.errors.0 }}</small>
     {% endif %}
@@ -131,13 +131,13 @@
         </ul>
         <br/>
         <p>You can always destroy these URLs and return to privacy.</p>
-        <form action="{% url seriesly-subscription-edit_public_id %}" method="post">
+        <form action="{% url seriesly-subscription-edit_public_id %}#subscription-public-urls" method="post">
             <p><input type="submit" value="Destroy Public URLs"/>{{ subscription.webhook_form.subkey }}</p>
             <p><strong>Warning:</strong> destroying the URLs cannot be undone.</p>
         </form>
     {% else %}
         <p>You can share public URLs with others.<br/>They will only see your shows and will not be able to change your subscriptions.</p>
-        <form action="{% url seriesly-subscription-edit_public_id %}" method="post">
+        <form action="{% url seriesly-subscription-edit_public_id %}#subscription-public-urls" method="post">
             <p><input type="submit" value="Generate public URLs"/>{{ subscription.webhook_form.subkey }}</p>
         </form>
     {% endif %}
@@ -146,7 +146,7 @@
 
 <section class="step">
     <h3 id="subscription-secure">Secure URLs</h3>
-    <p>The following secure URLs are available:</p>
+    <p>The following secure URLs (HTTPS) are available:</p>
     <ul class="normal-list">
         <li><a href="{{ SECURE_DOMAIN_URL }}{% url seriesly-subscription-show subscription.subkey %}">A secure version of this page</a></li>
         <li><a href="{{ SECURE_DOMAIN_URL }}{% url seriesly-subscription-guide subscription.subkey %}">Secure Episode Guide</a></li>
