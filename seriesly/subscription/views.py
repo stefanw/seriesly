@@ -396,9 +396,13 @@ def edit_xmpp(request):
         subscription.activated_xmpp = False
     subscription.xmpp = form.cleaned_data["xmpp"]
     subscription.last_changed = datetime.datetime.now()
-    subscription.put()
     if subscription.xmpp != "" and subscription.activated_xmpp == False:
-        subscription.send_invitation_xmpp()
+        try:
+            subscription.send_invitation_xmpp()
+        except Exception:
+            form.errors["xmpp"] = ["Could not send invitation to this XMPP address"]
+            return show(request, request.POST.get("subkey", ""), extra_context={"xmpp_form":form})
+    subscription.put()
     return HttpResponseRedirect(subscription.get_absolute_url() + "#xmpp-subscription")
     
 def incoming_xmpp(request):

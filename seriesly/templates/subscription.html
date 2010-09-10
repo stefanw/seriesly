@@ -79,7 +79,7 @@
     {% endif %}
     <form action="{% url seriesly-subscription-edit_xmpp %}" method="post">
     {% if subscription.xmpp_form.xmpp.errors %}
-    <small class="error">{{ subscription.xmpp_form.email.errors.0 }}</small>
+    <small class="error">{{ subscription.xmpp_form.xmpp.errors.0 }}</small>
     {% endif %}
     <p>{{ subscription.xmpp_form.subkey }}{{ subscription.xmpp_form.xmpp.label_tag }}: {{ subscription.xmpp_form.xmpp }} <input type="submit" value="Submit"/></p>
     </form>
