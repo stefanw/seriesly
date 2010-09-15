@@ -479,3 +479,15 @@ def post_to_callback(request):
         return HttpResponse("Done (with errors): %s" % key)
     logging.debug("Done sending Webhook Callback to %s" % subscription.xmpp)
     return HttpResponse("Done: %s" % key)
+    
+def json(request, subkey):
+    subscription = Subscription.all().filter("subkey =", subkey).get()
+    if subscription is None:
+        raise Http404
+    return _guide(request, subscription, template="widget.json")
+    
+def json_public(request, public_id):
+    subscription = Subscription.all().filter("public_id =", public_id).get()
+    if subscription is None:
+        raise Http404
+    return _guide(request, subscription, template="widget.json", public=True)

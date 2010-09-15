@@ -23,7 +23,8 @@ urlpatterns = patterns('',
     (r'^public/([A-Za-z0-9]{32})/rss/$', 'subscription.views.feed_rss_public', {}, 'seriesly-subscription-rss_public'),
     (r'^public/([A-Za-z0-9]{32})/feed/$', 'subscription.views.feed_atom_public', {}, 'seriesly-subscription-atom_public'),
     (r'^public/([A-Za-z0-9]{32})/calendar/$', 'subscription.views.calendar_public', {}, 'seriesly-subscription-calendar_public'),
-
+    (r'^public/([A-Za-z0-9]{32})/json/$', 'subscription.views.json_public', {}, 'seriesly-subscription-json_public'),
+    
     (r'^([A-Za-z0-9]{32})/$', 'subscription.views.show', {}, 'seriesly-subscription-show'),
     (r'^([A-Za-z0-9]{32})/confirm/([a-f0-9]{40})/$', 'subscription.views.confirm_mail', {}, 'seriesly-subscription-confirm_mail'),
     (r'^([A-Za-z0-9]{32})/edit/$', 'subscription.views.edit', {}, 'seriesly-subscription-edit'),
@@ -31,5 +32,5 @@ urlpatterns = patterns('',
     (r'^([A-Za-z0-9]{32})/rss/$', 'subscription.views.feed_rss', {}, 'seriesly-subscription-rss'),
     (r'^([A-Za-z0-9]{32})/feed/$', 'subscription.views.feed_atom', {}, 'seriesly-subscription-atom'),
     (r'^([A-Za-z0-9]{32})/calendar/$', 'subscription.views.calendar', {}, 'seriesly-subscription-calendar'),
-
+    (r'^([A-Za-z0-9]{32})/json/$', 'subscription.views.json', {}, 'seriesly-subscription-json'),
 )
