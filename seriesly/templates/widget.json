@@ -7,13 +7,13 @@
   ,"episode": {{ episode.number }}
   ,"name": "{{ episode.show.name|escapejs }}"
   ,"title": "{{ episode.title|escapejs }}"
-  ,"releases":[{% if subscription.want_releases %}{% for release in episode.releases %}
+  ,"releases":[{% if subscription.want_releases %}{% for release in episode.releases %}{
     "serieslyurl": "{% url seriesly-releases-redirect release.idnr as release_url %}{{ release_url|escapejs}}"
     ,"url": "{{ release.url|escapejs }}"
     ,"type": "{{ release.which }}"
     ,"quality": "{{ release.quality|join:", " }}"
-    {% endfor %}{% endif %}]
-  {% endfor %}]
+    }{% if not forloop.last %},{% endif %}{% endfor %}{% endif %}]
+  }{% if not forloop.last %},{% endif %}{% endfor %}]
  ,"last_week":[{% for episode in last_week reversed %}
   {"startdate": "{{ episode.date|date:"Y-m-d\TH:i:s" }}"
   ,"since": "{{ episode.date|timesince }}"
@@ -23,21 +23,22 @@
   ,"episode": {{ episode.number }}
   ,"name": "{{ episode.show.name|escapejs }}"
   ,"title": "{{ episode.title|escapejs }}"
-  ,"releases":[{% if subscription.want_releases %}{% for release in episode.releases %}
+  ,"releases":[{% if subscription.want_releases %}{% for release in episode.releases %}{
     "serieslyurl": "{% url seriesly-releases-redirect release.idnr as release_url %}{{ release_url|escapejs}}"
     ,"url": "{{ release.url|escapejs }}"
     ,"type": "{{ release.which }}"
     ,"quality": "{{ release.quality|join:", " }}"
-    {% endfor %}{% endif %}]
-  {% endfor %}]
+    }{% if not forloop.last %},{% endif %}{% endfor %}{% endif %}]
+  }{% if not forloop.last %},{% endif %}{% endfor %}]
  ,"coming_up":[{% for episode in upcoming %}
    {"startdate": "{{ episode.date|date:"Y-m-d\TH:i:s" }}"
-  ,"since": "{{ episode.date|timesince }}"
+  ,"since": "{{ episode.date|timeuntil }}"
   ,"enddate": "{{ episode.date_end|date:"Y-m-d\TH:i:s" }}"
   ,"network": "{{ episode.show.network }}"
   ,"season": {{ episode.season_number }}
   ,"episode": {{ episode.number }}
   ,"name": "{{ episode.show.name|escapejs }}"
   ,"title": "{{ episode.title|escapejs }}"
-  {% endfor %}]
+  ,"releases":[]
+  }{% if not forloop.last %},{% endif %}{% endfor %}]
 }

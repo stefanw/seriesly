@@ -484,10 +484,14 @@ def json(request, subkey):
     subscription = Subscription.all().filter("subkey =", subkey).get()
     if subscription is None:
         raise Http404
-    return _guide(request, subscription, template="widget.json")
+    response = _guide(request, subscription, template="widget.json")
+    response["Content-Type"] = 'application/json'
+    return response
     
 def json_public(request, public_id):
     subscription = Subscription.all().filter("public_id =", public_id).get()
     if subscription is None:
         raise Http404
-    return _guide(request, subscription, template="widget.json", public=True)
+    response = _guide(request, subscription, template="widget.json", public=True)
+    response["Content-Type"] = 'application/json'
+    return response
