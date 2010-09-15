@@ -1,0 +1,1 @@
+Give the gift of a good show: {% url seriesly-shows-redirect_to_amazon item.show.idnr %}
