@@ -314,6 +314,22 @@ def confirm_mail(request, subkey, confirmkey):
         return HttpResponseRedirect(subscription.get_absolute_url() + "#email-subscription")
     else:
         raise Http404
+        
+def send_confirm_mail(request):
+    key = None
+    try:
+        key = request.POST.get("key", None)
+        if key is None:
+            raise Http404
+        subscription = Subscription.get(key)
+        if subscription is None:
+            raise Http404        
+    except Exception, e:
+        logging.error(e)
+        return HttpResponse("Done (with errors): %s" % key)
+    subscription.do_send_confirmation_mail()
+    logging.debug("Done sending Confirmation Mail to %s" % subscription.email)
+    return HttpResponse("Done: %s" % key)
 
 def email_task(request):
     subscriptions = Subscription.all().filter("activated_mail =", True)

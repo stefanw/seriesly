@@ -64,6 +64,9 @@ class Subscription(db.Model):
         return False
         
     def send_confirmation_mail(self):
+        return self.add_task('seriesly-subscription-send_confirm_mail', "mail-queue")
+    
+    def do_send_confirmation_mail(self):
         confirmation_key = hmac.new(settings.SECRET_KEY, self.subkey, digestmod=hashlib.sha1).hexdigest()
         confirmation_url = settings.DOMAIN_URL + reverse("seriesly-subscription-confirm_mail", args=(self.subkey, confirmation_key))
         sub_url = settings.DOMAIN_URL + reverse("seriesly-subscription-show", args=(self.subkey,))

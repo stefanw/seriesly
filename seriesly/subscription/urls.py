@@ -3,6 +3,7 @@ from django.conf.urls.defaults import *
 urlpatterns = patterns('',
     (r'^edit/mail/$', 'subscription.views.edit_mail', {}, 'seriesly-subscription-edit_mail'),
     (r'^mail-task/$', 'subscription.views.email_task', {}, "seriesly-subscription-email_task"),
+    (r'^confirmmail/$', 'subscription.views.send_confirm_mail', {}, "seriesly-subscription-send_confirm_mail"),
     (r'^mail/$', 'subscription.views.send_mail', {}, "seriesly-subscription-mail"),
     
     (r'^edit/xmpp/$', 'subscription.views.edit_xmpp', {}, 'seriesly-subscription-edit_xmpp'),
