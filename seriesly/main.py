@@ -27,7 +27,8 @@ def log_exception(sender, **kwargs):
             repr_request = 'Request repr() not available.'
     else:
         repr_request = 'Request not available.'
-    logging.exception("Request: %s" % repr_request)
+    if logging is not None:
+        logging.exception("Request: %s" % repr_request)
  
 signals.got_request_exception.connect(log_exception)
 # signals.got_request_exception.disconnect(db._rollback_on_exception)
@@ -52,7 +53,8 @@ def profile_main():
     # The rest is optional.
     # stats.print_callees()
     # stats.print_callers()
-    logging.info("Profile data:\n%s", stream.getvalue())
+    if logging is not None:
+        logging.info("Profile data:\n%s", stream.getvalue())
 
 if __name__ == '__main__':
     # profile_main()
