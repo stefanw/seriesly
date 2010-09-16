@@ -140,7 +140,10 @@ def feed_atom(request, subkey, template="atom.xml"):
         # don't specify encoding for unicode strings!
         subscription.feed_cache = db.Text(_feed(request, subscription, template)) 
         subscription.feed_stamp = now
-        subscription.put()
+        try:
+            subscription.put() # this put is not highly relevant
+        except Exception, e:
+            logging.warning(e)
     return HttpResponse(subscription.feed_cache, mimetype="application/atom+xml")
     
 def feed(request, subkey, template):
@@ -165,7 +168,10 @@ def feed_atom_public(request, public_id, template="atom_public.xml"):
         # don't specify encoding for unicode strings!
         subscription.feed_public_cache = db.Text(_feed(request, subscription, template, public=True)) 
         subscription.feed_public_stamp = now
-        subscription.put()
+        try:
+            subscription.put() # this put is not highly relevant
+        except Exception, e:
+            logging.warning(e)
     return HttpResponse(subscription.feed_public_cache, mimetype="application/atom+xml")
 
 def feed_rss_public(request, public_id, template="rss_public.xml"):
@@ -219,15 +225,14 @@ def _calendar(request, subscription, public=False):
     now = datetime.datetime.now()
     cache_time = datetime.timedelta(hours=1)
     if subscription.calendar_stamp is None or (now - subscription.calendar_stamp) > cache_time:
+        subscription.check_beacon_status(now)
+        subscription.calendar_stamp = now
+        # specify encoding for byte strings!
+        subscription.calendar_cache = db.Text(subscription.get_icalendar(public), encoding="utf8")
         try:
-            subscription.check_beacon_status(now)
-            subscription.calendar_stamp = now
-            # specify encoding for byte strings!
-            subscription.calendar_cache = db.Text(subscription.get_icalendar(public), encoding="utf8")
-            subscription.put()
+            subscription.put() # this put is not highly relevant
         except Exception, e:
-            logging.error(e)
-            subscription.calendar_cache = ""
+            logging.warning(e)
     response = HttpResponse(subscription.calendar_cache, mimetype='text/calendar')
     response['Filename'] = 'seriesly-calendar.ics'  # IE needs this
     response['Content-Disposition'] = 'attachment; filename=seriesly-calendar.ics'
@@ -250,8 +255,6 @@ def _guide(request, subscription, template="guide.html", public=False):
     subscription.is_public = public
     sub_settings = subscription.get_settings()
     now = datetime.datetime.now()
-    if subscription.check_beacon_status(now):
-        subscription.put()
     the_shows = subscription.get_shows()
     episodes = Episode.get_for_shows(the_shows, order="date")
     twentyfour_hours_ago = now - datetime.timedelta(hours=24)
@@ -278,6 +281,11 @@ def _guide(request, subscription, template="guide.html", public=False):
                             }))
     if not public:
         response.set_cookie("subkey", subscription.subkey)
+    try:
+        if subscription.check_beacon_status(now):
+            subscription.put() # this put is not highly relevant
+    except Exception, e:
+        logging.warning(e)
     return response
 
 @is_post
@@ -332,8 +340,10 @@ def send_mail(request):
             subscription.put()
             return HttpResponse("Skipping early.")
         if subscription.check_beacon_status(datetime.datetime.now()):
-            subscription.put()
-        
+            try:
+                subscription.put() # this put is not highly relevant
+            except Exception, e:
+                logging.warning(e)
         context = subscription.get_message_context()
         if context is None:
             return HttpResponse("Nothing to do.")
