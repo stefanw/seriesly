@@ -14,24 +14,23 @@ sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 
 # Must set this env var *before* importing any part of Django
 
-# from django import db
-from django.core import signals
+#from django.core import signals
+
 import django.core.handlers.wsgi
  
+#  
+# def log_exception(sender, **kwargs):
+#     if 'request' in kwargs:
+#         try:
+#             repr_request = repr(kwargs['request'])
+#         except:
+#             repr_request = 'Request repr() not available.'
+#     else:
+#         repr_request = 'Request not available.'
+#     if logging is not None:
+#         logging.exception("Request: %s" % repr_request)
  
-def log_exception(sender, **kwargs):
-    if 'request' in kwargs:
-        try:
-            repr_request = repr(kwargs['request'])
-        except:
-            repr_request = 'Request repr() not available.'
-    else:
-        repr_request = 'Request not available.'
-    if logging is not None:
-        logging.exception("Request: %s" % repr_request)
- 
-signals.got_request_exception.connect(log_exception)
-# signals.got_request_exception.disconnect(db._rollback_on_exception)
+#signals.got_request_exception.connect(log_exception)
 
 
 def main():
