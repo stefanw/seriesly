@@ -1,7 +1,7 @@
 cron:
 - description: daily updates of new shows
   url: /shows/update/
-  schedule: every day 05:05
+  schedule: every monday 05:05
 
 - description: daily updates of new releases (0)
   url: /releases/update/
