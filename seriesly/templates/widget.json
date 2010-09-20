@@ -1,4 +1,14 @@
-{"recently":[{% for episode in recently %}
+{"subscription": {
+  {% if subscription.is_public %}
+  "public": "true"
+  ,"key": "{{ subscription.public_id }}"
+  {% else %}
+  "public": "false"
+  ,"key": "{{ subscription.subkey }}"
+  ,"want_releases": {% if subscription.want_releases %}"true"{% else %}"false"{% endif %}
+  {% endif %}
+}
+ ,"recently":[{% for episode in recently %}
   {"startdate": "{{ episode.date|date:"Y-m-d\TH:i:s" }}"
   ,"since": "{{ episode.date|timesince }}"
   ,"enddate": "{{ episode.date_end|date:"Y-m-d\TH:i:s" }}"
