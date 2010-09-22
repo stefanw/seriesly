@@ -223,6 +223,26 @@ class Episode(db.Model):
     @property
     def date_end(self):
         return self.date + datetime.timedelta(minutes=self.show.runtime)
+
+    @property 
+    def date_local(self):
+        if getattr(self, "_date_local", None) is None:
+            try:
+                tz = get_timezone_for_gmt_offset(self.show.timezone)
+            except Exception:
+                tz = utc
+            self._date_local = utc.localize(self.date).astimezone(tz)
+        return self._date_local
+
+    @property 
+    def date_local_end(self):
+        if getattr(self, "_date_local_end", None) is None:
+            try:
+                tz = get_timezone_for_gmt_offset(self.show.timezone)
+            except Exception:
+                tz = utc
+            self._date_local_end = utc.localize(self.date_end).astimezone(tz)
+        return self._date_local_end
     
     @classmethod
     def update_or_create(cls, season, episode_info):

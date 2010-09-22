@@ -196,7 +196,7 @@ def _feed(request, subscription, template, public=False):
         if not subscription.want_releases or releases or now > episode.date + wait_time:
             torrenturl = False
             torrentlen = 0
-            pub_date = episode.date
+            pub_date = episode.date_local
             if len(releases) > 0:
                 # Some smart ranking needed here
                 torrenturl = releases[0].url
