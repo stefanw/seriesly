@@ -19,26 +19,27 @@ from releases.models import Release
 from series.models import Show, Episode
 
 class Subscription(db.Model):
-    subkey =        db.StringProperty()
-    last_visited =  db.DateTimeProperty()
-    last_changed =  db.DateTimeProperty()
+    subkey = db.StringProperty()
+    last_visited = db.DateTimeProperty()
+    last_changed = db.DateTimeProperty()
     activated_mail = db.BooleanProperty(default=False)
-    email =          db.StringProperty()
+    email = db.StringProperty()
     activated_xmpp = db.BooleanProperty(default=False)
-    xmpp =          db.StringProperty()
-    settings =      db.TextProperty()
-    webhook =       db.StringProperty()
-    public_id =      db.StringProperty(default=None)
+    xmpp = db.StringProperty()
+    settings = db.TextProperty()
+    webhook = db.StringProperty()
+    public_id = db.StringProperty(default=None)
     
-    feed_cache =    db.TextProperty()
-    feed_stamp =  db.DateTimeProperty()
+    feed_cache = db.TextProperty()
+    feed_stamp = db.DateTimeProperty()
     calendar_cache = db.TextProperty()
-    calendar_stamp =  db.DateTimeProperty()
+    calendar_stamp = db.DateTimeProperty()
 
-    feed_public_cache =    db.TextProperty()
-    feed_public_stamp =  db.DateTimeProperty()
+    feed_public_cache = db.TextProperty()
+    feed_public_stamp = db.DateTimeProperty()
 
-    
+    show_cache = db.TextProperty()
+        
     BEACON_TIME = datetime.timedelta(days=30)
     
     @classmethod
@@ -128,7 +129,20 @@ By the way: your Seriesly subscription URL is: %s
         
     def get_shows(self):
         show_dict = Show.get_all_dict()
+        return [show_dict[show_key] for show_key in self.get_show_cache() if show_key in show_dict]
+        
+    def get_shows_old(self):
+        show_dict = Show.get_all_dict()
         return [show_dict[str(sub_item._show)] for sub_item in self.subscriptionitem_set if str(sub_item._show) in show_dict]
+    
+    def get_show_cache(self):
+        if self.show_cache is None or not len(self.show_cache):
+            self.set_show_cache([str(sub_item._show) for sub_item in self.subscriptionitem_set])
+            self.put()
+        return self.show_cache.split("|")
+        
+    def set_show_cache(self, show_keys):
+        self.show_cache = '|'.join(show_keys)
         
     def set_shows(self, shows, old_shows=None):
         changes = False
@@ -148,7 +162,8 @@ By the way: your Seriesly subscription URL is: %s
                 changes = True
         return changes
         
-    def reset_cache(self):
+    def reset_cache(self, show_list):
+        self.set_show_cache([str(show.key()) for show in show_list])
         self.feed_stamp = None
         self.calendar_stamp = None
         self.feed_public_stamp = None

@@ -50,7 +50,7 @@ def subscribe(request):
     except ValueError:
         return index(request, form=form)
 
-    subscription.reset_cache()
+    subscription.reset_cache(selected_shows)
     subscription.put() # stay here, need key for setting shows!
     
     if editing:
