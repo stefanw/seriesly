@@ -87,7 +87,7 @@ class Release(db.Model):
             r.put()
     @classmethod
     def filter_quality(cls, qlist):
-        nq = [q for q in qlist if q in cls.quality_map]
+        nq = [q for q in qlist if q.lower() in [k.lower() for k in cls.quality_map.keys()]]
         if len(nq):
             return nq
         else:
