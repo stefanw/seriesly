@@ -1,7 +1,7 @@
 var checkSubscriptionCookie;
 $(document).ready(function(){
     var SHOW_ITEM = '<li><a href="#toggle-{1}" class="label-minus">{0}</a></li>';
-    var SUBSCRIPTION_MADE = '<section id="subscription-note" style="display:none" class="step">Note: You created a subscribtion recently. <a href="/{0}/">Go there now!</a></section>';
+    var SUBSCRIPTION_MADE = '<section id="subscription-note" style="display:none" class="step">Note: You created a subscription recently. <a href="/{0}/">Go there now!</a></section>';
 
     var filter_list = function(e){
       var query = $("#search").val().toLowerCase();
