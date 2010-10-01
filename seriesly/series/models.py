@@ -29,6 +29,7 @@ class Show(db.Model):
     runtime =       db.IntegerProperty()
     timezone =      db.StringProperty(indexed=False)
     tvrage_id =     db.IntegerProperty()
+    added =         db.DateTimeProperty()
     
     amazon_title =  db.StringProperty(indexed=False)
     amazon_url =  db.StringProperty(indexed=False)
@@ -151,7 +152,8 @@ class Show(db.Model):
                         country=show_info.country,
                         runtime=show_info.runtime,
                         timezone=show_info.timezone,
-                        tvrage_id=show_info.tvrage_id)
+                        tvrage_id=show_info.tvrage_id,
+                        added=datetime.datetime.now())
             show.put()
         show.update(show_info)
         
@@ -167,6 +169,15 @@ class Show(db.Model):
             self.amazon_title = title
             self.put()
         
+    
+    @property
+    def is_new(self):
+        if self.added is None:
+            return False
+        new_time = datetime.timedelta(days=7)
+        if datetime.datetime.now() - self.added < new_time:
+            return True
+        return False
     
 class Season(db.Model):
     show =      db.ReferenceProperty(Show)

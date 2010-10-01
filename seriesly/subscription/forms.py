@@ -1,5 +1,8 @@
+from itertools import chain
 import re
 
+from django.utils.html import escape, conditional_escape
+from django.utils.encoding import force_unicode
 from django import forms
 from django.utils.safestring import mark_safe
 
@@ -8,7 +11,7 @@ from subscription.models import Subscription
 
 def get_choices():
     shows = Show.get_all_ordered()
-    return [(str(show.idnr), show.ordered_name) for show in shows]
+    return [(str(show.idnr), show.ordered_name, show.is_new) for show in shows]
     
 class HTML5EmailInput(forms.TextInput):
     input_type = 'email'
@@ -40,10 +43,33 @@ class HTML5URLField(forms.CharField):
     widget = HTML5URLInput
     
 class SerieslyCheckboxSelectMultiple(forms.CheckboxSelectMultiple):
-    def render(self, *args, **kwargs):
-        output = super(SerieslyCheckboxSelectMultiple, self).render(*args, **kwargs)
-        return mark_safe(u"\n".join(output.split("\n")[1:-1]))
-
+    def render(self, name, value, attrs=None, choices=()):
+        """From django.forms.widgets adapted to insert class"""
+        if value is None: value = []
+        has_id = attrs and 'id' in attrs
+        final_attrs = self.build_attrs(attrs, name=name)
+        # Normalize to strings
+        output = []
+        str_values = set([force_unicode(v) for v in value])
+        for i, (option_value, option_label, option_new) in enumerate(chain(self.choices, choices)):
+            # If an ID attribute was given, add a numeric index as a suffix,
+            # so that the checkboxes don't all have the same ID attribute.
+            if has_id:
+                final_attrs = dict(final_attrs, id='%s_%s' % (attrs['id'], i))
+                label_for = u' for="%s"' % final_attrs['id']
+            else:
+                label_for = ''
+            if option_new:
+                label_new = ' class="new-show"'
+            else:
+                label_new = ''
+            cb = forms.CheckboxInput(final_attrs, check_test=lambda value: value in str_values)
+            option_value = force_unicode(option_value)
+            rendered_cb = cb.render(name, option_value)
+            option_label = conditional_escape(force_unicode(option_label))
+            output.append(u'<li%s><label%s>%s %s</label></li>' % (label_new, label_for,
+                rendered_cb, option_label))
+        return mark_safe(u'\n'.join(output))
 
 class SubscriptionForm(forms.Form):
     subkey = forms.CharField(required=False, widget=forms.HiddenInput)

@@ -179,7 +179,7 @@ small {
 .show-list li {
     display:block;
     border-top:2px #fff solid;
-    padding:2px 10px 2px 5px;
+    padding:2px 5px 2px 5px;
     background:#f3f3f3;
     cursor:pointer;
 }
@@ -193,6 +193,16 @@ small {
     display:block-inline;
     float:right;
     cursor:pointer;
+}
+
+.new-show label:after{
+    content:"new";
+    font-size:10pt;
+    padding:2px 0 0 2px;
+}
+
+.new-show {
+    background:#a3f6f6;
 }
 
 .label-minus {
