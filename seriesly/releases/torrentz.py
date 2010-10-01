@@ -19,11 +19,11 @@ from releases import ReleaseData
         
 
 class Torrentz(object):
-    feed_url = "http://www.torrentz.com/feedA?q=TV"
-#    title_regex = re.compile("(.*?) ([0-9]{1,3})[xX]([0-9]{1,3}) \[([^\]]+)\]")
-    title_regex = re.compile(r"^(.*?) ([Ss]\d+[Ee]\d+|[\d ]+)(.*?)HDTV(.*?)$")
+    #    title_regex = re.compile("(.*?) ([0-9]{1,3})[xX]([0-9]{1,3}) \[([^\]]+)\]")
+    title_regex = re.compile(r"^(.*?) ([Ss]\d+[Ee]\d+|[\d ]+|\d+[xX]\d+)(.*?)$")
 # The League S02E03 The White Knuckler HDTV XviD FQM eztv    
-    
+    feed_url = "http://www.torrentz.com/feed?q=TV"
+                
     def get_info(self):
         """<item>
          <title>The Big Bang Theory S04E02 The Cruciferous Vegetable Amplification HDTV XviD FQM eztv</title> 
@@ -58,12 +58,13 @@ class Torrentz(object):
                 match = self.title_regex.match(title)
                 show_name = None
                 episode_title = None
+                season_nr, episode_nr = None, None
                 if match is None:
                     logging.warn(u"%s is not well-formed for the regex" % title)
                     quality = []
                 else:
                     show_name = match.group(1)
-                    episode_title = match.group(3)
+                    show_name = show_name.replace("HDTV", "").strip()
                     dateNumber = match.group(2).lower()
                     if dateNumber.startswith("s"):
                         try:
@@ -71,11 +72,18 @@ class Torrentz(object):
                             season_nr, episode_nr = map(int, dateNumber.split("e"))
                         except ValueError:
                             season_nr, episode_nr = None, None
+                    elif "x" in dateNumber:
+                        try:
+                            season_nr, episode_nr = map(int, dateNumber.split("x"))
+                        except ValueError:
+                            season_nr, episode_nr = None, None
                     else:
                         pass
-                    quality = "HDTV "+match.group(4).strip()
+                    quality = match.group(3).strip()
                     quality.split(" ")[:-1]
                 torrentlen = 0
+                if season_nr is None:
+                    continue
                 release_items.append(ReleaseData(which="torrent", 
                                 url=url, 
                                 show_name=show_name,
@@ -90,7 +98,10 @@ class Torrentz(object):
                 logging.warn(str(e))
                 continue
         return release_items
-        
+
+class TorrentzDate(Torrentz):
+    feed_url = "http://www.torrentz.com/feedA?q=TV"
+    
 if __name__ == '__main__':
     http_get = lambda x: """<?xml version="1.0"?> 
 <rss version="2.0"> 
