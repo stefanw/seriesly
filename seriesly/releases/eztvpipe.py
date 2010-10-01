@@ -19,22 +19,17 @@ from releases import ReleaseData
         
 
 class EZTVPipe(object):
-    feed_url = "pipes.yahoo.com/pipes/pipe.run?_id=3dc789adfc63c9360eb76c0edfec2184&_render=rss"
+    feed_url = "http://pipes.yahoo.com/pipes/pipe.run?_id=3dc789adfc63c9360eb76c0edfec2184&_render=rss"
 #    title_regex = re.compile("(.*?) ([0-9]{1,3})[xX]([0-9]{1,3}) \[([^\]]+)\]")
     # title_regex = re.compile("(.*?) \[([^\]]+)\]")
     title_regex = re.compile(r"^(.*?) ([Ss]\d+[Ee]\d+|[\d ]+|\d+[xX]\d+)(.*?)$")
     
     def get_info(self):
-        """<item>
-            <title>Royal Institution Christmas Lectures - Part2 20x9 [WS - PDTV - WATERS]</title>
-            <link>http://torrent.zoink.it/Royal.Institution.Christmas.Lectures.2009.Part2.WS.PDTV.XviD-WATERS.[eztv].torrent</link>
-            <category>TV Show</category>
-            <pubDate>Thu, 24 Dec 2009 18:26:04 -0500</pubDate>
-            <description>Show Name: Royal Institution Christmas Lectures; Episode Title: Part2; Season: 20; Episode: 9</description>
-            <enclosure url="http://torrent.zoink.it/Royal.Institution.Christmas.Lectures.2009.Part2.WS.PDTV.XviD-WATERS.[eztv].torrent" length="364605440" type="application/x-bittorrent" />
-            <comments>http://eztv.it/forum/discuss/18088/</comments>
-            <guid>http://eztv.it/ep/18088/royal-institution-christmas-lectures-2009-part2-ws-pdtv-xvid-waters/</guid>
-        </item>
+        """      <item> 
+         <title>The Big Bang Theory S04E02 The Cruciferous Vegetable Amplification HDTV XviD-FQM</title> 
+         <link>http://torrent.zoink.it/The.Big.Bang.Theory.S04E02.The.Cruciferous.Vegetable.Amplification.HDTV.XviD-FQM.[eztv].torrent</link> 
+         <guid isPermaLink="false">3dc789adfc63c9360eb76c0edfec2184_37aba8090c7b44198d3241f5409db1cc</guid> 
+      </item>
         episode =       db.ReferenceProperty(Episode)
         which    =       db.StringProperty() # torrent, stream, magnet etc.
         url     =       db.StringProperty()
