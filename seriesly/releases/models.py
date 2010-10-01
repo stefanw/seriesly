@@ -35,7 +35,7 @@ class Release(db.Model):
         return "releases_release"
     
     quality_map = {"default": 0, "Stream": 0, "WS": 1, "HDTV": 1, "720p": 2, "DVDRIP": 2,"DVDSCR": 2, "1080p":3, "PDTV": 1}
-    providers = {"ezrss": EZRSS, "tvshack": TVShack, "eztv-pipe": EZTVPipe}
+    providers = {"ezrss": EZRSS, "tvshack": TVShack, "eztvpipe": EZTVPipe}
     # "torrentz": Torrentz, "torrentz-date": TorrentzDate} 
     #, "surfthechannel": SurfTheChannel, 
     #"piratebayez": PirateBayEZ, 
