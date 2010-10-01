@@ -6,7 +6,8 @@ from django.core.urlresolvers import reverse
 
 from releases.ezrss import EZRSS
 from releases.tvshack import TVShack
-from releases.torrentz import Torrentz, TorrentzDate
+from releases.eztvpipe import EZTVPipe
+# from releases.torrentz import Torrentz, TorrentzDate
 #from releases.btchat import BTChatEZTV, BTChatVTV
 #from releases.surfthechannel import SurfTheChannel
 #from releases.piratebayez import PirateBayEZ
@@ -34,7 +35,8 @@ class Release(db.Model):
         return "releases_release"
     
     quality_map = {"default": 0, "Stream": 0, "WS": 1, "HDTV": 1, "720p": 2, "DVDRIP": 2,"DVDSCR": 2, "1080p":3, "PDTV": 1}
-    providers = {"ezrss": EZRSS, "tvshack": TVShack, "torrentz": Torrentz, "torrentz-date": TorrentzDate} 
+    providers = {"ezrss": EZRSS, "tvshack": TVShack, "eztv-pipe": EZTVPipe}
+    # "torrentz": Torrentz, "torrentz-date": TorrentzDate} 
     #, "surfthechannel": SurfTheChannel, 
     #"piratebayez": PirateBayEZ, 
     #"piratebaytvteam": PirateBayTVTeam}
@@ -86,6 +88,7 @@ class Release(db.Model):
                         torrentlen=release_info.torrentlen
                         )
             r.put()
+    
     @classmethod
     def filter_quality(cls, qlist):
         nq = [q for q in qlist if q.lower() in [k.lower() for k in cls.quality_map.keys()]]
