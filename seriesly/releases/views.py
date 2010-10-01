@@ -8,6 +8,14 @@ from helper import is_get, is_post
 from releases.models import Release
 from series.models import Episode
 
+def update_one(request, which):
+    for provider in Release.providers.keys():
+        if provider == which:
+            Release.add_update_task(provider)
+    Episode.add_clear_cache_task("releases")
+    return HttpResponse("Done: \n%s" % which)
+
+
 def update_releases(request):
     for provider in Release.providers.keys():
         Release.add_update_task(provider)
