@@ -333,6 +333,7 @@ def send_confirm_mail(request):
 
 def email_task(request):
     subscriptions = Subscription.all().filter("activated_mail =", True)
+        # .filter("next_airtime <", datetime.datetime.now().date())
     counter = 0
     for s in subscriptions:
         s.add_email_task()
@@ -355,14 +356,10 @@ def send_mail(request):
             subscription.activated_mail = False
             subscription.put()
             return HttpResponse("Skipping early.")
-        if subscription.check_beacon_status(datetime.datetime.now()):
-            try:
-                subscription.put() # this put is not highly relevant
-            except Exception, e:
-                logging.warning(e)
         context = subscription.get_message_context()
         if context is None:
             return HttpResponse("Nothing to do.")
+        subscription.check_beacon_status(datetime.datetime.now())
         subject = "Seriesly.com - %d new episodes" % len(context["items"])
         body = render_to_string("subscription_mail.txt", RequestContext(request, context))
     except Exception, e:
@@ -370,11 +367,15 @@ def send_mail(request):
         return HttpResponse("Done (with errors): %s" % key)
     # let mail sending trigger an error to allow retries
     mail.send_mail(settings.DEFAULT_FROM_EMAIL, subscription.email, subject, body)
-    logging.debug("Done sending Mail to %s" % subscription.email)
+    try:
+        subscription.put() # this put is not highly relevant
+    except Exception, e:
+        logging.warning(e)
     return HttpResponse("Done: %s" % key)
 
 def xmpp_task(request):
     subscriptions = Subscription.all().filter("activated_xmpp =", True)
+        # .filter("next_airtime <", datetime.datetime.now().date())
     counter = 0
     for s in subscriptions:
         s.add_xmpp_task()
@@ -392,24 +393,23 @@ def send_xmpp(request):
         if subscription is None:
             raise Http404
         needs_put = False
-        if subscription.check_beacon_status(datetime.datetime.now()):
-            needs_put = True
+        subscription.check_beacon_status(datetime.datetime.now())
         context = subscription.get_message_context()
         if context is None:
             return HttpResponse("Nothing to do.")
         body = render_to_string("subscription_xmpp.txt", RequestContext(request, context))
-        status_code = xmpp.send_message(subscription.xmpp, body)
-        jid_broken = (status_code == xmpp.INVALID_JID)
-        if jid_broken:
-            subscription.xmpp = None
-            subscription.xmpp_activated = False
-            needs_put = True
-        if needs_put:
-            subscription.put()
     except Exception, e:
         logging.error(e)
         return HttpResponse("Done (with errors): %s" % key)
-    logging.debug("Done sending XMPP to %s" % subscription.xmpp)
+    status_code = xmpp.send_message(subscription.xmpp, body)
+    jid_broken = (status_code == xmpp.INVALID_JID)
+    if jid_broken:
+        subscription.xmpp = None
+        subscription.xmpp_activated = False
+    try:
+        subscription.put()
+    except Exception, e:
+        logging.warn(e)
     return HttpResponse("Done: %s" % key)
     
 @is_post
@@ -466,6 +466,7 @@ def edit_webhook(request):
 
 def webhook_task(request):
     subscriptions = Subscription.all().filter("webhook !=", None)
+        # .filter("next_airtime <", datetime.datetime.now().date())
     counter = 0
     for s in subscriptions:
         s.add_webhook_task()
@@ -482,10 +483,7 @@ def post_to_callback(request):
         subscription = Subscription.get(key)
         if subscription is None:
             raise Http404
-        needs_put = False
-
-        if subscription.check_beacon_status(datetime.datetime.now()):
-            needs_put = True
+        subscription.check_beacon_status(datetime.datetime.now())
             
         context = subscription.get_message_context()
         if context is None:
@@ -495,11 +493,9 @@ def post_to_callback(request):
             subscription.post_to_callback(body)
         except Exception, e:
             subscription.webhook = None
-            needs_put = True
             logging.warn("Webhook failed (%s): %s" % (key, e))
             
-        if needs_put:
-            subscription.put()
+        subscription.put()
     except Exception, e:
         logging.error(e)
         return HttpResponse("Done (with errors): %s" % key)

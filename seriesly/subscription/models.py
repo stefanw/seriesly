@@ -39,6 +39,8 @@ class Subscription(db.Model):
     feed_public_stamp = db.DateTimeProperty()
 
     show_cache = db.TextProperty()
+    
+    next_airtime = db.DateProperty(default=datetime.date(2010,1,1))
         
     BEACON_TIME = datetime.timedelta(days=30)
     
@@ -53,9 +55,11 @@ class Subscription(db.Model):
         return settings.DOMAIN_URL + reverse("seriesly-subscription-show", args=(self.subkey,))
 
     def check_beacon_status(self, time):
+        self.last_visited = time
         if self.last_visited is None or time - self.last_visited > self.BEACON_TIME:
             self.last_visited = time
             return True
+        self.last_visited = time
         return False
     
     def check_confirmation_key(self, confirmkey):
@@ -164,6 +168,7 @@ By the way: your Seriesly subscription URL is: %s
         
     def reset_cache(self, show_list):
         self.set_show_cache([str(show.key()) for show in show_list])
+        self.next_airtime = datetime.date(2010,1,1) # don't know next airtime
         self.feed_stamp = None
         self.calendar_stamp = None
         self.feed_public_stamp = None
@@ -193,11 +198,14 @@ By the way: your Seriesly subscription URL is: %s
         the_shows = self.get_shows()
         now = datetime.datetime.now()
         twentyfour_hours_ago = now - datetime.timedelta(hours=24)
-        episodes = Episode.get_for_shows(the_shows, before=now, after=twentyfour_hours_ago, order="date")
+        episodes = Episode.get_for_shows(the_shows, after=twentyfour_hours_ago, order="date")
         if not len(episodes):
             return None
         context = {"subscription": self, "items": []}
         for episode in episodes:
+            if episode.date > now:
+                self.next_airtime = episode.date
+                break
             if self.want_releases:
                 episode.releases = Release.filter(episode.releases, self.get_settings())
             else:
