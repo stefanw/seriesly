@@ -11,7 +11,7 @@ from subscription.models import Subscription
 
 def get_choices():
     shows = Show.get_all_ordered()
-    return [(str(show.idnr), show.ordered_name, show.is_new) for show in shows]
+    return [(str(show.idnr), "%s%s" % (show.ordered_name, int(show.is_new))) for show in shows]
     
 class HTML5EmailInput(forms.TextInput):
     input_type = 'email'
@@ -43,6 +43,7 @@ class HTML5URLField(forms.CharField):
     widget = HTML5URLInput
     
 class SerieslyCheckboxSelectMultiple(forms.CheckboxSelectMultiple):
+
     def render(self, name, value, attrs=None, choices=()):
         """From django.forms.widgets adapted to insert class"""
         if value is None: value = []
@@ -51,7 +52,10 @@ class SerieslyCheckboxSelectMultiple(forms.CheckboxSelectMultiple):
         # Normalize to strings
         output = []
         str_values = set([force_unicode(v) for v in value])
-        for i, (option_value, option_label, option_new) in enumerate(chain(self.choices, choices)):
+        for i, (option_value, option_label) in enumerate(chain(self.choices, choices)):
+            # new value is stored as last character on the label, bitter
+            option_new = bool(int(option_label[-1]))
+            option_label = option_label[:-1]
             # If an ID attribute was given, add a numeric index as a suffix,
             # so that the checkboxes don't all have the same ID attribute.
             if has_id:
