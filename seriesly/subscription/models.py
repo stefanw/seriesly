@@ -204,7 +204,7 @@ By the way: your Seriesly subscription URL is: %s
         context = {"subscription": self, "items": []}
         for episode in episodes:
             if episode.date > now:
-                self.next_airtime = episode.date
+                self.next_airtime = episode.date.date()
                 break
             if self.want_releases:
                 episode.releases = Release.filter(episode.releases, self.get_settings())
