@@ -211,6 +211,8 @@ By the way: your Seriesly subscription URL is: %s
             else:
                 episode.releases = []
             context["items"].append(episode)
+        if not context["items"]:
+            return None
         return context
         
     def get_icalendar(self, public):
