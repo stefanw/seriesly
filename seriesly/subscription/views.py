@@ -1,5 +1,6 @@
 import datetime
 import logging
+import re
 
 from google.appengine.api import xmpp
 from google.appengine.api import mail
@@ -17,6 +18,8 @@ from subscription.forms import SubscriptionForm, MailSubscriptionForm, \
     XMPPSubscriptionForm, WebHookSubscriptionForm, SubscriptionKeyForm
 from subscription.models import Subscription
 from releases.models import Release
+
+WORD = re.compile("^\w+$")
 
 def index(request, form=None, extra_context=None):
     if form is None:
@@ -251,7 +254,7 @@ def guide_public(request, public_id):
         raise Http404
     return _guide(request, subscription, template="guide_public.html", public=True)
         
-def _guide(request, subscription, template="guide.html", public=False):
+def _guide(request, subscription, template="guide.html", public=False, extra_context=None):
     subscription.is_public = public
     sub_settings = subscription.get_settings()
     now = datetime.datetime.now()
@@ -274,11 +277,13 @@ def _guide(request, subscription, template="guide.html", public=False):
             recently.append(episode)
         else:
             upcoming.append(episode)
-    response = render_to_response(template, RequestContext(request, {"subscription":subscription, 
-                                "recently": recently, 
-                                "upcoming": upcoming, 
-                                "last_week": last_week
-                            }))
+    context = {"subscription":subscription, 
+                "recently": recently, 
+                "upcoming": upcoming, 
+                "last_week": last_week}
+    if extra_context is not None:
+        context.update(extra_context)
+    response = render_to_response(template, RequestContext(request, context))
     if not public:
         response.set_cookie("subkey", subscription.subkey)
     try:
@@ -502,11 +507,19 @@ def post_to_callback(request):
     logging.debug("Done sending Webhook Callback to %s" % subscription.xmpp)
     return HttpResponse("Done: %s" % key)
     
+def get_extra_json_context(request):
+    callback = request.GET.get("callback", None)
+    extra_context = {"callback": None}
+    if callback is not None and WORD.match(callback) is not None:
+        extra_context = {"callback": callback}
+    return extra_context
+    
 def json(request, subkey):
     subscription = Subscription.all().filter("subkey =", subkey).get()
     if subscription is None:
         raise Http404
-    response = _guide(request, subscription, template="widget.json")
+    response = _guide(request, subscription, template="widget.json",
+        extra_context=get_extra_json_context(request))
     response["Content-Type"] = 'application/json'
     return response
     
@@ -514,6 +527,7 @@ def json_public(request, public_id):
     subscription = Subscription.all().filter("public_id =", public_id).get()
     if subscription is None:
         raise Http404
-    response = _guide(request, subscription, template="widget.json", public=True)
+    response = _guide(request, subscription, template="widget.json", 
+        public=True, extra_context=get_extra_json_context(request))
     response["Content-Type"] = 'application/json'
     return response
