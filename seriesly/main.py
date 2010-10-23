@@ -14,14 +14,6 @@ sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 
 # Must set this env var *before* importing any part of Django
 
-<<<<<<< HEAD
-#from django.core import signals
-
-import django.core.handlers.wsgi
-
-#signals.got_request_exception.connect(log_exception)
-
-=======
 # import django.db
 # import django.core.signals
 # import django.dispatch.dispatcher
@@ -46,7 +38,6 @@ import django.core.handlers.wsgi
 # django.dispatch.Signal.disconnect(
 #     django.core.signals.got_request_exception,
 #     django.db._rollback_on_exception)
->>>>>>> remove django stuff from main, keeps timeouting
 
 
 def main():
