@@ -6,7 +6,7 @@
             <div class="clearfix" style="width:100%">
                 <div class="left">
                     <div class="vevent-meta">
-                        <time class="dtstart" datetime="{{ episode.date|date:"Y-m-d\TH:i:s" }}">{{ episode.date|timesince }} ago</time>
+                        <time class="dtstart" datetime="{{ episode.date|date:"Y-m-d\TH:i:s" }}">{{ episode.date_local|timesince }} ago</time>
                         <time class="dtend" datetime="{{ episode.date_end|date:"Y-m-d\TH:i:s" }}"></time> <span class="location">on {{ episode.show.network }}</span>, {{ episode.season_number }}x{{ episode.number }}
                     </div>
                     <span title="Season {{ episode.season_number }}, Episode {{ episode.number }}" class="summary">{{ episode.show.name }}: &ldquo;{{ episode.title }}&rdquo;</span>
@@ -29,7 +29,7 @@
                 {% for episode in last_week reversed %}
                 <li class="vevent episode-item">
                     <div class="vevent-meta">
-                        <time class="dtstart" datetime="{{ episode.date|date:"Y-m-d\TH:i:s" }}">{{ episode.date|timesince }} ago</time>
+                        <time class="dtstart" datetime="{{ episode.date|date:"Y-m-d\TH:i:s" }}">{{ episode.date_local|timesince }} ago</time>
                         <time class="dtend" datetime="{{ episode.date_end|date:"Y-m-d\TH:i:s" }}"></time> <span class="location">on {{ episode.show.network }}</span>, {{ episode.season_number }}x{{ episode.number }}
                     </div>
                     <span title="Season {{ episode.season_number }}, Episode {{ episode.number }}" class="summary">{{ episode.show.name }}: &ldquo;{{ episode.title }}&rdquo;</span>
@@ -48,7 +48,7 @@
                 {% for episode in upcoming %}
                 <li class="vevent episode-item">
                     <div class="vevent-meta">
-                        <time class="dtstart" datetime="{{ episode.date|date:"Y-m-d\TH:i:s" }}">in {{ episode.date|timeuntil }}</time>
+                        <time class="dtstart" datetime="{{ episode.date|date:"Y-m-d\TH:i:s" }}">in {{ episode.date_local|timeuntil }}</time>
                         <time class="dtend" datetime="{{ episode.date_end|date:"Y-m-d\TH:i:s" }}"></time> <span class="location">on {{ episode.show.network }}</span>, {{ episode.season_number }}x{{ episode.number }}
                     </div>
                     <span title="Season {{ episode.season_number }}, Episode {{ episode.number }}" class="summary">{{ episode.show.name }}: &ldquo;{{ episode.title }}&rdquo;</span>
