@@ -1,6 +1,8 @@
+import urllib
+import logging
+
 from google.appengine.ext import db
 from google.appengine.api.labs import taskqueue
-import logging
 
 from django.core.urlresolvers import reverse
 
@@ -80,13 +82,15 @@ class Release(db.Model):
             if episode is None:
                 logging.debug("There is no episode in %s" % release_info)
                 continue
+            urlparts = release_info.url.split("//",1)
+            new_url = "%s//%s" % (urlparts[0], urllib.quote(urlparts[1]))
             r = Release(episode=episode, 
                         which=release_info.which,
                         pub_date=release_info.pub_date,
-                        url=release_info.url,
+                        url=new_url,
                         quality=cls.filter_quality(release_info.quality),
                         torrentlen=release_info.torrentlen
-                        )
+            )
             r.put()
     
     @classmethod
