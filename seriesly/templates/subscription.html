@@ -7,12 +7,12 @@
 {% endblock %}
 
 {% block skiplinks %}<li><a href="#guide">to episode guide</a></li>
-<li><a href="#email-subscription">to email subscription</a></li>
-<li><a href="#feed-subscription">to feed subscription</a></li>
-<li><a href="#ical-subscription">to iCalendar subscription</a></li>
-<li><a href="#xmpp-subscription">to XMPP chat subscription</a></li>
-<li><a href="#webhook-subscription">to Web Hook callback subscription</a></li>
-<li><a href="#subscription-settings">to subscription settings</a></li>
+<li><a href="#email">to email subscription</a></li>
+<li><a href="#feed">to feed subscription</a></li>
+<li><a href="#ical">to iCalendar subscription</a></li>
+<li><a href="#xmpp">to XMPP chat subscription</a></li>
+<li><a href="#webhook">to Web Hook callback subscription</a></li>
+<li><a href="#settings">to subscription settings</a></li>
 {% endblock %}
 {% block body %}
 
@@ -24,12 +24,39 @@
 </section>
 
 <section class="step">
-    <h3 id="guide">Episode Guide<span class="right sprite-big sprite-guide_big"></span></h3>
+    <h3>Quick Links</h3>
+    <ul class="subscriptions">
+        <li><a href="{% url seriesly-subscription-guide subscription.subkey %}"><span class="sprite-guide sprite"></span>Episode Guide</a></li>
+        <li><a href="#settings"><span class="sprite-edit sprite"></span>Edit Your Shows</a></li>
+        <li><a href="#email"><span class="sprite-mail sprite"></span>Email</a></li>
+        <li><a href="#feed"><span class="sprite-feed sprite"></span>Feeds</a></li>
+        <li><a href="#ical"><span class="sprite-ical sprite"></span>iCalendar</a></li>
+        <li><a href="#xmpp"><span class="sprite-xmpp sprite"></span>XMPP Chat</a></li>
+    </ul>
+</section>
+
+<section class="step" id="guide">
+    <h3>Episode Guide<span class="right sprite-big sprite-guide_big"></span></h3>
     <p><a href="{% url seriesly-subscription-guide subscription.subkey %}">This is your personal Episode Guide</a>.<br/>It will always show you the episodes that aired / will air recently.</p>
 </section>
 
-<section class="step">
-    <h3 id="email-subscription">Email Subscription<div class="right sprite-big sprite-mail_big"></div></h3>
+<section class="step" id="settings">
+    <h3>Edit Your Shows<span class="right sprite-big sprite-edit_big"></span></h3>
+    <p>You can <a href="{% url seriesly-subscription-edit subscription.subkey %}">edit your shows and subscription settings here</a>.</p>
+    <p>{% if subscription.want_releases %}
+    You are currently receiving links to
+        {% if subscription.sub_settings.torrent %}torrents{% endif %}
+        {% if subscription.sub_settings.torrent and subscription.sub_settings.stream %} and {% endif %}
+        {% if subscription.sub_settings.stream %}streaming sites{% endif %}.
+    {% else %}
+    You are currently <em>not</em> receiving any links to torrents or streaming sites.
+    {% endif %}</p>
+    <p>You should not give any of your subscription links away, because others will then be able to change your settings, too.</p>
+    <p>If you have questions, consult the <a href="{% url seriesly-faq %}">FAQ</a>.</p>
+</section>
+
+<section class="step" id="email">
+    <h3>Email Subscription<span class="right sprite-big sprite-mail_big"></span></h3>
     {% if subscription.email %}
     {% if subscription.activated_mail %}
     <p>You are currently getting email notifications to:</p>
@@ -43,7 +70,7 @@
     {% else %}
     <p>You don't have email notifications at the moment. You can change that by entering your email below. You will receive a confirmation email.</p>
     {% endif %}
-    <form action="{% url seriesly-subscription-edit_mail %}#email-subscription" method="post">
+    <form action="{% url seriesly-subscription-edit_mail %}#email" method="post">
     {% if subscription.mail_form.email.errors %}
     <small class="error">{{ subscription.mail_form.email.errors.0 }}</small>
     {% endif %}
@@ -51,20 +78,22 @@
     </form>
 </section>
 
-<section class="step">
-    <h3 id="feed-subscription">Feeds<div class="right sprite-big sprite-feed_big"></div></h3>
-    <p>Get your personal <a href="{% url seriesly-subscription-atom subscription.subkey %}">Episode Feed</a>. <br/>Click on the link to subscribe with your feedreader.</p>
+<section class="step" id="feed">
+    <h3>Feeds<span class="right sprite-big sprite-feed_big"></span></h3>
+    <p>Get your personal <a href="{{ SECURE_DOMAIN_URL }}{% url seriesly-subscription-atom subscription.subkey %}">Episode Feed by clicking this link</a> or copying this URL to your feed reader:<br/>
+    <input type="text" readonly="readonly" value="{{ SECURE_DOMAIN_URL }}{% url seriesly-subscription-atom subscription.subkey %}" style="width:75%"/></p>
+
 </section>
 
-<section class="step">
-    <h3 id="ical-subscription">iCalendar<div class="right sprite-big sprite-ical_big"></div></h3>
+<section class="step" id="ical">
+    <h3>iCalendar<span class="right sprite-big sprite-ical_big"></span></h3>
     <p>This is your personal iCalendar URL:<br/>
-        <input type="text" readonly="readonly" value="{{ DOMAIN_URL }}{% url seriesly-subscription-calendar subscription.subkey %}" style="width:75%"/></p>
+        <input type="text" readonly="readonly" value="{{ SECURE_DOMAIN_URL }}{% url seriesly-subscription-calendar subscription.subkey %}" style="width:75%"/></p>
     <p>You can add it to <a href="{% url seriesly-faq %}#q-2">Google Calendar</a>, <a href="{% url seriesly-faq %}#q-1">iCal</a> and other calendar applications.</p>
 </section>
 
-<section class="step">
-    <h3 id="xmpp-subscription">XMPP Chat Subscription<div class="right sprite-big sprite-xmpp_big"></div></h3>
+<section class="step" id="xmpp">
+    <h3>XMPP Chat Subscription<span class="right sprite-big sprite-xmpp_big"></span></h3>
     {% if subscription.xmpp %}
     {% if subscription.activated_xmpp %}
     <p>You are currently getting chat notifications to:</p>
@@ -77,7 +106,7 @@
     {% else %}
     <p>You don't have XMPP chat notifications at the moment. You can change that by entering your XMPP address below. You will receive an invitation from the Seriesly Subscription Bot.</p>
     {% endif %}
-    <form action="{% url seriesly-subscription-edit_xmpp %}#xmpp-subscription" method="post">
+    <form action="{% url seriesly-subscription-edit_xmpp %}#xmpp" method="post">
     {% if subscription.xmpp_form.xmpp.errors %}
     <small class="error">{{ subscription.xmpp_form.xmpp.errors.0 }}</small>
     {% endif %}
@@ -85,8 +114,10 @@
     </form>
 </section>
 
-<section class="step">
-    <h3 id="webhook-subscription">Web Hook<div class="right sprite-big sprite-webhook_big"></div></h3>
+<hr class="advanced-delimiter"/>
+
+<section class="step" id="webhook">
+    <h3>Web Hook<span class="right sprite-big sprite-webhook_big"></span></h3>
     {% if subscription.webhook %}
     <p>Your current callback URL is:</p>
     <p class="full centered"><strong>{{ subscription.webhook }}</strong></p>
@@ -94,29 +125,13 @@
     {% else %}
     <p>You don't have a Seriesly Web Hook callback at the moment.<br/>If you know what Web Hooks are, you can enter a callback URL below.</p>
     {% endif %}
-    <form action="{% url seriesly-subscription-edit_webhook %}#webhook-subscription" method="post">
+    <form action="{% url seriesly-subscription-edit_webhook %}#webhook" method="post">
     {% if subscription.webhook_form.webhook.errors %}
         <small class="error">{{ subscription.webhook_form.webhook.errors.0 }}</small>
     {% endif %}
         <p>{{ subscription.webhook_form.subkey }}{{ subscription.webhook_form.webhook.label_tag }}: {{ subscription.webhook_form.webhook }} <input type="submit" value="Submit"/></p>
         <p><small>You will get a POST request to your URL containing XML and need to answer correctly. Please read the <a href="{% url seriesly-webhook-xml %}">details page on the Seriesly Web Hook.</a>.</small></p>
     </form>
-</section>
-
-<section class="step">
-    <h3 id="subscription-settings">Edit Your Shows</h3>
-    <p>You can <a href="{% url seriesly-subscription-edit subscription.subkey %}">edit your shows and subscription settings here</a>.</p>
-    <p>{% if subscription.want_releases %}
-    You are currently receiving links to
-        {% if subscription.sub_settings.torrent %}torrents{% endif %}
-        {% if subscription.sub_settings.torrent and subscription.sub_settings.stream %} and {% endif %}
-        {% if subscription.sub_settings.stream %}streaming sites{% endif %}.
-        
-    {% else %}
-    You are currently <em>not</em> receiving any links to torrents or streaming sites.
-    {% endif %}</p>
-    <p>You should not give any of your subscription links away, because others will then be able to change your settings, too.</p>
-    <p>If you have questions, consult the <a href="{% url seriesly-faq %}">FAQ</a>.</p>
 </section>
 
 <section class="step">
@@ -153,7 +168,7 @@
         <li><a href="{{ SECURE_DOMAIN_URL }}{% url seriesly-subscription-atom subscription.subkey %}">Secure Feed URL</a></li>
         <li><a href="{{ SECURE_DOMAIN_URL }}{% url seriesly-subscription-calendar subscription.subkey %}">Secure Calendar URL</a></li>
     </ul>
-    <p>See also this <a href="{% url seriesly-faq %}#q-7">FAQ entry</a>.
+    <p>See also this <a href="{% url seriesly-faq %}#q-7">FAQ entry</a>.</p>
 </section>
 {% endblock %}
 {% block extra_js %}{% endblock  %}

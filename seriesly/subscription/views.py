@@ -306,7 +306,7 @@ def edit_mail(request):
     subscription.put()
     if subscription.email != "" and subscription.activated_mail == False:
         subscription.send_confirmation_mail()
-    return HttpResponseRedirect(subscription.get_absolute_url() + "#email-subscription")
+    return HttpResponseRedirect(subscription.get_absolute_url() + "#email")
     
 def confirm_mail(request, subkey, confirmkey):
     subscription = Subscription.all().filter("subkey =", subkey).get()
@@ -316,7 +316,7 @@ def confirm_mail(request, subkey, confirmkey):
         if subscription.activated_mail == False and subscription.email != "":
             subscription.activated_mail = True
             subscription.put()
-        return HttpResponseRedirect(subscription.get_absolute_url() + "#email-subscription")
+        return HttpResponseRedirect(subscription.get_absolute_url() + "#email")
     else:
         raise Http404
         
@@ -434,7 +434,7 @@ def edit_xmpp(request):
             form.errors["xmpp"] = ["Could not send invitation to this XMPP address"]
             return show(request, request.POST.get("subkey", ""), extra_context={"xmpp_form":form})
     subscription.put()
-    return HttpResponseRedirect(subscription.get_absolute_url() + "#xmpp-subscription")
+    return HttpResponseRedirect(subscription.get_absolute_url() + "#xmpp")
     
 def incoming_xmpp(request):
     try:
@@ -467,7 +467,7 @@ def edit_webhook(request):
     subscription.webhook = form.cleaned_data["webhook"]
     subscription.last_changed = datetime.datetime.now()
     subscription.put()
-    return HttpResponseRedirect(subscription.get_absolute_url() + "#webhook-subscription")
+    return HttpResponseRedirect(subscription.get_absolute_url() + "#webhook")
 
 def webhook_task(request):
     subscriptions = Subscription.all().filter("webhook !=", None)
