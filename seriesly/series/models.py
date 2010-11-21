@@ -1,6 +1,7 @@
 import logging
 import re
 import datetime
+import urllib
 
 from pytz import utc
 
@@ -31,8 +32,8 @@ class Show(db.Model):
     tvrage_id =     db.IntegerProperty()
     added =         db.DateTimeProperty()
     
-    amazon_title =  db.StringProperty(indexed=False)
-    amazon_url =  db.StringProperty(indexed=False)
+    # amazon_title =  db.StringProperty(indexed=False)
+    # amazon_url =  db.StringProperty(indexed=False)
     
     _memkey_all_shows_ordered = "all_shows_ordered"
     _memkey_shows_dict = "all_shows_dict"
@@ -50,9 +51,24 @@ class Show(db.Model):
         return self.key().id()
     
     @property
-    def amazon(self):
-        return settings.AMAZON_ENABLED and self.amazon_url
-        
+    def amazon(self, tld="com"):
+        if settings.AMAZON_ENABLED:
+            return "http://www.amazon.%s/exec/obidos/external-search/?mode=dvd&keyword=%s&tag=%s" % \
+                (tld, urllib.quote_plus(self.name), settings.AMAZON_ASSOCIATE_TAG)
+        return None
+
+    @property
+    def amazon_de(self):
+        return self.amazon(tld="de")
+
+    @property
+    def amazon_uk(self):
+        return self.amazon(tld="co.uk")
+
+    @property
+    def amazon_fr(self):
+        return self.amazon(tld="fr")
+
     def alternative_names(self):
         if self.alt_names is None:
             return []
