@@ -376,23 +376,45 @@ small {
     width:48px;
     height:48px;
     margin:0 auto;
-    background: url("../img/seriesly-sprites.png") no-repeat top left;
+    background: url("../img/seriesly-sprites-2.png") no-repeat top left;
 }
 
 .sprite-big {
     width:96px;
     height:96px;
-    background: url("../img/seriesly-sprites.png") no-repeat top left;
+    background: url("../img/seriesly-sprites-2.png") no-repeat top left;
 }
-.sprite-guide { background-position: 0 0; } 
-.sprite-guide_big { background-position: 0 -98px; } 
-.sprite-ical { background-position: 0 -244px; } 
-.sprite-ical_big { background-position: 0 -342px; } 
-.sprite-mail { background-position: 0 -488px; } 
-.sprite-mail_big { background-position: 0 -586px; } 
-.sprite-feed { background-position: 0 -732px; } 
-.sprite-feed_big { background-position: 0 -822px; } 
-.sprite-webhook { background-position: 0 -960px; } 
-.sprite-webhook_big { background-position: 0 -1050px; } 
-.sprite-xmpp { background-position: 0 -1196px; } 
-.sprite-xmpp_big { background-position: 0 -1286px; } 
+
+.advanced-delimiter{
+    margin:1em auto;
+    height:1px;
+    color:gray;
+    border:0px;
+    border-top:1px inset;
+    float-edge:margin-box;
+}
+.advanced-delimiter:before{
+    content:"Advanced";
+    position:relative;
+    top:-0.75em;
+    left:1em;
+    background-color:#d9d9d9;
+}
+
+.sprite-caldav{ background-position: 0 0; width: 32px; height: 32px; } 
+.sprite-caldav_big{ background-position: 0 -82px; width: 48px; height: 48px; } 
+.sprite-edit{ background-position: 0 -180px; width: 48px; height: 48px; } 
+.sprite-edit_big{ background-position: 0 -278px; width: 96px; height: 96px; } 
+.sprite-guide{ background-position: 0 -424px; width: 48px; height: 48px; } 
+.sprite-guide_big{ background-position: 0 -522px; width: 96px; height: 96px; } 
+.sprite-ical{ background-position: 0 -668px; width: 48px; height: 48px; } 
+.sprite-ical_big{ background-position: 0 -766px; width: 96px; height: 96px; } 
+.sprite-mail{ background-position: 0 -912px; width: 48px; height: 48px; } 
+.sprite-mail_big{ background-position: 0 -1010px; width: 96px; height: 96px; } 
+.sprite-feed{ background-position: 0 -1156px; width: 40px; height: 40px; } 
+.sprite-feed_big{ background-position: 0 -1246px; width: 88px; height: 88px; } 
+.sprite-webhook{ background-position: 0 -1384px; width: 40px; height: 40px; } 
+.sprite-webhook_big{ background-position: 0 -1474px; width: 96px; height: 96px; } 
+.sprite-xmpp{ background-position: 0 -1620px; width: 40px; height: 40px; } 
+.sprite-xmpp_big{ background-position: 0 -1710px; width: 96px; height: 96px; } 
+
