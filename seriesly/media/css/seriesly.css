@@ -381,6 +381,7 @@ small {
     height:48px;
     margin:0 auto;
     background: url("../img/seriesly-sprites-2.png") no-repeat top left;
+    display:block;
 }
 
 .sprite-big {
