@@ -11,7 +11,7 @@
                     <span title="Season {{ item.season_number }}, Episode {{ item.number }}" class="summary">{{ item.show.name }}: &ldquo;{{ item.title }}&rdquo;</span>
                 </div>
                 {% if subscription.want_releases %}
-                <ul class="right description">{% for release in item.releases %}<li><a href="{% url seriesly-releases-redirect release.idnr %}" title="{{ release.url }}">{{ release.title }}</li>{% empty %}<li>No releases for this episode yet</li>{% endfor %}</ul>
+                <ul class="right description">{% for release in item.releases %}<li><a href="{% url seriesly-releases-redirect release.idnr %}" title="{{ release.url }}">{{ release.title }}</a></li>{% empty %}<li>No releases for this episode yet</li>{% endfor %}</ul>
                 {% endif %}
             </div>
             {% if AMAZON %}{% include "amazon.html" %}{% endif %}
@@ -34,7 +34,7 @@
                     </div>
                     <span title="Season {{ item.season_number }}, Episode {{ item.number }}" class="summary">{{ item.show.name }}: &ldquo;{{ item.title }}&rdquo;</span>
                     {% if subscription.want_releases %}
-                    <ul class="description margin-left">{% for release in item.releases %}<li><a href="{% url seriesly-releases-redirect release.idnr %}" title="{{ release.url }}">{{ release.url|slice:"7:25" }}</a> ({{ release.which }}, Quality: {{ release.quality|join:", " }})</li>{% empty %}<li>No releases found for this episode</li>{% endfor %}</ul>    
+                    <ul class="description margin-left">{% for release in item.releases %}<li><a href="{% url seriesly-releases-redirect release.idnr %}" title="{{ release.url }}">{{ release.title }}</a></li>{% empty %}<li>No releases found for this episode</li>{% endfor %}</ul>    
                     {% endif %}
                     {% if AMAZON %}{% include "amazon.html" %}{% endif %}
                 </li>
