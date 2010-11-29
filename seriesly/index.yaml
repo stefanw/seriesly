@@ -39,7 +39,17 @@ indexes:
 - kind: subscription_subscription
   properties:
   - name: activated_mail
+  - name: next_airtime
+
+- kind: subscription_subscription
+  properties:
+  - name: activated_mail
   - name: subkey
+
+- kind: subscription_subscription
+  properties:
+  - name: activated_xmpp
+  - name: next_airtime
 
 - kind: subscription_subscription
   properties:
