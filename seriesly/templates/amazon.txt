@@ -1,1 +1,4 @@
-Give the gift of a good show: {% url seriesly-shows-redirect_to_amazon item.show.idnr %}
+Find {{ item.show.name }} on:
+ - Amazon.com: {{ item.show.amazon }}
+ - Amazon.de: {{ item.show.amazon_de }}
+ - Amazon.co.uk: {{ item.show.amazon_uk }}
