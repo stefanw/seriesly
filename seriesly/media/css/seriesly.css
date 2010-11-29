@@ -264,7 +264,7 @@ small {
 }
 .subscriptions li {
     display:inline-block;
-    margin:0 1em;
+    margin:0 0.5em;
 }
 .subscriptions li p {
     font-size:0.9em;
@@ -318,6 +318,10 @@ small {
 
 .description {
     font-size:0.75em;
+}
+
+.margin-left {
+    margin-left:0.5em;
 }
 
 .episode-item {
@@ -401,20 +405,48 @@ small {
     background-color:#d9d9d9;
 }
 
-.sprite-caldav{ background-position: 0 0; width: 32px; height: 32px; } 
-.sprite-caldav_big{ background-position: 0 -82px; width: 48px; height: 48px; } 
-.sprite-edit{ background-position: 0 -180px; width: 48px; height: 48px; } 
-.sprite-edit_big{ background-position: 0 -278px; width: 96px; height: 96px; } 
-.sprite-guide{ background-position: 0 -424px; width: 48px; height: 48px; } 
-.sprite-guide_big{ background-position: 0 -522px; width: 96px; height: 96px; } 
-.sprite-ical{ background-position: 0 -668px; width: 48px; height: 48px; } 
-.sprite-ical_big{ background-position: 0 -766px; width: 96px; height: 96px; } 
-.sprite-mail{ background-position: 0 -912px; width: 48px; height: 48px; } 
-.sprite-mail_big{ background-position: 0 -1010px; width: 96px; height: 96px; } 
-.sprite-feed{ background-position: 0 -1156px; width: 40px; height: 40px; } 
-.sprite-feed_big{ background-position: 0 -1246px; width: 88px; height: 88px; } 
-.sprite-webhook{ background-position: 0 -1384px; width: 40px; height: 40px; } 
-.sprite-webhook_big{ background-position: 0 -1474px; width: 96px; height: 96px; } 
-.sprite-xmpp{ background-position: 0 -1620px; width: 40px; height: 40px; } 
-.sprite-xmpp_big{ background-position: 0 -1710px; width: 96px; height: 96px; } 
+.sprite-caldav{background-position:0 0;width:32px;height:32px;}
+.sprite-caldav_big{background-position:0 -82px;width:48px;height:48px;}
+.sprite-edit{background-position:0 -180px;width:48px;height:48px;}
+.sprite-edit_big{background-position:0 -278px;width:96px;height:96px;}
+.sprite-guide{background-position:0 -424px;width:48px;height:48px;}
+.sprite-guide_big{background-position:0 -522px;width:96px;height:96px;}
+.sprite-ical{background-position:0 -668px;width:48px;height:48px;}
+.sprite-ical_big{background-position:0 -766px;width:96px;height:96px;}
+.sprite-mail{background-position:0 -912px;width:48px;height:48px;}
+.sprite-mail_big{background-position:0 -1010px;width:96px;height:96px;}
+.sprite-feed{background-position:0 -1156px;width:40px;height:40px;}
+.sprite-feed_big{background-position:0 -1246px;width:88px;height:88px;}
+.sprite-webhook{background-position:0 -1384px;width:40px;height:40px;}
+.sprite-webhook_big{background-position:0 -1474px;width:96px;height:96px;}
+.sprite-xmpp{background-position:0 -1620px;width:40px;height:40px;}
+.sprite-xmpp_big{background-position:0 -1710px;width:96px;height:96px;}
+.amazon-text {
+    font-size:12px;
+}
+.amazon-sprite {
+    display:inline-block;
+    background:url("../img/amazon/amazon-sprite.png") no-repeat top left;
+    margin:0 10px 0 0;
+    opacity:0.9;
+    vertical-align:middle;
+}
 
+.amazon-sprite:hover {
+    opacity:1.0;
+}
+
+.amazon-com{ 
+    background-position: 0 -26px; width: 32px; height: 16px;
+} 
+.amazon-com:hover {
+    background-position: 0 0; width: 32px; height: 16px;
+}
+.amazon-de{ background-position: 0 -78px; width: 32px; height: 16px; } 
+.amazon-de:hover {
+    background-position: 0 -52px; width: 32px; height: 16px; 
+}
+.amazon-fr{ background-position: 0 -130px; width: 32px; height: 16px; } 
+.amazon-fr:hover { background-position: 0 -104px; width: 32px; height: 16px; }
+.amazon-uk{ background-position: 0 -182px; width: 32px; height: 16px; } 
+.amazon-uk:hover{ background-position: 0 -156px; width: 32px; height: 16px; } 
