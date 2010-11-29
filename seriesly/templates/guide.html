@@ -8,6 +8,7 @@
 {% endblock %}
 
 {% block body %}
+{% include "announcement.html" %}
 <section class="step">
     <small class="right"><a href="{% url seriesly-subscription-show subscription.subkey %}">your subscription page</a></small>
     {% include "guide_list.html" %}

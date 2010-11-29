@@ -3,9 +3,9 @@ Hello,
 the following episodes aired in the last 24 hours:
 {% for item in items %}
 {{ item.show.name }} - {{ item.title }} ({{ item.season_number }}x{{ item.number }})
-{% if subscription.want_releases %}{% for release in item.releases %} - {{ release.url }} ({{ release.which }}, Quality: {{ release.quality|join:", " }})
+{% if subscription.want_releases %}{% for release in item.releases %} - {{ release.title }}: {{ release.url }}
 {% empty %} - No releases found now. Please check {{ DOMAIN_URL }}{% url seriesly-subscription-guide subscription.subkey %}
-{% endfor %}{% endif %}{% if item.show_amazon %}{% include "amazon.txt" %}
+{% endfor %}{% endif %}{% if AMAZON %}{% include "amazon.txt" %}
 {% endif %}
 {% if item.next %}{% if item.next.date %}The next episode "{{ item.next.title }}" ({{ item.next.season_number }}x{{ item.next.number }}) will air on {{ item.next.date|date:"d.m.Y - H:i" }}.
 {% else %}The airdate of the next episode "{{ item.next.title }}" ({{ item.next.season_number }}x{{ item.next.number }}) is unkown.
