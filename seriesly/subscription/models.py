@@ -239,7 +239,7 @@ By the way: your Seriesly subscription URL is: %s
     def release_sources(self):
         sub_settings = self.get_settings()
         release_sources = [x.title() for x in \
-            ("torrent", "stream", "sharehoster") if sub_settings[x]]
+            ("torrent", "stream", "sharehoster") if sub_settings.get(x, False)]
         if len(release_sources) > 0:
             if len(release_sources) > 1:
                 return "%s and %s" % (", ".join(release_sources[:-1]), release_sources[-1])
