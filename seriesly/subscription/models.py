@@ -114,7 +114,9 @@ By the way: your Seriesly subscription URL is: %s
     
     @property
     def want_releases(self):
-        return self.get_settings()["stream"] or self.get_settings()["torrent"]
+        return self.get_settings()["stream"] or \
+            self.get_settings()["torrent"] or \
+            self.get_settings()["sharehoster"]
         
     @classmethod
     def generate_subkey(cls):

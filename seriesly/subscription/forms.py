@@ -81,6 +81,7 @@ class SubscriptionForm(forms.Form):
         error_messages={'required': 'You need to select at least one show!'})
     torrent = forms.BooleanField(initial=True, label="Torrent Files", required=False)
     stream = forms.BooleanField(initial=True, label="Streaming Links", required=False)
+    sharehoster = forms.BooleanField(initial=True, label="Sharehosting Links", required=False)
     quality = forms.ChoiceField(choices=[("default", "Standard"), ("720p", "720p"), ("1080p", "1080p")], label="Quality")
 
     def clean_subkey(self):

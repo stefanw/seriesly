@@ -44,7 +44,8 @@ def subscribe(request):
         subscription = form._subscription
     sub_settings = {"quality": form.cleaned_data["quality"],
                 "torrent": str(form.cleaned_data["torrent"]),
-                "stream" : str(form.cleaned_data["stream"])
+                "stream" : str(form.cleaned_data["stream"]),
+                "sharehoster" : str(form.cleaned_data["sharehoster"])
             }
     subscription.set_settings(sub_settings)
     
@@ -108,8 +109,9 @@ def edit(request, subkey):
         sub_settings = subscription.get_settings()
         sub_dict = {"email": subscription.email, 
                     "quality": sub_settings["quality"],
-                    "torrent": sub_settings["torrent"],
-                    "stream": sub_settings["stream"],
+                    "torrent": sub_settings.get("torrent", False),
+                    "stream": sub_settings.get("stream", False),
+                    "sharehoster": sub_settings.get("sharehoster", False),
                     "shows": map(lambda x: x.idnr, subscription.get_shows()),
                     "subkey": subkey}
         form = SubscriptionForm(sub_dict)
