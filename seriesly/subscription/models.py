@@ -235,6 +235,16 @@ By the way: your Seriesly subscription URL is: %s
                     vevent.add('url').value = releases[0].url
                     vevent.add('description').value = u"\n".join(map(unicode, releases))
         return cal.serialize()
+    
+    def release_sources(self):
+        sub_settings = self.get_settings()
+        release_sources = [x.title() for x in \
+            ("torrent", "stream", "sharehoster") if sub_settings[x]]
+        if len(release_sources) > 0:
+            if len(release_sources) > 1:
+                return "%s and %s" % (", ".join(release_sources[:-1]), release_sources[-1])
+            return release_sources[0]
+        return ""
         
 
 class SubscriptionItem(db.Model):
