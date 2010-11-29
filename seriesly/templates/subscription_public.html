@@ -9,7 +9,7 @@
 
 {% block body %}
 <section class="step">
-    <h3 id="subscription-secure">Shared URLs</h3>
+    <h3>Shared URLs</h3>
     <p>This shared Seriesly subscription provides the following:</p>
     <ul class="normal-list">
         <li><a href="{% url seriesly-subscription-guide_public subscription.public_id %}">Episode Guide</a></li>
@@ -19,7 +19,7 @@
 </section>
 
 <section class="step">
-    <h3 id="subscription-secure">Shared Shows</h3>
+    <h3>Shared Shows</h3>
     <p>This shared Seriesly subscription contains these shows:</p>
     <ul class="normal-list">
     {% for show in shows %}

@@ -17,22 +17,22 @@
 {% block body %}
 
 <section class="step">
-    <h3>Your Seriesly Subscription</h3>
-    <p>The heart of your Seriesly subscription is this page with a private URL:<br/>
-        <input type="text" readonly="readonly" value="{{ DOMAIN_URL }}{% url seriesly-subscription-show subscription.subkey %}" style="width:75%"/></p>
-    <p>You should store this URL <em>privately</em> (e.g. bookmark it). A link to this page is also provided in feed items, email notifications etc.</p>
-</section>
-
-<section class="step">
     <h3>Quick Links</h3>
     <ul class="subscriptions">
         <li><a href="{% url seriesly-subscription-guide subscription.subkey %}"><span class="sprite-guide sprite"></span>Episode Guide</a></li>
-        <li><a href="#settings"><span class="sprite-edit sprite"></span>Edit Your Shows</a></li>
+        <li><a href="{% url seriesly-subscription-edit subscription.subkey %}"><span class="sprite-edit sprite"></span>Edit Your Shows</a></li>
         <li><a href="#email"><span class="sprite-mail sprite"></span>Email</a></li>
         <li><a href="#feed"><span class="sprite-feed sprite"></span>Feeds</a></li>
         <li><a href="#ical"><span class="sprite-ical sprite"></span>iCalendar</a></li>
         <li><a href="#xmpp"><span class="sprite-xmpp sprite"></span>XMPP Chat</a></li>
     </ul>
+</section>
+
+<section class="step">
+    <h3>Your Seriesly Subscription</h3>
+    <p>The heart of your Seriesly subscription is this page with a private URL:<br/>
+        <input type="text" readonly="readonly" value="{{ DOMAIN_URL }}{% url seriesly-subscription-show subscription.subkey %}" style="width:75%"/></p>
+    <p>You should store this URL <em>privately</em> (e.g. bookmark it). A link to this page is also provided in your feed, email notifications etc.</p>
 </section>
 
 <section class="step" id="guide">
@@ -48,7 +48,7 @@
     {% else %}
     You are currently <em>not</em> receiving any links to torrents, streaming or sharehoster sites.
     {% endif %}</p>
-    <p>You should not give any of your subscription links away, because others will then be able to change your settings, too.</p>
+    <p>You should not share your subscription links with anybody, because others will then be able to change your settings, too.<br/>You can <a href="#public-urls">share your subscription with special Public URLs though.</a></p>
     <p>If you have questions, consult the <a href="{% url seriesly-faq %}">FAQ</a>.</p>
 </section>
 
@@ -131,8 +131,8 @@
     </form>
 </section>
 
-<section class="step">
-    <h3 id="subscription-public-urls">Public URLs</h3>
+<section class="step" id="public-urls">
+    <h3>Public URLs</h3>
     {% if subscription.public_id %}
         <p>You are currently sharing your shows through the following public URLs:</p>
         <ul class="normal-list">
@@ -156,8 +156,8 @@
 
 </section>
 
-<section class="step">
-    <h3 id="subscription-secure">Secure URLs</h3>
+<section class="step" id="secure-urls">
+    <h3>Secure URLs</h3>
     <p>The following secure URLs (HTTPS) are available:</p>
     <ul class="normal-list">
         <li><a href="{{ SECURE_DOMAIN_URL }}{% url seriesly-subscription-show subscription.subkey %}">A secure version of this page</a></li>
