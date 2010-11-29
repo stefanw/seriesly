@@ -9,6 +9,7 @@ from django.core.urlresolvers import reverse
 from releases.ezrss import EZRSS
 from releases.tvshack import TVShack
 from releases.eztvpipe import EZTVPipe
+from releases.oneddl import OneDDL
 # from releases.torrentz import Torrentz, TorrentzDate
 #from releases.btchat import BTChatEZTV, BTChatVTV
 #from releases.surfthechannel import SurfTheChannel
@@ -31,13 +32,21 @@ class Release(db.Model):
     @property
     def idnr(self):
         return self.key().id()
+        
+    @property
+    def url_domain(self):
+        return ".".join(self.url.split("//")[1].split("/")[0].split(".")[-2:])
+        
+    @property
+    def which_title(self):
+        return self.which.title()
     
     @classmethod
     def kind(cls):
         return "releases_release"
     
     quality_map = {"default": 0, "Stream": 0, "WS": 1, "HDTV": 1, "720p": 2, "DVDRIP": 2,"DVDSCR": 2, "1080p":3, "PDTV": 1}
-    providers = {"ezrss": EZRSS, "tvshack": TVShack, "eztvpipe": EZTVPipe}
+    providers = {"ezrss": EZRSS, "tvshack": TVShack, "eztvpipe": EZTVPipe, "oneddl": OneDDL}
     # "torrentz": Torrentz, "torrentz-date": TorrentzDate} 
     #, "surfthechannel": SurfTheChannel, 
     #"piratebayez": PirateBayEZ, 
@@ -48,6 +57,10 @@ class Release(db.Model):
 
     def __str__(self):
         return "%s (%s, %s)" % (self.url, self.which, ", ".join(self.quality))
+    
+    @property
+    def title(self):
+        return u"%s (%s) from %s" % (self.which_title, self.quality[0], self.url_domain)
     
     @classmethod
     def add_update_task(cls, provider_key):
