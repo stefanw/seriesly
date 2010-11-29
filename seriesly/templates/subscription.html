@@ -37,7 +37,7 @@
 
 <section class="step" id="guide">
     <h3>Episode Guide<span class="right sprite-big sprite-guide_big"></span></h3>
-    <p><a href="{% url seriesly-subscription-guide subscription.subkey %}">This is your personal Episode Guide</a>.<br/>It will always show you the episodes that aired / will air recently.</p>
+    <p><a href="{% url seriesly-subscription-guide subscription.subkey %}">This is your personal Episode Guide</a>.<br/>It will always show you the episodes that aired recently or will air soon.</p>
 </section>
 
 <section class="step" id="settings">
@@ -130,7 +130,7 @@
         <small class="error">{{ subscription.webhook_form.webhook.errors.0 }}</small>
     {% endif %}
         <p>{{ subscription.webhook_form.subkey }}{{ subscription.webhook_form.webhook.label_tag }}: {{ subscription.webhook_form.webhook }} <input type="submit" value="Submit"/></p>
-        <p><small>You will get a POST request to your URL containing XML and need to answer correctly. Please read the <a href="{% url seriesly-webhook-xml %}">details page on the Seriesly Web Hook.</a>.</small></p>
+        <p><small>You will get a POST request to your URL containing XML and need to answer correctly. Please read the <a href="{% url seriesly-webhook-xml %}">details page on the Seriesly Web Hook</a>.</small></p>
     </form>
 </section>
 
