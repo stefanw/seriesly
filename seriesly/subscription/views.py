@@ -472,8 +472,8 @@ def edit_webhook(request):
     return HttpResponseRedirect(subscription.get_absolute_url() + "#webhook")
 
 def webhook_task(request):
+    """BadFilterError: invalid filter: Only one property per query may have inequality filters (<=, >=, <, >).."""
     subscriptions = Subscription.all().filter("webhook !=", None)
-        # .filter("next_airtime <", datetime.datetime.now().date())
     counter = 0
     for s in subscriptions:
         s.add_webhook_task()
