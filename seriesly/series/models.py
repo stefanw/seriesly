@@ -50,25 +50,26 @@ class Show(db.Model):
     def idnr(self):
         return self.key().id()
     
+    def amazon_link(self, tld="com"):
+        return "http://www.amazon.%s/exec/obidos/external-search/?mode=dvd&keyword=%s&tag=%s" % \
+                (tld, urllib.quote_plus(self.name), settings.AMAZON_ASSOCIATE_TAG[tld])
+    
     @property
-    def amazon(self, tld="com"):
-        if settings.AMAZON_ENABLED:
-            return "http://www.amazon.%s/exec/obidos/external-search/?mode=dvd&keyword=%s&tag=%s" % \
-                (tld, urllib.quote_plus(self.name), settings.AMAZON_ASSOCIATE_TAG)
-        return None
-
+    def amazon(self):
+        return self.amazon_link()
+    
     @property
     def amazon_de(self):
-        return self.amazon(tld="de")
-
+        return self.amazon_link(tld="de")
+    
     @property
     def amazon_uk(self):
-        return self.amazon(tld="co.uk")
-
+        return self.amazon_link(tld="co.uk")
+    
     @property
     def amazon_fr(self):
-        return self.amazon(tld="fr")
-
+        return self.amazon_link(tld="fr")
+    
     def alternative_names(self):
         if self.alt_names is None:
             return []
