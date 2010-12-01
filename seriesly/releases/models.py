@@ -78,7 +78,10 @@ class Release(db.Model):
         updater = kls()
         release_list = updater.get_info()
         for release_info in release_list:
-            already = Release.all().filter("url =", release_info.url).get()
+            urlparts = release_info.url.split("//",1)
+            new_url = "%s//%s" % (urlparts[0], urllib.quote(urlparts[1]))
+
+            already = Release.all().filter("url =", new_url).get()
             if already is not None:
                 continue
             show = Show.find(release_info.show_name)
@@ -95,8 +98,6 @@ class Release(db.Model):
             if episode is None:
                 logging.debug("There is no episode in %s" % release_info)
                 continue
-            urlparts = release_info.url.split("//",1)
-            new_url = "%s//%s" % (urlparts[0], urllib.quote(urlparts[1]))
             r = Release(episode=episode, 
                         which=release_info.which,
                         pub_date=release_info.pub_date,
