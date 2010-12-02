@@ -1,4 +1,4 @@
-{% include "announcement.txt" %}
+{% autoescape off %}{% include "announcement.txt" %}
 
 {% for item in items %}{{ item.show.name }} - {{ item.title }} ({{ item.season_number }}x{{ item.number }})
 {% if subscription.want_releases %}{% for release in item.releases %} - {{ release.title }}: {{ release.url }}
@@ -8,3 +8,4 @@
 {% else %}The airdate of the next episode "{{ item.next.title }}" ({{ item.next.season_number }}x{{ item.next.number }}) is unkown.
 {% endif %}{% else %}{% if not item.show.active %}This show has ended.{% else %}{% endif %}{% endif %}
 {% endfor %}
+{% endautoescape %}

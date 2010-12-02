@@ -1,4 +1,4 @@
-Hello,
+{% autoescape off %}Hello,
 {% include "announcement.txt" %}
 the following episodes aired in the last 24 hours:
 {% for item in items %}
@@ -15,4 +15,4 @@ the following episodes aired in the last 24 hours:
 
 -- 
 www.seriesly.com
-Your Subscription: {{ DOMAIN_URL }}{% url seriesly-subscription-show subscription.subkey %}
+Your Subscription: {{ DOMAIN_URL }}{% url seriesly-subscription-show subscription.subkey %}{% autoescape off %}
