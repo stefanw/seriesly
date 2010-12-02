@@ -35,6 +35,6 @@ cron:
   url: /subscription/webhook-task/
   schedule: every day 08:00
 
-- description: weekly amazon product for show task
-  url: /amazon/update
-  schedule: every day 09:00
+# - description: weekly amazon product for show task
+#   url: /amazon/update
+#   schedule: every day 09:00
