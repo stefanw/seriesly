@@ -37,3 +37,11 @@ def product_for_show(request):
         return HttpResponse("Done (with errors, %s(%s))" % (show,key))
     logging.debug("Done amazoning show %s(%s)" % (show,key))
     return HttpResponse("Done: %s: %s, %s" % (show.name, url, title))
+    
+@is_get
+def redirect(request, tld, slug):
+    nname = slug.replace("-", " ")
+    show = Show.all().filter("normalized_name =", nname).fetch(1)
+    if show is None or not len(show):
+        raise Http404
+    return HttpResponseRedirect(show[0].amazon_link(tld=tld))

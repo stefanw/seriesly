@@ -50,6 +50,29 @@ class Show(db.Model):
     def idnr(self):
         return self.key().id()
     
+    @property 
+    def slug(self):
+        return self.normalized_name.replace(" ", "-")
+    
+    def amazon_redirect(self, tld="com"):
+        return settings.DOMAIN_URL + reverse('seriesly-amazon-redirect', args=(tld, self.slug))
+
+    @property
+    def amazon_redirect_com(self):
+        return self.amazon_redirect(tld="com")
+
+    @property
+    def amazon_redirect_de(self):
+        return self.amazon_redirect(tld="de")
+
+    @property
+    def amazon_redirect_uk(self):
+        return self.amazon_redirect(tld="co.uk")
+
+    @property
+    def amazon_redirect_fr(self):
+        return self.amazon_redirect(tld="fr")
+
     def amazon_link(self, tld="com"):
         return "http://www.amazon.%s/exec/obidos/external-search/?mode=dvd&keyword=%s&tag=%s" % \
                 (tld, urllib.quote_plus(self.name), settings.AMAZON_ASSOCIATE_TAG[tld])

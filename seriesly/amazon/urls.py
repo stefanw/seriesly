@@ -6,4 +6,5 @@ from django.conf.urls.defaults import *
 urlpatterns = patterns('',
     (r'^product_for_show/$', 'amazon.views.product_for_show', {}, "seriesly-amazon-product_for_show"),
     (r'^update/$', 'amazon.views.update', {}, "seriesly-amazon-update"),
+    (r'^(com|co\.uk|de|fr)/([\w-]+)/$', 'amazon.views.redirect', {}, "seriesly-amazon-redirect"),
 )
