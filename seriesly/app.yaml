@@ -29,6 +29,10 @@ handlers:
   static_files: media/robots.txt
   upload: media/robots.txt
   
+- url: /apple-touch-icon.png
+  static_files: media/img/apple-touch-icon.png
+  upload: media/img/apple-touch-icon.png
+  
 - url: /media
   static_dir: media
   
