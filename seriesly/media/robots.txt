@@ -1,1 +1,6 @@
 User-agent: *
+Allow: /faq/
+Allow: /about/
+Allow: /webhook-xml/
+Allow: /privacy/
+Disallow: /*
