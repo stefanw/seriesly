@@ -1,6 +1,7 @@
 {% autoescape off %}Hello,
+
 {% include "announcement.txt" %}
-the following episodes aired in the last 24 hours:
+The following episodes aired in the last 24 hours:
 {% for item in items %}
 {{ item.show.name }} - {{ item.title }} ({{ item.season_number }}x{{ item.number }})
 {% if subscription.want_releases %}{% for release in item.releases %} - {{ release.title }}: {{ release.url }}
