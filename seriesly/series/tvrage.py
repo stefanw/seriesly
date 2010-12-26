@@ -63,15 +63,22 @@ class TVRage(object):
         logging.debug("Start walking...")
         show_doc = dom.getElementsByTagName("Show")[0]
         seasons = show_doc.getElementsByTagName("Season")
+        special = show_doc.getElementsByTagName("Special")
+        seasons.extend(special)
         timezone = show_doc.getElementsByTagName("timezone")[0].firstChild.data
         tz = get_timezone_for_gmt_offset(timezone)
         delta_params = show_doc.getElementsByTagName("airtime")[0].firstChild.data.split(":")
         delta = datetime.timedelta(hours=int(delta_params[0]), minutes=int(delta_params[1]))
         season_list = []
         for season in seasons:
-            season_nr = int(season.attributes["no"].value)
+            try:
+                season_nr = int(season.attributes["no"].value)
+            except Exception:
+                season_nr = False
             episode_list = []
             for episode in season.getElementsByTagName("episode"):
+                if not season_nr:
+                    season_nr = int(episode.getElementsByTagName("season")[0].firstChild.data)
                 try:
                     title = unescape(episode.getElementsByTagName("title")[0].firstChild.data)
                 except AttributeError:
@@ -83,7 +90,10 @@ class TVRage(object):
                     date = tz.localize(date)
                 except ValueError, e:
                     date = None
-                epnum = int(episode.getElementsByTagName("seasonnum")[0].firstChild.data)
+                try:
+                    epnum = int(episode.getElementsByTagName("seasonnum")[0].firstChild.data)
+                except IndexError:
+                    epnum = 0
                 ep_info = TVEpisodeInfo(date=date, title=title, nr=epnum, season_nr=season_nr)
                 episode_list.append(ep_info)
             season = TVSeasonInfo(season_nr=season_nr, episodes=episode_list)
