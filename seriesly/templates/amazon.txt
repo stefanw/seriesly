@@ -1,4 +1,4 @@
-Find "{{ item.show.name }}" DVD gifts on Amazon:
+Find "{{ item.show.name }}" on Amazon:
  - .com: {{ item.show.amazon_redirect_com }}
  - .de: {{ item.show.amazon_redirect_de }}
  - .co.uk: {{ item.show.amazon_redirect_uk }}
