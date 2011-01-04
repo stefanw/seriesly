@@ -3,4 +3,7 @@ Allow: /faq/
 Allow: /about/
 Allow: /webhook-xml/
 Allow: /privacy/
+Allow: /public/*
+Allow: /*/calendar/$
 Disallow: /*
+Disallow: /releases/
