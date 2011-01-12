@@ -150,6 +150,7 @@ class Show(db.Model):
         if show_info is None:
             tvrage = TVRage()
             show_info = tvrage.get_info(self.tvrage_id)
+            show_info.name = show_info.name.replace(u"\u2019", "'") # Kill Tabatha\u2019s ... here
             if show_info.name.startswith("'"): # Kill >>'Til Death<< here
                 show_info.name = show_info.name.replace("'","",1)
             attr_list = ["name","network","genres","active","country","runtime","timezone","tvrage_id"]
