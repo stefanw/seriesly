@@ -11,7 +11,7 @@
       <title>{{ item.show.name }} - {{ item.title }} ({{ item.season_number }}x{{ item.number }})</title>
       {% if item.torrenturl %}<link rel="enclosure" type="application/x-bittorrent"{% if item.torrentlen %} length="{{ item.torrentlen }}"{% endif %} href="{{ item.torrenturl }}"/>{% endif %}
       <updated>{{ item.pub_date|rfc3339 }}</updated>
-      <content type="html"><![CDATA[<div>{% include "announcement.txt" %}{% include "feed_content.html" %}
+      <content type="html"><![CDATA[<div>{% include "announcement_feed.html" %}{% include "feed_content.html" %}
            <a href="{{ DOMAIN_URL }}{% url seriesly-subscription-show subscription.subkey %}">Your Subscription on Seriesly.com</a></div>
       ]]></content>
       <id>{{ DOMAIN_URL }}{% url seriesly-shows-episode item.key.id %}</id>
