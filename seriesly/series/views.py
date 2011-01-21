@@ -51,6 +51,8 @@ def update_show(request):
         if show is None:
             raise Http404
         show.update()
+    except Http404:
+        raise Http404
     except Exception, e:
         logging.error("Error Updating Show (%s)%s: %s" % (show, key, e))
         return HttpResponse("Done (with errors, %s(%s))" % (show,key))
