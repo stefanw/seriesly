@@ -4,6 +4,8 @@ import logging
 import datetime
 import urllib
 
+from pytz import utc
+
 from helper.http import get as http_get
 from helper.html import unescape
 from helper.string_utils import normalize
@@ -67,6 +69,7 @@ class TVRage(object):
         seasons.extend(special)
         timezone = show_doc.getElementsByTagName("timezone")[0].firstChild.data
         tz = get_timezone_for_gmt_offset(timezone)
+        last_show_date = None
         delta_params = show_doc.getElementsByTagName("airtime")[0].firstChild.data.split(":")
         delta = datetime.timedelta(hours=int(delta_params[0]), minutes=int(delta_params[1]))
         season_list = []
@@ -90,6 +93,8 @@ class TVRage(object):
                     date = tz.localize(date)
                 except ValueError, e:
                     date = None
+                if last_show_date is None or last_show_date < date:
+                    last_show_date = date
                 try:
                     epnum = int(episode.getElementsByTagName("seasonnum")[0].firstChild.data)
                 except IndexError:
@@ -111,9 +116,10 @@ class TVRage(object):
         for genre in genres:
             genre_list.append(genre.firstChild.data)
         genre_str = "|".join(genre_list)
-        
+        today = datetime.datetime.now(utc) - datetime.timedelta(hours=24)
         active = show_doc.getElementsByTagName("ended")[0].firstChild
-        if active is None or active.data == "0":
+        if active is None or active.data == "0" or \
+                (last_show_date is not None and last_show_date >= today):
             active = True
         else:
             active = False
@@ -161,4 +167,16 @@ class TVRage(object):
                 return self.get_info(int(shows[0].getElementsByTagName("showid")[0].firstChild.data))
             return None
         return self.get_info(show_id)
-        
+
+
+def main():
+    tz = get_timezone_for_gmt_offset("GMT-5 -DST")
+    date_str = "2011-01-31"
+    date = datetime.datetime(*map(int, date_str.split("-")))
+    delta = datetime.timedelta(hours=21, minutes=0)
+    date = date + delta
+    date = tz.localize(date)
+    today = datetime.datetime.now(utc)
+    print date >= today
+if __name__ == '__main__':
+    main()
