@@ -111,7 +111,7 @@ class Show(db.Model):
             else:
                 show.ordered_name = cls.re_find_the.sub("\\1, The", show.name)
             show_list.append(show)
-        shows = sorted(show_list, key=lambda x: x.ordered_name)
+        shows = sorted(show_list, key=lambda x: x.ordered_name.lower())
         memcache.set(key=cls._memkey_all_shows_ordered, value=shows)
         return shows
     
