@@ -36,11 +36,15 @@ $(document).ready(function(){
       if(e){e.preventDefault();}
       var li = $(this);
       var list_id = li.parent().attr("id");
-      if (list_id == "chosenshows-list"){
+      if (list_id == "chosenshows-list" || (list_id == "allshows-list" && li.find("input").attr("checked"))){
+        if(list_id == "allshows-list" && li.find("input").attr("checked")){
+              li = $("#chosenshows-list li a[href='#toggle-"+li.find("label").attr("for").split("_")[2]+"']").parent();
+          }
+
         // Deselect clicked show
         // Show ID is temp-stored in href-attribute after a -
         show_id = li.find("a").attr("href").split("-")[1];
-        var real_li = $("#id_shows_"+show_id).attr("checked", "").parent().parent().show();
+        var real_li = $("#id_shows_"+show_id).attr("checked", "").parent().parent().css({"backgroundColor": null});
         li.remove();
         // No more shows selected:
         if ($("#chosenshows-list li").length == 0){
@@ -61,7 +65,7 @@ $(document).ready(function(){
         var label = li.find("label").text();
         show_id = li.find("label").attr("for").split("_")[2];
         $("#chosenshows-list").append(SHOW_ITEM.replace(/\{0\}/,label).replace(/\{1\}/, show_id));
-        li.hide();
+        li.css({"backgroundColor": "#ffff99"});
         li.find("input").attr("checked", "checked");
         // Hide "no shows" error, if it was last error
         if($(".select-shows .errorlist").text().indexOf("least") != -1){
