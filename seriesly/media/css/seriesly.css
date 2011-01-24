@@ -215,7 +215,7 @@ small {
 }
 
 .label-minus:after {
-    content:"−";
+    content:"−" !important;
     display:block;
     float:right;
     cursor:pointer;

@@ -44,7 +44,7 @@ $(document).ready(function(){
         // Deselect clicked show
         // Show ID is temp-stored in href-attribute after a -
         show_id = li.find("a").attr("href").split("-")[1];
-        var real_li = $("#id_shows_"+show_id).attr("checked", "").parent().parent().css({"backgroundColor": null});
+        var real_li = $("#id_shows_"+show_id).attr("checked", "").parent().parent().css({"backgroundColor": null}).find("label").removeClass("label-minus")
         li.remove();
         // No more shows selected:
         if ($("#chosenshows-list li").length == 0){
@@ -65,7 +65,7 @@ $(document).ready(function(){
         var label = li.find("label").text();
         show_id = li.find("label").attr("for").split("_")[2];
         $("#chosenshows-list").append(SHOW_ITEM.replace(/\{0\}/,label).replace(/\{1\}/, show_id));
-        li.css({"backgroundColor": "#ffff99"});
+        li.css({"backgroundColor": "#ffff99"}).find("label").addClass("label-minus");
         li.find("input").attr("checked", "checked");
         // Hide "no shows" error, if it was last error
         if($(".select-shows .errorlist").text().indexOf("least") != -1){
