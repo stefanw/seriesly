@@ -24,11 +24,26 @@ $(document).ready(function(){
         }
       });
     };
-
+    
     var clear_search = function(e){
       if(e){e.preventDefault();}
       $("#search").val("");
       filter_list(e);
+    };
+    
+    var add_li = function(li){
+        var label = li.find("label").text();
+        var show_id = li.find("label").attr("for").split("_")[2];
+        $("#chosenshows-list").prepend(SHOW_ITEM.replace(/\{0\}/,label).replace(/\{1\}/, show_id));
+        li.css({"backgroundColor": "#ffff99"}).find("label").addClass("label-minus");
+        li.find("input").attr("checked", "checked");
+    };
+    
+    var remove_li = function(show_id){
+        var li = $("#id_shows_"+show_id).attr("checked", "").parent().parent();
+        li.css({"backgroundColor": null})
+            .find("label").removeClass("label-minus");
+        $("#chosenshows-list li a[href='#toggle-"+show_id+"']").parent().remove();
     };
 
     var toggle_show = function(e){
@@ -37,36 +52,22 @@ $(document).ready(function(){
       var li = $(this);
       var list_id = li.parent().attr("id");
       if (list_id == "chosenshows-list" || (list_id == "allshows-list" && li.find("input").attr("checked"))){
-        if(list_id == "allshows-list" && li.find("input").attr("checked")){
-              li = $("#chosenshows-list li a[href='#toggle-"+li.find("label").attr("for").split("_")[2]+"']").parent();
-          }
-
-        // Deselect clicked show
-        // Show ID is temp-stored in href-attribute after a -
-        show_id = li.find("a").attr("href").split("-")[1];
-        var real_li = $("#id_shows_"+show_id).attr("checked", "").parent().parent().css({"backgroundColor": null}).find("label").removeClass("label-minus")
-        li.remove();
-        // No more shows selected:
-        if ($("#chosenshows-list li").length == 0){
-          $("#chosenshows-label").text("You haven't chosen any shows yet.");
-          // If last error was "no shows", remind user
-          if($(".select-shows .errorlist").text().indexOf("least") != -1){
-              $(".select-shows .errorlist").show();
-          }
+        
+        if(list_id == "allshows-list"){
+            show_id = li.find("label").attr("for").split("_")[2];
+        } else {
+            show_id = li.find("a").attr("href").split("-")[1];
         }
-        // Hide too many shows error, when user complies
-        if ($("#chosenshows-list li").length <= 90){
-            if($(".select-shows .errorlist").text().indexOf("maximum") != -1){
-                $(".select-shows .errorlist").hide();
-            }        
-        }
+        remove_li(show_id);
+                  
       } else {
         // Select clicked show
-        var label = li.find("label").text();
-        show_id = li.find("label").attr("for").split("_")[2];
-        $("#chosenshows-list").append(SHOW_ITEM.replace(/\{0\}/,label).replace(/\{1\}/, show_id));
-        li.css({"backgroundColor": "#ffff99"}).find("label").addClass("label-minus");
-        li.find("input").attr("checked", "checked");
+        add_li(li);
+      }
+      checks();
+    };
+    
+    var checks = function(){
         // Hide "no shows" error, if it was last error
         if($(".select-shows .errorlist").text().indexOf("least") != -1){
             $(".select-shows .errorlist").hide("fast");
@@ -82,7 +83,20 @@ $(document).ready(function(){
         if ($("#allshows-list li:visible").length == 0 && $("#search").val() != ""){
             clear_search();
         }
-      }
+          // No more shows selected:
+        if ($("#chosenshows-list li").length == 0){
+          $("#chosenshows-label").text("You haven't chosen any shows yet.");
+          // If last error was "no shows", remind user
+          if($(".select-shows .errorlist").text().indexOf("least") != -1){
+              $(".select-shows .errorlist").show();
+          }
+        }
+        // Hide too many shows error, when user complies
+        if ($("#chosenshows-list li").length <= 90){
+            if($(".select-shows .errorlist").text().indexOf("maximum") != -1){
+                $(".select-shows .errorlist").hide();
+            }        
+        }
     };
 
     checkSubscriptionCookie = function(){
@@ -108,6 +122,7 @@ $(document).ready(function(){
         }
         return null;
     };
+    
     $("#chosenshows").show();
     $("#search-fields").show();
     $(".show-list li input").hide();
@@ -159,17 +174,19 @@ $(document).ready(function(){
     $(".show-list li").live("click",toggle_show);
     // Put checked shows in chosen-shows box
     $("#allshows-list li input:checked").each(function(i, el){
-      toggle_show.apply($(el).parent().parent(),[]);
+      add_li($(el).parent().parent());
     });
+    checks();
     if(document.location.hash !== "" && document.location.hash.indexOf("shows=") != -1){
         var shows = document.location.hash;
         shows = shows.replace(/#?shows=/,'');
         shows = shows.split(',');
         $('#allshows-list input').each(function(){
             if($.inArray($(this).val(), shows) != -1){
-                toggle_show.apply($(this).parent().parent(),[]);
+                add_li($(this).parent().parent());
             }
         });
+        checks();
     }
     if($("#twitter").length == 1 && document.location.protocol != "https:"){
       // This is a packed function from twitter for displaying relative time
