@@ -8,19 +8,21 @@ $(document).ready(function(){
       if (query == ""){
         $("#clear-search").hide();
         // Show all shows that have are not checked (i.e. are in the other box)
-        $("#allshows-list li input:not(:checked)").parent().parent().show();
+        $("#allshows-list li").show();
         return;
       }
-      if (!$.browser.safari){
-          //Safar has its own clear button in html5
+      if (!$.browser.webkit){
+          // Webkit has its own clear button in html5
         $("#clear-search").show();    
       }
       // Check all list items that are not checked
-      $("#allshows-list li input:not(:checked)").each(function(i, el){
-        if ($(el).parent().text().toLowerCase().indexOf(query) == -1){
-          $(el).parent().parent().hide();
-        } else {
-          $(el).parent().parent().show();
+      $("#allshows-list li").each(function(i, el){
+          var text = $(el).find("label").text().toLowerCase().replace(/^\s(.*)$/, "$1");
+          var alttext = text.replace(/^(.*), the$/, "the $1");
+          if (text.indexOf(query) == -1 && alttext.indexOf(query) == -1){
+              $(el).hide();
+          } else {
+              $(el).show();
         }
       });
     };
@@ -31,10 +33,27 @@ $(document).ready(function(){
       filter_list(e);
     };
     
+    var order_lis = function(ul){
+        var lis = ul.find("li");
+        lis.sort(function(a,b){
+            a = $(a).text().toLowerCase();
+            b = $(b).text().toLowerCase();
+            if (a <  b){
+                return -1;
+            }
+            if (a > b){
+                return 1;
+            }
+            return 0;
+        });
+        ul.empty().append(lis);
+    };
+    
     var add_li = function(li){
         var label = li.find("label").text();
         var show_id = li.find("label").attr("for").split("_")[2];
         $("#chosenshows-list").prepend(SHOW_ITEM.replace(/\{0\}/,label).replace(/\{1\}/, show_id));
+        order_lis($("#chosenshows-list"));
         li.css({"backgroundColor": "#ffff99"}).find("label").addClass("label-minus");
         li.find("input").attr("checked", "checked");
     };
