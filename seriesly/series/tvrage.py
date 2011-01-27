@@ -93,8 +93,9 @@ class TVRage(object):
                     date = tz.localize(date)
                 except ValueError, e:
                     date = None
-                if last_show_date is None or last_show_date < date:
-                    last_show_date = date
+                if date is not None:
+                    if last_show_date is None or last_show_date < date:
+                        last_show_date = date
                 try:
                     epnum = int(episode.getElementsByTagName("seasonnum")[0].firstChild.data)
                 except IndexError:
