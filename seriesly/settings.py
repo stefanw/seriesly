@@ -43,7 +43,7 @@ AMAZON_ASSOCIATE_TAG = {
     "co.uk": "seriesly01-21",
     "fr": "seriesly0a-21"
 }
-AMAZON_ENABLED = True
+AMAZON_ENABLED = False
 
 TEMPLATE_CONTEXT_PROCESSORS = (
 #    'django.core.context_processors.auth',
