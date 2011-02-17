@@ -8,7 +8,7 @@ import vobject
 from google.appengine.ext import db
 from google.appengine.api import mail
 from google.appengine.api import xmpp
-from google.appengine.api.labs import taskqueue
+from google.appengine.api import taskqueue
 
 from django.core.urlresolvers import reverse
 from django.conf import settings
