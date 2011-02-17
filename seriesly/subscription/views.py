@@ -538,9 +538,8 @@ def json_public(request, public_id):
 from google.appengine.api import taskqueue
 
 def add_next_airtime_task(request):
-    subscription_keys = Subscription.all(keys_only=True)
-    for key in subscription_keys:
-        t = taskqueue.Task(url=reverse("seriesly-subscription-set_next_airtime"), params={"key": str(key)})
+    for key in Subscription.all(keys_only=True).filter("activated_mail =", True):
+        t = taskqueue.Task(url="/subscription/next-airtime/", params={"key": str(key)})
         t.add(queue_name="webhook-queue")
     return HttpResponse("Done: ")
     
