@@ -163,8 +163,9 @@ By the way: your Seriesly subscription URL is: %s
                 changes = True
         for old_show in old_shows:
             if not old_show.key() in show_ids:
-                s = SubscriptionItem.all().filter("subscription =",self).filter("show =", old_show).get()
-                s.delete()
+                key = SubscriptionItem.all(keys_only=True).filter("subscription =",self).filter("show =", old_show).get()
+                if key:
+                    db.delete(key)
                 changes = True
         return changes
         
