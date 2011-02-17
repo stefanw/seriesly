@@ -130,7 +130,7 @@ By the way: your Seriesly subscription URL is: %s
             key = ""
             for i in range(32):
                 key += random.choice(CHARS)
-            wtf = Subscription.all().filter("%s =" % field, key).get()
+            wtf = Subscription.all(keys_only=True).filter("%s =" % field, key).get()
         return key
         
     def get_shows(self):
@@ -174,18 +174,22 @@ By the way: your Seriesly subscription URL is: %s
         self.feed_stamp = None
         self.calendar_stamp = None
         self.feed_public_stamp = None
-                
-    def add_email_task(self):
-        return self.add_task('seriesly-subscription-mail', "mail-queue")
+    
+    @classmethod
+    def add_email_task(cls, key):
+        return cls.add_task('seriesly-subscription-mail', "mail-queue", key)
 
-    def add_xmpp_task(self):
-        return self.add_task('seriesly-subscription-xmpp', "xmpp-queue")
+    @classmethod
+    def add_xmpp_task(cls, key):
+        return cls.add_task('seriesly-subscription-xmpp', "xmpp-queue", key)
 
-    def add_webhook_task(self):
-        return self.add_task('seriesly-subscription-webhook', "webhook-queue")
-
-    def add_task(self, url_name, queue_name):
-        t = taskqueue.Task(url=reverse(url_name), params={"key": str(self.key())})
+    @classmethod
+    def add_webhook_task(cls, key):
+        return cls.add_task('seriesly-subscription-webhook', "webhook-queue", key)
+    
+    @classmethod
+    def add_task(cls, url_name, queue_name, key):
+        t = taskqueue.Task(url=reverse(url_name), params={"key": str(key)})
         t.add(queue_name=queue_name)
         return t
         

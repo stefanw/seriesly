@@ -339,13 +339,13 @@ def send_confirm_mail(request):
     return HttpResponse("Done: %s" % key)
 
 def email_task(request):
-    subscriptions = Subscription.all().filter("activated_mail =", True)
+    subscription_keys = Subscription.all(keys_only=True).filter("activated_mail =", True)
         # .filter("next_airtime <", datetime.datetime.now().date())
     counter = 0
-    for s in subscriptions:
-        s.add_email_task()
+    for key in subscription_keys:
+        Subscription.add_email_task(key)
         counter += 1
-    return HttpResponse("Done: \n%s, %d" % (subscriptions, counter))
+    return HttpResponse("Done: added %d" % counter)
 
 @is_post
 def send_mail(request):
@@ -381,13 +381,13 @@ def send_mail(request):
     return HttpResponse("Done: %s" % key)
 
 def xmpp_task(request):
-    subscriptions = Subscription.all().filter("activated_xmpp =", True)
+    subscription_keys = Subscription.all(keys_only=True).filter("activated_xmpp =", True)
         # .filter("next_airtime <", datetime.datetime.now().date())
     counter = 0
-    for s in subscriptions:
-        s.add_xmpp_task()
+    for key in subscription_keys:
+        Subscription.add_xmpp_task(key)
         counter += 1
-    return HttpResponse("Done: \n%s, %d" % (subscriptions, counter))
+    return HttpResponse("Done: added %d" % counter)
 
 @is_post
 def send_xmpp(request):
@@ -473,12 +473,12 @@ def edit_webhook(request):
 
 def webhook_task(request):
     """BadFilterError: invalid filter: Only one property per query may have inequality filters (<=, >=, <, >).."""
-    subscriptions = Subscription.all().filter("webhook !=", None)
+    subscription_keys = Subscription.all(keys_only=True).filter("webhook !=", None)
     counter = 0
-    for s in subscriptions:
-        s.add_webhook_task()
+    for key in subscription_keys:
+        Subscription.add_webhook_task(key)
         counter += 1
-    return HttpResponse("Done: \n%d" % counter)
+    return HttpResponse("Done: added %d" % counter)
 
 @is_post
 def post_to_callback(request):
