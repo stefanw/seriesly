@@ -17,6 +17,10 @@ from helper.dateutils import get_timezone_for_gmt_offset
 
 from series.tvrage import TVRage
 
+global_all_shows_ordered = None
+global_shows_dict = None
+global_episode_dict = None
+
 class Show(db.Model):
     name =          db.StringProperty()
     normalized_name = db.StringProperty()
@@ -100,8 +104,12 @@ class Show(db.Model):
     
     @classmethod
     def get_all_ordered(cls):
+        global global_all_shows_ordered
+        if global_all_shows_ordered is not None:
+            return global_all_shows_ordered
         shows = memcache.get(cls._memkey_all_shows_ordered)
         if shows is not None:
+            global_all_shows_ordered = shows
             return shows
         shows = Show.all().filter("active =", True)
         show_list = []
@@ -112,6 +120,7 @@ class Show(db.Model):
                 show.ordered_name = cls.re_find_the.sub("\\1, The", show.name)
             show_list.append(show)
         shows = sorted(show_list, key=lambda x: x.ordered_name.lower())
+        global_all_shows_ordered = shows
         memcache.set(key=cls._memkey_all_shows_ordered, value=shows)
         return shows
     
@@ -128,16 +137,24 @@ class Show(db.Model):
     
     @classmethod
     def get_all_dict(cls):
+        global global_shows_dict
+        if global_shows_dict is not None:
+            return global_shows_dict
         show_dict = memcache.get(cls._memkey_shows_dict)
         if show_dict is not None:
+            global_shows_dict = show_dict
             return show_dict
         shows = Show.get_all_ordered()
         show_dict = dict([(str(show.key()), show) for show in shows])
+        global_shows_dict = show_dict
         memcache.set(key=cls._memkey_shows_dict, value=show_dict)
         return show_dict
     
     @classmethod
     def clear_cache(cls):
+        global global_all_shows_ordered, global_shows_dict
+        global_all_shows_ordered = None
+        global_shows_dict = None
         memcache.delete(cls._memkey_all_shows_ordered)
         memcache.delete(cls._memkey_shows_dict)
             
@@ -318,8 +335,12 @@ class Episode(db.Model):
                         
     @classmethod
     def get_all_dict(cls):
+        global global_episode_dict
+        if global_episode_dict is not None:
+            return global_episode_dict
         episode_dict = memcache.get(cls._memkey_episode_dict)
         if episode_dict is not None:
+            global_episode_dict = episode_dict
             return episode_dict
         now = datetime.datetime.now()
         one_week_ago = now - datetime.timedelta(days=8)
@@ -331,11 +352,14 @@ class Episode(db.Model):
             if len(episode_dict.get(str(ep._show),[])) < 20:
                 # store max of 20 episodes per show
                 episode_dict.setdefault(str(ep._show), []).append(ep)
+        global_episode_dict = episode_dict
         memcache.set(key=cls._memkey_episode_dict, value=episode_dict)
         return episode_dict
 
     @classmethod
     def clear_cache(cls):
+        global global_episode_dict
+        global_episode_dict = None
         memcache.delete(cls._memkey_episode_dict)
         
     @classmethod        
@@ -343,6 +367,12 @@ class Episode(db.Model):
         t = taskqueue.Task(url=reverse('seriesly-shows-clear_cache'), params={})
         t.add(queue_name=queue_name)
         return t
+        
+    @classmethod
+    def set_cached_episode_dict(cls, episode_dict):
+        global global_episode_dict
+        global_episode_dict = episode_dict
+        memcache.set(key=cls._memkey_episode_dict, value=episode_dict)
         
     @classmethod
     def get_for_shows(cls, shows, before=None, after=None, order=None):
@@ -368,7 +398,7 @@ class Episode(db.Model):
                     prev = ep
                 episode_list.extend(episode_dict[k])
         if changed:
-            memcache.set(key=cls._memkey_episode_dict, value=episode_dict)
+            cls.set_cached_episode_dict(episode_dict)
         episode_list.sort(key=lambda x: x.date)
         if after is not None or before is not None:
             lower = None
