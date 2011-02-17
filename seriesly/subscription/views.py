@@ -533,3 +533,23 @@ def json_public(request, public_id):
         public=True, extra_context=get_extra_json_context(request))
     response["Content-Type"] = 'application/json'
     return response
+
+
+from google.appengine.api import taskqueue
+
+def add_next_airtime_task(request):
+    subscription_keys = Subscription.all(keys_only=True)
+    for key in subscription_keys:
+        t = taskqueue.Task(url=reverse("seriesly-subscription-set_next_airtime"), params={"key": str(key)})
+        t.add(queue_name="webhook-queue")
+    return HttpResponse("Done: ")
+    
+def set_next_airtime(request):
+    key = None
+    key = request.POST.get("key", None)
+    if key is None:
+        raise Http404
+    subscription = Subscription.get(key)
+    subscription.next_airtime = datetime.date(2010,1,1)
+    subscription.put()
+    return HttpResponse("Done: %s" % key)

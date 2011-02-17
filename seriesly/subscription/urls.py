@@ -15,4 +15,8 @@ urlpatterns = patterns('',
     (r'^webhook/$', 'subscription.views.post_to_callback', {}, "seriesly-subscription-webhook"),
     
     (r'^toggle/public-urls$', 'subscription.views.edit_public_id', {}, "seriesly-subscription-edit_public_id"),
+    
+    (r'^next-airtime-task/$', 'subscription.views.add_next_airtime_task', {}, "seriesly-subscription-add_next_airtime_task"),
+    (r'^next-airtime/$', 'subscription.views.set_next_airtime', {}, "seriesly-subscription-set_next_airtime"),
+
 )
