@@ -81,7 +81,7 @@ class Release(db.Model):
             urlparts = release_info.url.split("//",1)
             new_url = "%s//%s" % (urlparts[0], urllib.quote(urlparts[1]))
 
-            already = Release.all().filter("url =", new_url).get()
+            already = Release.all(keys_only=True).filter("url =", new_url).get()
             if already is not None:
                 continue
             show = Show.find(release_info.show_name)
