@@ -133,7 +133,7 @@ def edit_public_id(request):
     else:
         subscription.public_id = None
     subscription.put()
-    return HttpResponseRedirect(subscription.get_absolute_url() + "#subscription-public-urls")
+    return HttpResponseRedirect(subscription.get_absolute_url() + "#public-urls")
 
 def feed_rss(request, subkey):
     return feed(request, subkey, template="rss.xml")
