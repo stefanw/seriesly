@@ -343,8 +343,9 @@ def send_confirm_mail(request):
     return HttpResponse("Done: %s" % key)
 
 def email_task(request):
+    filter_date = datetime.datetime.now().date() + datetime.timedelta(days=1)
     subscription_keys = Subscription.all(keys_only=True).filter("activated_mail =", True)\
-            .filter("next_airtime <=", datetime.datetime.now().date())
+            .filter("next_airtime <=", filter_date)
     counter = 0
     for key in subscription_keys:
         Subscription.add_email_task(key)
@@ -403,7 +404,6 @@ def send_xmpp(request):
         subscription = Subscription.get(key)
         if subscription is None:
             raise Http404
-        needs_put = False
         subscription.check_beacon_status(datetime.datetime.now())
         context = subscription.get_message_context()
         if context is None:
