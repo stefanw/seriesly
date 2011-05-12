@@ -34,4 +34,5 @@ urlpatterns = patterns('',
     (r'^([A-Za-z0-9]{32})/feed/$', 'subscription.views.feed_atom', {}, 'seriesly-subscription-atom'),
     (r'^([A-Za-z0-9]{32})/calendar/$', 'subscription.views.calendar', {}, 'seriesly-subscription-calendar'),
     (r'^([A-Za-z0-9]{32})/json/$', 'subscription.views.json', {}, 'seriesly-subscription-json'),
+    (r'^([A-Za-z0-9]{32})/webhook-test/$', 'subscription.views.test_webhook', {}, 'seriesly-subscription-test_webhook'),
 )

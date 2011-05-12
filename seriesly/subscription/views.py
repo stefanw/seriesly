@@ -482,6 +482,14 @@ def webhook_task(request):
     return HttpResponse("Done: added %d" % counter)
 
 @is_post
+def test_webhook(request, subkey):
+    subscription = Subscription.all().filter("subkey =", subkey).get()
+    if subscription is None:
+        raise Http404
+    Subscription.add_webhook_task(subscription.key())
+    return HttpResponseRedirect(subscription.get_absolute_url() + "#webhook")
+    
+@is_post
 def post_to_callback(request):
     key = None
     try:
