@@ -484,10 +484,10 @@ def webhook_task(request):
 @is_post
 def test_webhook(request, subkey):
     subscription = Subscription.all().filter("subkey =", subkey).get()
-    if subscription is None:
+    if subscription is None or subscription.webhook is None:
         raise Http404
     Subscription.add_webhook_task(subscription.key())
-    return HttpResponseRedirect(subscription.get_absolute_url() + "#webhook")
+    return HttpResponse("Task for posting to %s added. Will run in some seconds. Be reminded of The Rules on http://www.seriesly.com/webhook-xml/" % subscription.webhook)
     
 @is_post
 def post_to_callback(request):
