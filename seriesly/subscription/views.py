@@ -507,7 +507,7 @@ def post_to_callback(request):
     except Exception, e:
         logging.error(e)
         return HttpResponse("Done (with errors): %s" % key)
-    logging.debug("Done sending Webhook Callback to %s" % subscription.xmpp)
+    logging.debug("Done sending Webhook Callback to %s" % subscription.webhook)
     return HttpResponse("Done: %s" % key)
     
 def get_extra_json_context(request):
