@@ -474,10 +474,10 @@ def edit_webhook(request):
 
 def webhook_task(request):
     """BadFilterError: invalid filter: Only one property per query may have inequality filters (<=, >=, <, >).."""
-    subscription_keys = Subscription.all().filter("webhook !=", None)
+    subscriptions = Subscription.all().filter("webhook !=", None)
     counter = 0
-    for key in subscription_keys:
-        Subscription.add_webhook_task(key)
+    for obj in subscriptions:
+        Subscription.add_webhook_task(obj.key())
         counter += 1
     return HttpResponse("Done: added %d" % counter)
 
