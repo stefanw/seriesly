@@ -1,12 +1,72 @@
-{% extends 'base.html' %}
-{% block title %}Page not found{% endblock %}
+<!DOCTYPE html> 
+<html dir="ltr" lang="en-US"> 
+    <head> 
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/> 
+        <title>404 Seriesly!</title> 
+        <link rel="stylesheet" href="/media/css/seriesly.min.css?v=7" type="text/css"/> 
+        <!--[if IE]><style type="text/css">
+          .clearfix {zoom: 1; display: block;}
+        </style>
+        <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]--> 
+       
+       <link rel="icon" type="image/png" href="/media/img/favicon.png" /> 
+       <meta name="robots" content="index, follow" /> 
+       <meta name="keywords" content="tv show series episode guide calendar rss atom xml email" /> 
+       <meta name="description" content="Seriesly provides you with torrent/streaming links for your favorite TV shows." /> 
+       <!-- // <script src="/media/js/jquery.js" type="text/javascript" charset="utf-8"></script> --> 
+       <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript" charset="utf-8"></script> 
+       
+       <script type="text/javascript"> 
+            try {
+                var _gaq = _gaq || [];
+                _gaq.push(['_setAccount', 'UA-12418396-1'],
+                  ['_trackPageview']);
+            } catch(err) {}
+            (function() {
+                var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+                ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+                var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+            })();
+        </script> 
+       
+    </head> 
+    
+    <body> 
+        <nav class="skipLink"> 
+            <ul> 
+                <li><a href="#content">to main content</a></li> 
+            </ul> 
+        </nav> 
+        <header role="banner" id="header"> 
+            <h1 class="logo"><a href="/">Seriesly</a></h1> 
+            <h2 class="strapline">Taking your addiction seriesly.</h2> 
+        </header> 
+        
+        <article id="content"> 
+            
+          <section class="step frame">
+              <div class="centered" style="margin:6em auto;">
+                  <h3>You followed an invalid link!</h3>
+                  <p class="full">This url is invalid or has expired. Please proceede <a href="/">this way...</a></p>
+                  <p class="full"><small>Note: a subscription might get deleted if not visited for more than a couple of months.</small></p>
+              </div>
+          </section>
 
-{% block body %}
-<section class="step frame">
-    <div class="centered" style="margin:6em auto;">
-        <h3>You followed an invalid link!</h3>
-        <p class="full">This url is invalid or has expired. Please proceede <a href="/">this way...</a></p>
-        <p class="full"><small>Note: a subscription might get deleted if not visited for more than a couple of months.</small></p>
-    </div>
-</section>
-{% endblock %}
+        </article> 
+        
+        <aside id="twitter"></aside> 
+        
+        <footer id="footer"> 
+            <ul> 
+                <li><a href="/about/">About</a></li> 
+                <li><a href="/faq/">FAQ</a></li> 
+                <li><a href="/about/#impressum">Impressum</a></li> 
+                <li><a href="/terms/">Terms</a></li> 
+                <li><a href="/privacy/">Privacy</a></li> 
+                <li><a href="http://stefanwehrmeyer.com">StefanWehrmeyer.com</a></li> 
+            </ul> 
+        </footer> 
+       
+    </body> 
+</html> 
