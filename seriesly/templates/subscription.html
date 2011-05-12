@@ -120,7 +120,7 @@
     {% if subscription.webhook %}
     <p>Your current callback URL is:</p>
     <p class="full centered"><strong>{{ subscription.webhook }}</strong></p>
-    <form action="{% url seriesly-subscription-test_webhook %}" method="post">
+    <form action="{% url seriesly-subscription-test_webhook subscription.subkey %}" method="post">
       <p><input type="submit" value="Post to Web Hook now"/></p>
     </form>
     <p>You can always switch to another URL or remove this one:</p>
