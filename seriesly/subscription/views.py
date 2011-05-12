@@ -492,6 +492,7 @@ def test_webhook(request, subkey):
 @is_post
 def post_to_callback(request):
     key = None
+    webhook = None
     try:
         key = request.POST.get("key", None)
         if key is None:
@@ -505,6 +506,7 @@ def post_to_callback(request):
         if context is None:
             return HttpResponse("Nothing to do.")
         body = render_to_string("subscription_webhook.xml", RequestContext(request, context))
+        webhook = subscription.webhook
         try:
             subscription.post_to_callback(body)
         except Exception, e:
@@ -515,7 +517,7 @@ def post_to_callback(request):
     except Exception, e:
         logging.error(e)
         return HttpResponse("Done (with errors): %s" % key)
-    logging.debug("Done sending Webhook Callback to %s" % subscription.webhook)
+    logging.debug("Done sending Webhook Callback to %s" % webhook)
     return HttpResponse("Done: %s" % key)
     
 def get_extra_json_context(request):
