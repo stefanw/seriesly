@@ -143,8 +143,7 @@ def feed_atom(request, subkey, template="atom.xml"):
     if subscription is None:
         raise Http404
     now = datetime.datetime.now()
-    cache_time = datetime.timedelta(hours=1)
-    if True or subscription.feed_stamp is None or (now - subscription.feed_stamp) > cache_time:
+    if subscription.needs_update(subscription.feed_stamp, now):
         subscription.check_beacon_status(now)
         # don't specify encoding for unicode strings!
         subscription.feed_cache = db.Text(_feed(request, subscription, template)) 
@@ -171,8 +170,7 @@ def feed_atom_public(request, public_id, template="atom_public.xml"):
     if subscription is None:
         raise Http404
     now = datetime.datetime.now()
-    cache_time = datetime.timedelta(hours=3)
-    if subscription.feed_public_stamp is None or (now - subscription.feed_public_stamp) > cache_time:
+    if subscription.needs_update(subscription.feed_public_stamp, now):
         subscription.check_beacon_status(now)
         # don't specify encoding for unicode strings!
         subscription.feed_public_cache = db.Text(_feed(request, subscription, template, public=True)) 
@@ -232,8 +230,7 @@ def calendar_public(request, public_id):
     
 def _calendar(request, subscription, public=False):
     now = datetime.datetime.now()
-    cache_time = datetime.timedelta(hours=1)
-    if subscription.calendar_stamp is None or (now - subscription.calendar_stamp) > cache_time:
+    if subscription.needs_update(subscription.calendar_stamp, now):
         subscription.check_beacon_status(now)
         subscription.calendar_stamp = now
         # specify encoding for byte strings!

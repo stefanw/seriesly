@@ -61,6 +61,23 @@ class Subscription(db.Model):
             return True
         self.last_visited = time
         return False
+
+    def needs_update(self, last_stamp, now):
+        if last_stamp is None:
+            return True
+        diff = (now - last_stamp)
+        max_distance = datetime.timedelta(hours=7)
+        busy_distance = datetime.timedelta(minutes=20)
+        normal_distance = datetime.timedelta(hours=3)
+        if diff > max_distance:
+            return True
+        if ((last_stamp.hour > 5 and last_stamp.hour <= 13) or\
+                (now.hour > 5 and now.hour <= 13)) and\
+                diff > busy_distance:
+            return True
+        elif diff >= normal_distance:
+            return True
+        return False
     
     def check_confirmation_key(self, confirmkey):
         shouldbe = hmac.new(settings.SECRET_KEY, self.subkey, digestmod=hashlib.sha1).hexdigest()
