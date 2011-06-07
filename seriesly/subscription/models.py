@@ -15,7 +15,6 @@ from django.conf import settings
 
 from helper.http import post as http_post
 
-from releases.models import Release
 from series.models import Show, Episode
 
 class Subscription(db.Model):
@@ -128,13 +127,7 @@ By the way: your Seriesly subscription URL is: %s
             elif v == "True":
                 self._cached_settings[k] = True
         return self._cached_settings
-    
-    @property
-    def want_releases(self):
-        return self.get_settings().get("stream", False) or \
-            self.get_settings().get("torrent", False) or \
-            self.get_settings().get("sharehoster", False)
-        
+
     @classmethod
     def generate_subkey(cls):
         return cls.generate_key("subkey")
@@ -230,10 +223,6 @@ By the way: your Seriesly subscription URL is: %s
             if episode.date > now:
                 self.next_airtime = episode.date.date()
                 break
-            if self.want_releases:
-                episode.releases = Release.filter(episode.releases, self.get_settings())
-            else:
-                episode.releases = []
             context["items"].append(episode)
         if not context["items"]:
             return None
@@ -250,24 +239,8 @@ By the way: your Seriesly subscription URL is: %s
         cal.add('method').value = 'PUBLISH'  # IE/Outlook needs this
         for episode in episodes:
             vevent = episode.create_event_details(cal)
-            releases = []
-            if self.want_releases:
-                releases = Release.filter(episode.releases, sub_settings)
-                if releases:
-                    vevent.add('url').value = releases[0].url
-                    vevent.add('description').value = u"\n".join(map(unicode, releases))
         return cal.serialize()
-    
-    def release_sources(self):
-        sub_settings = self.get_settings()
-        release_sources = [x.title() for x in \
-            ("torrent", "stream", "sharehoster") if sub_settings.get(x, False)]
-        if len(release_sources) > 0:
-            if len(release_sources) > 1:
-                return "%s and %s" % (", ".join(release_sources[:-1]), release_sources[-1])
-            return release_sources[0]
-        return ""
-        
+
 
 class SubscriptionItem(db.Model):
     subscription =  db.ReferenceProperty(Subscription)

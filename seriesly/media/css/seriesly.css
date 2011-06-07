@@ -422,32 +422,3 @@ small {
 .sprite-webhook_big{background-position:0 -1474px;width:96px;height:96px;}
 .sprite-xmpp{background-position:0 -1620px;width:40px;height:40px;}
 .sprite-xmpp_big{background-position:0 -1710px;width:96px;height:96px;}
-.amazon-text {
-    font-size:12px;
-}
-.amazon-sprite {
-    display:inline-block;
-    background:url("../img/amazon/amazon-sprite.png") no-repeat top left;
-    margin:0 10px 0 0;
-    opacity:0.9;
-    vertical-align:middle;
-}
-
-.amazon-sprite:hover {
-    opacity:1.0;
-}
-
-.amazon-com{ 
-    background-position: 0 -26px; width: 32px; height: 16px;
-} 
-.amazon-com:hover {
-    background-position: 0 0; width: 32px; height: 16px;
-}
-.amazon-de{ background-position: 0 -78px; width: 32px; height: 16px; } 
-.amazon-de:hover {
-    background-position: 0 -52px; width: 32px; height: 16px; 
-}
-.amazon-fr{ background-position: 0 -130px; width: 32px; height: 16px; } 
-.amazon-fr:hover { background-position: 0 -104px; width: 32px; height: 16px; }
-.amazon-uk{ background-position: 0 -182px; width: 32px; height: 16px; } 
-.amazon-uk:hover{ background-position: 0 -156px; width: 32px; height: 16px; } 

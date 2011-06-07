@@ -10,11 +10,7 @@
                     </div>
                     <span title="Season {{ item.season_number }}, Episode {{ item.number }}" class="summary">{{ item.show.name }}: &ldquo;{{ item.title }}&rdquo;</span>
                 </div>
-                {% if subscription.want_releases %}
-                <ul class="right description">{% for release in item.releases %}<li><a href="{% url seriesly-releases-redirect release.idnr %}" title="{{ release.url }}">{{ release.title }}</a></li>{% empty %}<li>No releases for this episode yet</li>{% endfor %}</ul>
-                {% endif %}
             </div>
-            {% if AMAZON %}{% include "amazon.html" %}{% endif %}
         </li>
         {% empty %}
         <li>No recent episodes</li>
@@ -33,10 +29,6 @@
                         <time class="dtend" datetime="{{ item.date_end|date:"Y-m-d\TH:i:s" }}"></time> <span class="location">on {{ item.show.network }}</span>, {{ item.season_number }}x{{ item.number }}
                     </div>
                     <span title="Season {{ item.season_number }}, Episode {{ item.number }}" class="summary">{{ item.show.name }}: &ldquo;{{ item.title }}&rdquo;</span>
-                    {% if subscription.want_releases %}
-                    <ul class="description margin-left">{% for release in item.releases %}<li><a href="{% url seriesly-releases-redirect release.idnr %}" title="{{ release.url }}">{{ release.title }}</a></li>{% empty %}<li>No releases found for this episode</li>{% endfor %}</ul>    
-                    {% endif %}
-                    {% if AMAZON %}{% include "amazon.html" %}{% endif %}
                 </li>
                 {% empty %}
                 <li>No episodes last week</li>
@@ -53,7 +45,6 @@
                         <time class="dtend" datetime="{{ item.date_end|date:"Y-m-d\TH:i:s" }}"></time> <span class="location">on {{ item.show.network }}</span>, {{ item.season_number }}x{{ item.number }}
                     </div>
                     <span title="Season {{ item.season_number }}, Episode {{ item.number }}" class="summary">{{ item.show.name }}: &ldquo;{{ item.title }}&rdquo;</span>
-                    {% if AMAZON %}{% include "amazon.html" %}{% endif %}
                 </li>
                 {% empty %}
                 <li>No upcoming episodes</li>

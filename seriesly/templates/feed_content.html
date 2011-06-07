@@ -1,9 +1,4 @@
 <p>"{{ item.title }}" aired on {{ item.date|date:"d.m.Y - H:i" }} (GMT).</p>
-{% if subscription.want_releases %}
-<ul>{% for release in item.releases %}<li><a href="{% url seriesly-releases-redirect release.idnr %}" title="{{ release.url }}">{{ release.title }}</a></li>{% empty %}<li>No releases found now. Check <a href="{{ DOMAIN_URL }}{% url seriesly-subscription-guide subscription.subkey %}">your episode guide</a>.</li>{% endfor %}
-{% if AMAZON %}<li>{% include "amazon_feed.html" %}</li>{% endif %}</ul>
-<br/>
-{% else %}<p>You are not receiving any releases.</p>{% if AMAZON %}{% include "amazon_feed.html" %}{% endif %}{% endif %}
 {% if item.next %}
 {% if item.next.date %}
 <p>The next episode "{{ item.next.title }}" ({{ item.next.season_number }}x{{ item.next.number }}) will air on {{ item.next.date|date:"d.m.Y - H:i" }} (GMT).</p>
@@ -17,7 +12,4 @@
 <p>There is no information about the next episode.</p>
 {% endif %}
 {% endif %}
-<p>Please subscribe to Seriesly on Flattr!<br/> 
-    <a href="http://flattr.com/thing/118976/Seriesly-Personal-TV-Show-Reminder" target="_blank">
-<img src="http://api.flattr.com/button/flattr-badge-large.png" alt="Flattr this" title="Flattr this" border="0" /></a></p>
 <hr/>

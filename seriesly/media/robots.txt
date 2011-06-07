@@ -6,4 +6,3 @@ Allow: /privacy/
 Allow: /public/*
 Allow: /*/calendar/$
 Disallow: /*
-Disallow: /releases/

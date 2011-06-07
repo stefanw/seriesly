@@ -55,10 +55,6 @@ handlers:
   script: main.py
   login: admin
 
-- url: /releases/update/
-  script: main.py
-  login: admin
-
 - url: /subscriptions/mail-task/
   script: main.py
   login: admin
@@ -68,10 +64,6 @@ handlers:
   login: admin
 
 - url: /subscriptions/webhook-task/
-  script: main.py
-  login: admin
-
-- url: /amazon/update/
   script: main.py
   login: admin
 

@@ -3,26 +3,6 @@ cron:
   url: /shows/update/
   schedule: every mon,wed,fri 05:05
 
-- description: daily updates of new releases (0)
-  url: /releases/update/
-  schedule: every day 06:45
-
-- description: daily updates of new releases (1)
-  url: /releases/update/
-  schedule: every day 07:30
-
-- description: daily updates of new releases (2)
-  url: /releases/update/
-  schedule: every day 10:00
-
-# - description: daily updates of new releases (3)
-#   url: /releases/update/
-#   schedule: every day 17:45
-# 
-# - description: daily updates of new releases (4)
-#   url: /releases/update/
-#   schedule: every day 23:45
-
 - description: daily mail sending
   url: /subscription/mail-task/
   schedule: every day 08:15
@@ -34,7 +14,3 @@ cron:
 - description: daily web hook task
   url: /subscription/webhook-task/
   schedule: every day 08:00
-
-# - description: weekly amazon product for show task
-#   url: /amazon/update
-#   schedule: every day 09:00

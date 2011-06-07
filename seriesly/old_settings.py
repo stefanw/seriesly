@@ -90,7 +90,6 @@ INSTALLED_APPS = (
 #    'django.contrib.sites',
     'appenginepatcher',
     'series',
-    'releases',
     'subscription',
     'helper',
 #    'mediautils',

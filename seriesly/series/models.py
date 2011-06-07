@@ -32,9 +32,6 @@ class Show(db.Model):
     tvrage_id =     db.IntegerProperty()
     added =         db.DateTimeProperty()
     
-    # amazon_title =  db.StringProperty(indexed=False)
-    # amazon_url =  db.StringProperty(indexed=False)
-    
     _memkey_all_shows_ordered = "all_shows_ordered"
     _memkey_shows_dict = "all_shows_dict"
     re_find_the = re.compile("^The (.*)$")
@@ -53,45 +50,6 @@ class Show(db.Model):
     @property 
     def slug(self):
         return self.normalized_name.replace(" ", "-")
-    
-    def amazon_redirect(self, tld="com"):
-        return settings.DOMAIN_URL + reverse('seriesly-amazon-redirect', args=(tld, self.slug))
-
-    @property
-    def amazon_redirect_com(self):
-        return self.amazon_redirect(tld="com")
-
-    @property
-    def amazon_redirect_de(self):
-        return self.amazon_redirect(tld="de")
-
-    @property
-    def amazon_redirect_uk(self):
-        return self.amazon_redirect(tld="co.uk")
-
-    @property
-    def amazon_redirect_fr(self):
-        return self.amazon_redirect(tld="fr")
-
-    def amazon_link(self, tld="com"):
-        return "http://www.amazon.%s/exec/obidos/external-search/?mode=dvd&keyword=%s&tag=%s" % \
-                (tld, urllib.quote_plus(self.name), settings.AMAZON_ASSOCIATE_TAG[tld])
-    
-    @property
-    def amazon(self):
-        return self.amazon_link()
-    
-    @property
-    def amazon_de(self):
-        return self.amazon_link(tld="de")
-    
-    @property
-    def amazon_uk(self):
-        return self.amazon_link(tld="co.uk")
-    
-    @property
-    def amazon_fr(self):
-        return self.amazon_link(tld="fr")
     
     def alternative_names(self):
         if self.alt_names is None:
@@ -197,20 +155,7 @@ class Show(db.Model):
                         added=datetime.datetime.now())
             show.put()
         show.update(show_info)
-        
-    def add_amazon_update_task(self):
-        t = taskqueue.Task(url=reverse('seriesly-amazon-product_for_show'), params={"key": str(self.key())})
-        t.add(queue_name="amazon-queue")
-        return t
 
-        
-    def update_amazon(self, url, title):
-        if self.amazon_url != url:
-            self.amazon_url = url
-            self.amazon_title = title
-            self.put()
-        
-    
     @property
     def is_new(self):
         if self.added is None:
@@ -359,12 +304,6 @@ class Episode(db.Model):
                     if prev is not None:
                         prev.next = ep
                     ep.show = show
-                    if not hasattr(ep, "releases"):
-                        if ep.date < now:
-                            ep.releases = list(ep.release_set)
-                        else:
-                            ep.releases = []
-                        changed = True
                     prev = ep
                 episode_list.extend(episode_dict[k])
         if changed:

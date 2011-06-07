@@ -14,10 +14,6 @@
 		{% for item in items %}
 		<item>
 			<title>{{ item.show.name }} - {{ item.title }} ({{ item.season_number }}x{{ item.number }})</title>
-			{% if item.torrenturl %}
-			<link>{{ item.torrenturl }}</link>
-			<enclosure url="{{ item.torrenturl }}" length="{{ item.torrentlen }}" type="application/x-bittorrent" />
-			{% endif %}
 			<pubDate>{{ item.pub_date|date:"r" }}</pubDate>
 			<description>{% include "feed_content.html" %}
 				<a href="{{ DOMAIN_URL }}{% url seriesly-subscription-show_public subscription.public_id %}">Your Subscription on Seriesly.com</a></content>

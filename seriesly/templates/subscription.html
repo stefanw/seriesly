@@ -45,11 +45,6 @@
 <section class="step" id="settings">
     <h3>Edit Your Shows<span class="right sprite-big sprite-edit_big"></span></h3>
     <p>You can <a href="{% url seriesly-subscription-edit subscription.subkey %}">edit your shows and subscription settings here</a>.</p>
-    <p>{% if subscription.want_releases %}
-    You are currently receiving {{ subscription.release_sources }} links.
-    {% else %}
-    You are currently <em>not</em> receiving any links to torrents, streaming or sharehoster sites.
-    {% endif %}</p>
     <p>You should not share your subscription links with anybody, because others will then be able to change your settings, too.<br/>You can <a href="#public-urls">share your subscription with special Public URLs though.</a></p>
     <p>If you have questions, consult the <a href="{% url seriesly-faq %}">FAQ</a>.</p>
 </section>

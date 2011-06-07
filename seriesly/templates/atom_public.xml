@@ -9,7 +9,6 @@
   <fa:max-expires>{{ subscription.expires }}</fa:max-expires>
   {% for item in items %}<entry>
       <title>{{ item.show.name }} - {{ item.title }} ({{ item.season_number }}x{{ item.number }})</title>
-      {% if item.torrenturl %}<link rel="enclosure" type="application/x-bittorrent"{% if item.torrentlen %} length="{{ item.torrentlen }}"{% endif %} href="{{ item.torrenturl }}"/>{% endif %}
       <updated>{{ item.pub_date|rfc3339 }}</updated>
       <content type="xhtml" xml:lang="en">
         <div xmlns="http://www.w3.org/1999/xhtml">

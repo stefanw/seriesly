@@ -119,8 +119,7 @@ class TVRage(object):
         genre_str = "|".join(genre_list)
         today = datetime.datetime.now(utc) - datetime.timedelta(hours=24)
         active = show_doc.getElementsByTagName("ended")[0].firstChild
-        if active is None or active.data == "0" or \
-                (last_show_date is not None and last_show_date >= today):
+        if active is None or active.data == "0":
             active = True
         else:
             active = False
