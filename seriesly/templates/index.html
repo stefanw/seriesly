@@ -47,7 +47,7 @@
         {% if subscription %}
         <legend class="step-label">2. Save your changes.</legend>
         {% else %}
-        <legend class="step-label">2. Get links to new episodes!</legend>
+        <legend class="step-label">2. Get notified when new episodes come out!</legend>
         {% endif %}
         <div class="centered">
             <p class="full centered">
@@ -56,7 +56,7 @@
             <button class="big-button" type="submit">Save!</button><br/>
             <a href="{% url seriesly-subscription-show subscription.subkey %}">Don't save, just go back</a>
             {% else %}
-            <button class="big-button" type="submit">Get it. It's free.</button>
+            <button class="big-button" type="submit">Get notified. It's free.</button>
             {% endif %}
             </p>
         </div>
