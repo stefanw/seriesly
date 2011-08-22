@@ -118,8 +118,11 @@ By the way: your Seriesly subscription URL is: %s
         lines = self.settings.split("\n")
         self._cached_settings = {}
         for l in lines:
-            k,v = l.split("\t", 1)
-            self._cached_settings[k] = v.strip()
+            try:
+                k, v = l.split("\t", 1)
+                self._cached_settings[k] = v.strip()
+            except ValueError:
+                pass
         # This is basically bad:
         for k,v in self._cached_settings.items():
             if v == "False":
