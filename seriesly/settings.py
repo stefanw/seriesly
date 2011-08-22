@@ -29,7 +29,7 @@ ROOT_URLCONF = 'urls'
 DEFAULT_FROM_EMAIL = 'mail@seriesly.com'
 SERVER_EMAIL = DEFAULT_FROM_EMAIL
     
-DOMAIN_URL = "http://www.seriesly.com"
+DOMAIN_URL = "http://serieslycom.appspot.com"
 SECURE_DOMAIN_URL = "https://serieslycom.appspot.com"
 
 # Make this unique, and don't share it with anybody.
