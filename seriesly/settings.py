@@ -13,6 +13,8 @@ on_production_server = have_appserver and \
 # automatically becomes /media/MEDIA_VERSION/
 DEBUG = False
 
+ADMIN_USERS = ()
+
 MEDIA_VERSION = 1
 if not on_production_server:
     DEBUG = True
@@ -73,3 +75,8 @@ TEMPLATE_DIRS = (
     # Don't forget to use absolute paths, not relative paths.
     ROOT_PATH + '/templates',
 )
+
+try:
+    from local_settings import *
+except ImportError:
+    pass

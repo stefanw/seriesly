@@ -47,10 +47,6 @@ handlers:
   script: main.py
   login: admin
 
-- url: /shows/import_show/
-  script: main.py
-  login: admin
-  
 - url: /shows/update/
   script: main.py
   login: admin
