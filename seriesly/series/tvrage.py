@@ -80,7 +80,7 @@ class TVRage(object):
                 season_nr = False
             episode_list = []
             for episode in season.getElementsByTagName("episode"):
-                if not season_nr:
+                if season_nr is False:
                     season_nr = int(episode.getElementsByTagName("season")[0].firstChild.data)
                 try:
                     title = unescape(episode.getElementsByTagName("title")[0].firstChild.data)
