@@ -115,7 +115,8 @@ class TVRage(object):
         genres = show_doc.getElementsByTagName("genre")
         genre_list = []
         for genre in genres:
-            genre_list.append(genre.firstChild.data)
+            if genre and genre.firstChild and genre.firstChild.data:
+                genre_list.append(genre.firstChild.data)
         genre_str = "|".join(genre_list)
         today = datetime.datetime.now(utc) - datetime.timedelta(hours=24)
         active = show_doc.getElementsByTagName("ended")[0].firstChild
