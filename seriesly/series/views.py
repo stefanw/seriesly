@@ -1,12 +1,14 @@
 import logging
 
-from django.shortcuts import get_object_or_404, render_to_response
+from google.appengine.api import users
+
 from django.http import HttpResponse,HttpResponseRedirect,Http404
-from django.template import RequestContext
+from django.core.urlresolvers import reverse
+from django.conf import settings
 
 from helper import is_get, is_post
 from series.models import Show, Episode
-from subscription.forms import SubscriptionForm
+
 
 def import_shows(request):
     from series_list import series_list
@@ -18,20 +20,30 @@ def import_shows(request):
     return HttpResponse("Done")
     
 def import_show(request):
-    if request.method == "GET":
-        return HttpResponse("""<form action="." method="post">
-            <input type="text" name="show"/><input type="submit"/></form>""")
-    else:
-        name = request.POST["show"]
-        if name.startswith("!"):
-            show_id = int(name[1:])
-            Show.update_or_create(None, show_id)
+    this_url = reverse("seriesly-shows-import_show")
+    user = users.get_current_user()
+    nick = "Anonymous"
+    if user:
+        nick = user.nickname()
+    if user and user.email() in settings.ADMIN_USERS:
+        if request.method == "GET":
+            return HttpResponse("""Hi %s,<br/>
+                <a href="http://services.tvrage.com/feeds/search.php?show=">Search for shows on TVRage</a><br/>
+                Enter TV Rage ID: <form action="." method="post">
+                <input type="text" name="show"/><input type="submit"/></form><a href="%s">Logout</a>""" % (nick, users.create_logout_url(this_url)))
         else:
-            Show.update_or_create(name)
-        Show.clear_cache()
-        Episode.clear_cache()
-        return HttpResponse("Done")
-    
+            name = request.POST["show"]
+            if name.startswith("!"):
+                Show.update_or_create(name[1:])
+            else:
+                show_id = int(name)
+                Show.update_or_create(None, show_id)
+            Show.clear_cache()
+            Episode.clear_cache()
+            return HttpResponseRedirect(this_url+"?status=Done")
+    else:
+        return HttpResponse("""Hi %s,<a href=\"%s\">Sign in</a>.""" % (nick, users.create_login_url(this_url)))
+
 def update(request):
     shows = Show.get_all_ordered()
     for show in shows:
@@ -66,7 +78,7 @@ def clear_cache(request):
     Show.clear_cache()
     Episode.clear_cache()
     return HttpResponse("Done.")
-    
+
 @is_get
 def redirect_to_amazon(request, show_id):
     show = Show.get_by_id(int(show_id))

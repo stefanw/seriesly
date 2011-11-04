@@ -3,8 +3,7 @@
 {% block body %}
 {% if not subscription %}
 <section class="step centered">
-    <!-- <p class="centered">Seriesly provides you with links to torrents and streams of new episodes of your selected TV shows via:</p> -->
-        <p class="centered">Seriesly reminds you of new episodes of your selected TV shows via:</p>
+    <p class="centered">Seriesly reminds you of new episodes of your selected TV shows via:</p>
 
     <ul class="subscriptions">
         <li><div class="sprite-mail sprite"></div>Email</li>
@@ -45,25 +44,10 @@
         </div>
     </fieldset>
     <fieldset class="step">
-        <span class="smaller"><a href="#advanced" class="toggle">Show advanced settings</a></span>
-        <div id="advanced" class="hide-me">
-            <div class="multi-checkbox">
-                <p>You want: {{ form.torrent }}{{ form.torrent.label_tag}}
-                    {{ form.stream }}{{ form.stream.label_tag}}
-                    {{ form.sharehoster }}{{ form.sharehoster.label_tag}}
-                </p>
-            </div>
-            <p>{{ form.quality.label_tag }}: 
-                {{ form.quality }}
-                <small>When not available another quality will be chosen (beta)</small>
-            </p>
-            </div>
-    </fieldset>
-    <fieldset class="step">
         {% if subscription %}
         <legend class="step-label">2. Save your changes.</legend>
         {% else %}
-        <legend class="step-label">2. Get links to new episodes!</legend>
+        <legend class="step-label">2. Get notified when new episodes come out!</legend>
         {% endif %}
         <div class="centered">
             <p class="full centered">
@@ -72,7 +56,7 @@
             <button class="big-button" type="submit">Save!</button><br/>
             <a href="{% url seriesly-subscription-show subscription.subkey %}">Don't save, just go back</a>
             {% else %}
-            <button class="big-button" type="submit">Get it. It's free.</button>
+            <button class="big-button" type="submit">Get notified. It's free.</button>
             {% endif %}
             </p>
         </div>

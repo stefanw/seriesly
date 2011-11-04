@@ -80,7 +80,7 @@ class TVRage(object):
                 season_nr = False
             episode_list = []
             for episode in season.getElementsByTagName("episode"):
-                if not season_nr:
+                if season_nr is False:
                     season_nr = int(episode.getElementsByTagName("season")[0].firstChild.data)
                 try:
                     title = unescape(episode.getElementsByTagName("title")[0].firstChild.data)
@@ -115,12 +115,12 @@ class TVRage(object):
         genres = show_doc.getElementsByTagName("genre")
         genre_list = []
         for genre in genres:
-            genre_list.append(genre.firstChild.data)
+            if genre and genre.firstChild and genre.firstChild.data:
+                genre_list.append(genre.firstChild.data)
         genre_str = "|".join(genre_list)
         today = datetime.datetime.now(utc) - datetime.timedelta(hours=24)
         active = show_doc.getElementsByTagName("ended")[0].firstChild
-        if active is None or active.data == "0" or \
-                (last_show_date is not None and last_show_date >= today):
+        if active is None or active.data == "0":
             active = True
         else:
             active = False

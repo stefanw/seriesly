@@ -1,5 +1,5 @@
 ﻿application: serieslycom
-version: 2-5
+version: 3-0
 runtime: python
 api_version: 1
 
@@ -47,15 +47,7 @@ handlers:
   script: main.py
   login: admin
 
-- url: /shows/import_show/
-  script: main.py
-  login: admin
-  
 - url: /shows/update/
-  script: main.py
-  login: admin
-
-- url: /releases/update/
   script: main.py
   login: admin
 
@@ -68,10 +60,6 @@ handlers:
   login: admin
 
 - url: /subscriptions/webhook-task/
-  script: main.py
-  login: admin
-
-- url: /amazon/update/
   script: main.py
   login: admin
 

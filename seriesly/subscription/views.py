@@ -17,7 +17,6 @@ from series.models import Show, Episode
 from subscription.forms import SubscriptionForm, MailSubscriptionForm, \
     XMPPSubscriptionForm, WebHookSubscriptionForm, SubscriptionKeyForm
 from subscription.models import Subscription
-from releases.models import Release
 
 WORD = re.compile("^\w+$")
 
@@ -42,11 +41,7 @@ def subscribe(request):
         editing = True
         subkey = form.cleaned_data["subkey"]
         subscription = form._subscription
-    sub_settings = {"quality": form.cleaned_data["quality"],
-                "torrent": str(form.cleaned_data["torrent"]),
-                "stream" : str(form.cleaned_data["stream"]),
-                "sharehoster" : str(form.cleaned_data["sharehoster"])
-            }
+    sub_settings = {}
     subscription.set_settings(sub_settings)
     
     try:
@@ -111,11 +106,7 @@ def edit(request, subkey):
         raise Http404
     if request.method == "GET":
         sub_settings = subscription.get_settings()
-        sub_dict = {"email": subscription.email, 
-                    "quality": sub_settings["quality"],
-                    "torrent": sub_settings.get("torrent", False),
-                    "stream": sub_settings.get("stream", False),
-                    "sharehoster": sub_settings.get("sharehoster", False),
+        sub_dict = {"email": subscription.email,
                     "shows": map(lambda x: x.idnr, subscription.get_shows()),
                     "subkey": subkey}
         form = SubscriptionForm(sub_dict)
@@ -197,22 +188,9 @@ def _feed(request, subscription, template, public=False):
     episodes = Episode.get_for_shows(the_shows, before=now, order="-date")
     items = []
     for episode in episodes:
-        releases = []
-        if subscription.want_releases:
-            releases = Release.filter(episode.releases, sub_settings)
-        if not subscription.want_releases or releases or now > episode.date + wait_time:
-            torrenturl = False
-            torrentlen = 0
+        if now > episode.date + wait_time:
             pub_date = episode.date_local
-            if len(releases) > 0:
-                # Some smart ranking needed here
-                torrenturl = releases[0].url
-                torrentlen = releases[0].torrentlen
-                pub_date = releases[0].pub_date
-            episode.torrenturl = torrenturl
-            episode.torrentlen = torrentlen
             episode.pub_date = pub_date
-            episode.releases = releases
             items.append(episode)
     return render_to_string(template, RequestContext(request, {"subscription":subscription, "items": items}))
     
@@ -268,12 +246,6 @@ def _guide(request, subscription, template="guide.html", public=False, extra_con
     last_week = []
     upcoming = []
     for episode in episodes:
-        if subscription.want_releases:
-            if episode.date < now:
-                releases = Release.filter(episode.releases, sub_settings)
-            else:
-                releases = []
-            episode.releases = releases
         if episode.date < twentyfour_hours_ago:
             last_week.append(episode)
         elif episode.date <= now:
@@ -487,7 +459,7 @@ def test_webhook(request, subkey):
     if subscription is None or subscription.webhook is None:
         raise Http404
     Subscription.add_webhook_task(subscription.key())
-    return HttpResponse("Task for posting to %s added. Will run in some seconds. Be reminded of The Rules on http://www.seriesly.com/webhook-xml/" % subscription.webhook)
+    return HttpResponse("Task for posting to %s added. Will run in some seconds. Be reminded of The Rules on http://www.seriesly.com/webhook-xml/#the-rules" % subscription.webhook)
     
 @is_post
 def post_to_callback(request):

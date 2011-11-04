@@ -13,6 +13,8 @@ on_production_server = have_appserver and \
 # automatically becomes /media/MEDIA_VERSION/
 DEBUG = False
 
+ADMIN_USERS = ()
+
 MEDIA_VERSION = 1
 if not on_production_server:
     DEBUG = True
@@ -29,21 +31,11 @@ ROOT_URLCONF = 'urls'
 DEFAULT_FROM_EMAIL = 'mail@seriesly.com'
 SERVER_EMAIL = DEFAULT_FROM_EMAIL
     
-DOMAIN_URL = "http://www.seriesly.com"
+DOMAIN_URL = "https://serieslycom.appspot.com"
 SECURE_DOMAIN_URL = "https://serieslycom.appspot.com"
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = '02ca0jaadlbjk;.93nfnvopm 40mu4w0daadlclm fniemcoia984<mHMImlkFUHA=")JRFP"Om'
-
-AMAZON_ACCESS_KEY = "AKIAJA6AP4VDXC6QW7IA"
-AMAZON_SECRET_ACCESS_KEY = "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"
-AMAZON_ASSOCIATE_TAG = {
-    "com": "seriesly0a-20",
-    "de": "seriesly-21",
-    "co.uk": "seriesly01-21",
-    "fr": "seriesly0a-21"
-}
-AMAZON_ENABLED = False
 
 TEMPLATE_CONTEXT_PROCESSORS = (
 #    'django.core.context_processors.auth',
@@ -71,11 +63,9 @@ INSTALLED_APPS = (
 #    'django.contrib.redirects',
 #    'django.contrib.sites',
     'series',
-    'releases',
     'subscription',
     'helper',
     'statistics',
-    'amazon',
 #    'mediautils',
 )
 
@@ -85,3 +75,8 @@ TEMPLATE_DIRS = (
     # Don't forget to use absolute paths, not relative paths.
     ROOT_PATH + '/templates',
 )
+
+try:
+    from local_settings import *
+except ImportError:
+    pass
