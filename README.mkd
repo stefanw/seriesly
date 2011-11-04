@@ -6,6 +6,38 @@ Seriesly is an easy TV schedule for your favorite shows. It can be run free of c
 Setup
 -----
 
+1. Download the code or fork the repository.
+2. Download the [Google App Engine SDK for. Python](https://code.google.com/appengine/downloads.html#Google_App_Engine_SDK_for_Python).
+3. Create a [Google App Engine application](https://appengine.google.com/) (you need a Google account).
+4. Copy the `local_setting.py.example` to `local_settings.py`.
+5. Change the values in `local_settings.py`.
+6. Change `application` name in `app.yaml` (and possibly version number etc.) to your app name from step 3.
+7. Test your app locally.
+8. Deploy the app to Google App Engine
+
+Getting Shows In
+----------------
+
+This should be much simpler and nicer. Anyways.
+
+1. Go to `http://services.tvrage.com/feeds/search.php?show=YOUR SHOW NAME`
+2. Find the right show in the XML and note it's `showid`
+3. Go to `http://yourappname.appspot.com/shows/import_show/` and sign in with your administrator account that is in the `local_settings.py` (see above step 5)
+4. Enter previously noted `showid` into interface.
+5. The show has been added and should be available after cache expiry.
+
+Damn. This should be easier.
+
+
+Contribution
+------------
+
+Please contribute. I probably don't have time to improve this further.
+
+This is free software and you are encouraged to implement additional features like linking to streaming sites etc.
+
+Please be aware that Seriesly is released unter the GNU AGPL 3.0 (see LICENSE.txt). If you deploy a version of Seriesly, you must make the code available to your users.
+
 
 Attribution
 -----------
