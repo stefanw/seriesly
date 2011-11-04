@@ -1,0 +1,11 @@
+# The default from email must be either an <appname>.appspotmail.com
+# or administrator account
+# see https://code.google.com/appengine/docs/python/mail/sendingmail.html for details
+DEFAULT_FROM_EMAIL = 'mail@example.com'
+
+# Enter your app name here:
+DOMAIN_URL = "https://<appname>.appspot.com"
+SECURE_DOMAIN_URL = "https://<appname>.appspot.com"
+
+# enter your google account address here to access a simple admin interface
+ADMIN_USERS = ("yourname@example.com", "anothername@example.com",)
