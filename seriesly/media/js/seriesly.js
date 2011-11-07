@@ -201,7 +201,7 @@ $(document).ready(function(){
         shows = shows.replace(/#?shows=/,'');
         shows = shows.split(',');
         $('#allshows-list input').each(function(){
-            if($.inArray($(this).val(), shows) != -1){
+            if($.inArray($(this).attr("data-tvrage"), shows) != -1){
                 add_li($(this).parent().parent());
             }
         });
