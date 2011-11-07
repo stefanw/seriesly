@@ -89,7 +89,8 @@ def show(request, subkey, extra_context=None):
     else:
         subscription.public_id_form = SubscriptionKeyForm({"subkey": subkey})
     subscription.sub_settings = subscription.get_settings()
-    response = render_to_response("subscription.html", RequestContext(request, {"subscription":subscription}))
+    response = render_to_response("subscription.html", RequestContext(request,
+            {"shows": subscription.get_shows(), "subscription":subscription}))
     response.set_cookie("subkey", subkey, max_age=31536000)
     return response
     
