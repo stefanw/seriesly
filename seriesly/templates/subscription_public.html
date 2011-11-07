@@ -28,7 +28,7 @@
         <li>There are no shows.</li>
     {% endfor %}
     </ul>
-    <p><a href="{% url seriesly-index %}#shows={% for show in shows %}{{ show.idnr }}{% if not forloop.last %},{% endif %}{% endfor %}">Create your own Seriesly subscription based on this list!</p>
+    <p><a href="{% url seriesly-index %}#shows={% for show in shows %}{{ show.tvrage_id }}{% if not forloop.last %},{% endif %}{% endfor %}">Create your own Seriesly subscription based on this list!</p>
 </section>
 {% endblock %}
 {% block extra_js %}{% endblock  %}
