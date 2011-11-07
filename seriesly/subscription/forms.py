@@ -11,8 +11,8 @@ from subscription.models import Subscription
 
 def get_choices():
     shows = Show.get_all_ordered()
-    return [(str(show.idnr), "%s%s" % (show.ordered_name, int(show.is_new))) for show in shows]
-    
+    return [(str(show.idnr), "%s%s" % (show.ordered_name, int(show.is_new)), show.tvrage_id) for show in shows]
+
 class HTML5EmailInput(forms.TextInput):
     input_type = 'email'
 
@@ -52,7 +52,7 @@ class SerieslyCheckboxSelectMultiple(forms.CheckboxSelectMultiple):
         # Normalize to strings
         output = []
         str_values = set([force_unicode(v) for v in value])
-        for i, (option_value, option_label) in enumerate(chain(self.choices, choices)):
+        for i, (option_value, option_label, tvrage_id) in enumerate(chain(self.choices, choices)):
             # new value is stored as last character on the label, bitter
             option_new = bool(int(option_label[-1]))
             option_label = option_label[:-1]
@@ -69,7 +69,7 @@ class SerieslyCheckboxSelectMultiple(forms.CheckboxSelectMultiple):
                 label_new = ''
             cb = forms.CheckboxInput(final_attrs, check_test=lambda value: value in str_values)
             option_value = force_unicode(option_value)
-            rendered_cb = cb.render(name, option_value)
+            rendered_cb = cb.render(name, option_value, attrs={"data-tvrage": str(tvrage_id)})
             option_label = conditional_escape(force_unicode(option_label))
             output.append(u'<li%s><label%s>%s %s</label></li>' % (label_new, label_for,
                 rendered_cb, option_label))
