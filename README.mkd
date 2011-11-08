@@ -7,13 +7,13 @@ Setup
 -----
 
 1. Download the code or fork the repository.
-2. Download the [Google App Engine SDK for. Python](https://code.google.com/appengine/downloads.html#Google_App_Engine_SDK_for_Python).
+2. Download the [Google App Engine SDK for Python](https://code.google.com/appengine/downloads.html#Google_App_Engine_SDK_for_Python).
 3. Create a [Google App Engine application](https://appengine.google.com/) (you need a Google account).
-4. Copy the `local_setting.py.example` to `local_settings.py`.
+4. Go to the seriesly folder and copy the `local_settings.py.example` to `local_settings.py`.
 5. Change the values in `local_settings.py`.
 6. Change `application` name in `app.yaml` (and possibly version number etc.) to your app name from step 3.
-7. Test your app locally.
-8. Deploy the app to Google App Engine
+7. Test your app locally (follow the [App Engine Getting Started Guide](https://code.google.com/appengine/docs/python/gettingstarted/)).
+8. Deploy the app to Google App Engine (see [Uploading your Application](https://code.google.com/appengine/docs/python/gettingstarted/uploading.html)).
 
 Getting Shows In
 ----------------
