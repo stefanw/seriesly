@@ -46,7 +46,7 @@
         <li>Any error will result in your callback being deleted. You will not receive any more callbacks unless you enter a new URL. It is your responsibility to keep your callback URL working according to these rules.</li>
         <li>Seriesly might drop your callback accidentally because another kind of error occured. Bad luck.</li>
     </ul>
-    <p>These rules are largely taken from <a href="http://code.google.com/appengine/docs/python/urlfetch/overview.html">the URL Fetch API from Google App Engine</a>. Others were made up to prevent POSTing to URLs that don't expect Seriesly notifications. This is how it works for now, but if you know of a more clever way, send a mail to mail [at] seriesly.com.</p>
+    <p>These rules are largely taken from <a href="http://code.google.com/appengine/docs/python/urlfetch/overview.html">the URL Fetch API from Google App Engine</a>. Others were made up to prevent POSTing to URLs that don't expect Seriesly notifications. This is how it works for now, but if you know of a more clever way, send a mail to <a href="{{ DEFAULT_FROM_EMAIL }}">{{ DEFAULT_FROM_EMAIL }}</a>.</p>
 </section>
 {% endblock %}
 {% block extra_js %}{% endblock  %}

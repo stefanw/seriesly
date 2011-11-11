@@ -7,7 +7,7 @@
     <h3>Frequently Asked Questions</h3>
     <ul class="faq-list normal-list">
         <li><p><a href="#q-6" class="toggle">My show is missing!</a></p>
-        <div id="q-6" class="hide-me">Write a quick email with the shows you need to {{ DEFAULT_FROM_EMAIL }}.</div></li>
+        <div id="q-6" class="hide-me">Write a quick email with the shows you need to <a href="{{ DEFAULT_FROM_EMAIL }}">{{ DEFAULT_FROM_EMAIL }}</a>.</div></li>
         <li><p><a class="toggle" href="#q-3">I lost my subscription link! What should I do?</a></p>
         <div id="q-3" class="hide-me">If you are still getting notifications somewhere you have not lost your subscription URL. A link to your subscription page is available in email and feed notifications. For calendars you can find the calendar URL in your calendar application and remove the "calendar/" part at the end and have your subscription URL. If you have XMPP Chat notifications, talk to the Seriesly Bot and he will tell you your subscription URL.<br/>If you are not getting any notifications anywhere you can still look in your browser's history.</div></li>
         <li><p><a class="toggle" href="#q-7">I want to use your site securely via SSL, but how?</a></p>
@@ -23,7 +23,7 @@
         <li><p><a href="#q-5" class="toggle">I want to do the Web Hook thing, but how?</a></p>
         <div id="q-5" class="hide-me">Please refer to the <a href="{% url seriesly-webhook-xml %}">Seriesly Web Hook details page</a>.</div></li>
         <li><p><a href="#q-9999" class="toggle">My question is not listed, what do I do?</a></p>
-        <div id="q-9999" class="hide-me">Write an email with your question to {{ DEFAULT_FROM_EMAIL }}.</div></li>
+        <div id="q-9999" class="hide-me">Write an email with your question to <a href="{{ DEFAULT_FROM_EMAIL }}">{{ DEFAULT_FROM_EMAIL }}</a>.</div></li>
     </ul>
 </section>
 {% endblock %}
