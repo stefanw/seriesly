@@ -11,5 +11,5 @@ The following episodes aired in the last 24 hours:
 {% endfor %}
 
 -- 
-www.seriesly.com
+{{ DOMAIN_URL }}
 Your Subscription: {{ DOMAIN_URL }}{% url seriesly-subscription-show subscription.subkey %}{% endautoescape %}
