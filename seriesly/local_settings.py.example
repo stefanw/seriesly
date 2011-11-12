@@ -3,6 +3,9 @@
 # see https://code.google.com/appengine/docs/python/mail/sendingmail.html for details
 DEFAULT_FROM_EMAIL = 'mail@example.com'
 
+# Enter your name here (displayed on about page):
+ADMIN_NAME = "John Doe"
+
 # Enter your app name here:
 DOMAIN_URL = "https://<appname>.appspot.com"
 SECURE_DOMAIN_URL = "https://<appname>.appspot.com"
