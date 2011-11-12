@@ -30,7 +30,9 @@ ROOT_URLCONF = 'urls'
 
 DEFAULT_FROM_EMAIL = 'mail@seriesly.com'
 SERVER_EMAIL = DEFAULT_FROM_EMAIL
-    
+
+ADMIN_NAME = "Stefan Wehrmeyer"
+
 DOMAIN_URL = "https://serieslycom.appspot.com"
 SECURE_DOMAIN_URL = "https://serieslycom.appspot.com"
 
