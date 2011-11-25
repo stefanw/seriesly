@@ -1,5 +1,5 @@
-﻿application: serieslycom
-version: 3-0
+﻿application: yourappid
+version: 1-0
 runtime: python
 api_version: 1
 
