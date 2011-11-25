@@ -4,7 +4,7 @@ os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
 
 from google.appengine.dist import use_library
 
-use_library('django', '1.1')
+use_library('django', '1.2')
 # Google App Engine imports.
 from google.appengine.ext.webapp.util import run_wsgi_app
 
