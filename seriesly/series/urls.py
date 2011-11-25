@@ -4,8 +4,8 @@ from django.conf.urls.defaults import *
 # from django.contrib import admin
 
 urlpatterns = patterns('',
-    (r'^import_shows/$', 'series.views.import_shows', {}, "seriesly-shows-import_shows"),
-    (r'^import_show/$', 'series.views.import_show', {}, "seriesly-shows-import_show"),
+    (r'^import/$', 'series.views.import_show_task', {}, "seriesly-shows-import"),
+    (r'^import_show/$', 'series.views.import_shows', {}, "seriesly-shows-import_show"),
     (r'^update/$', 'series.views.update', {}, "seriesly-shows-update"),
     (r'^update/show/$', 'series.views.update_show', {}, "seriesly-shows-update_show"),
     (r'^clear/cache/$', 'series.views.clear_cache', {}, "seriesly-shows-clear_cache"),

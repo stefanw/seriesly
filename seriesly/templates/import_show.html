@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Import Shows - Seriesly!{% endblock %}
+
+{% block body %}
+<section class="step">
+  <h3>Importing Shows</h3>
+  {% if logged_in %}
+  {% if status %}
+  <p>{{ status }}</p>
+  {% endif %}
+  <p>Logged in as {{ nick }}. <a href="{{ logout_url }}">Logout</a></p>
+  <p><a href="http://services.tvrage.com/feeds/search.php?show=">Search for shows on TVRage</a>
+    and enter TV Rage IDs comma separated below:</p>
+  <form action="." method="post">
+      <textarea cols="50" rows="5" name="show"></textarea><br/>
+      <input type="submit" value="Import these shows!"/>
+  </form>
+  {% else %}
+    {% if nick %}
+      <p>{{ nick }} is not an administrator account!<br/>
+        <a href="{{ logout_url }}">Logout</a></p>
+    {% else %}
+      <p>Please login with an administrator account!<br/>
+        <a href="{{ login_url }}">Login</a></p>
+    {% endif %}
+  {% endif %}
+</section>
+{% endblock body %}
