@@ -3,6 +3,7 @@ from xml.dom.minidom import parseString
 import logging
 import datetime
 import urllib
+import calendar
 
 from pytz import utc
 
@@ -12,6 +13,8 @@ from helper.string_utils import normalize
 from helper.dateutils import get_timezone_for_gmt_offset
 
 
+monthsToNumber = dict((v,k) for k,v in enumerate(calendar.month_abbr))
+
 class TVDataClass(object):
     def __init__(self, **kwargs):
         for k,v in kwargs.items():
@@ -19,17 +22,20 @@ class TVDataClass(object):
 
 class TVShowInfo(TVDataClass):
     pass
-        
+
+
 class TVSeasonInfo(TVDataClass):
     pass
-        
+
+
 class TVEpisodeInfo(TVDataClass):
     pass
+
 
 class TVRage(object):
     show_info_url = "http://services.tvrage.com/feeds/full_show_info.php?sid=%d"
     search_info_url = "http://services.tvrage.com/feeds/search.php?%s"
-    
+
     def get_info(self, show_id):
         """<Show>
         <name>Scrubs</name>
@@ -111,7 +117,7 @@ class TVRage(object):
         name = unescape(show_doc.getElementsByTagName("name")[0].firstChild.data)
         country = show_doc.getElementsByTagName("origin_country")[0].firstChild.data
         network = unescape(show_doc.getElementsByTagName("network")[0].firstChild.data)
-        
+
         genres = show_doc.getElementsByTagName("genre")
         genre_list = []
         for genre in genres:
@@ -122,6 +128,21 @@ class TVRage(object):
         active = show_doc.getElementsByTagName("ended")[0].firstChild
         if active is None or active.data == "0":
             active = True
+        elif "/" in active.data:
+            parts = active.data.split('/')
+            if len(parts) == 3:
+                try:
+                    month = monthsToNumber[parts[0]]
+                    day = int(parts[1])
+                    year = int(parts[2])
+                    if datetime.datetime.now() > datetime.datetime(year, month, day):
+                        active = False
+                    else:
+                        active = True
+                except (ValueError, KeyError):
+                    active = True
+            else:
+                active = True
         else:
             active = False
         logging.debug("Return TVShowInfo...")
@@ -134,7 +155,7 @@ class TVRage(object):
                               timezone=timezone,
                               active=active,
                               genres=genre_str)
-        
+
     def get_info_by_name(self, show_name):
         """<Results>
         <show>
@@ -179,5 +200,8 @@ def main():
     date = tz.localize(date)
     today = datetime.datetime.now(utc)
     print date >= today
+    tvrage = TVRage()
+    print tvrage.get_info(15614).active
+
 if __name__ == '__main__':
     main()
