@@ -12,15 +12,15 @@ except ImportError:
         print response.status, response.reason
         data = response.read()
         return data
-    
-
 
 def get(url):
     response = urlfetch_fetch(url, deadline=10)
-    if response.status_code != 200:
-        raise IOError
-    return response.content
-    
+    if hasattr(response, 'status_code'):
+        if response.status_code != 200:
+            raise IOError
+        return response.content
+    else:
+        return response
+
 def post(url, content):
     return urlfetch_fetch(url, payload=content, method="POST", follow_redirects=True)
-    
