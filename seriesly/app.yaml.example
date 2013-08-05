@@ -1,7 +1,16 @@
 ﻿application: yourappid
 version: 3-0
-runtime: python
+runtime: python27
+threadsafe: true
 api_version: 1
+
+libraries:
+- name: django
+  version: 1.2
+
+builtins:
+- remote_api: on
+- appstats: on
 
 default_expiration: '3650d'
 
@@ -37,39 +46,39 @@ handlers:
   static_dir: media
   
 - url: /seriesly-remote_api
-  script: $PYTHON_LIB/google/appengine/ext/remote_api/handler.py
+  script: google.appengine.ext.remote_api.handler.app
   login: admin
-  
+
 - url: /stats.*
-  script: $PYTHON_LIB/google/appengine/ext/appstats/ui.py
-  
+  script: google.appengine.ext.appstats.ui.app
+
 - url: /shows/clear/cache/
-  script: main.py
+  script: main.app
   login: admin
 
 - url: /shows/import/
-  script: main.py
+  script: main.app
   login: admin
 
 - url: /shows/update/
-  script: main.py
+  script: main.app
   login: admin
 
 - url: /subscriptions/mail-task/
-  script: main.py
+  script: main.app
   login: admin
 
 - url: /subscriptions/xmpp-task/
-  script: main.py
+  script: main.app
   login: admin
 
 - url: /subscriptions/webhook-task/
-  script: main.py
+  script: main.app
   login: admin
 
 - url: /statistics/.*
-  script: main.py
+  script: main.app
   login: admin
 
 - url: /.*
-  script: main.py
+  script: main.app

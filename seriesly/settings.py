@@ -53,6 +53,8 @@ MIDDLEWARE_CLASSES = (
 #    'django.contrib.sessions.middleware.SessionMiddleware',
 #    'django.contrib.auth.middleware.AuthenticationMiddleware',
 #    'django.middleware.doc.XViewMiddleware',
+    'google.appengine.ext.appstats.recording.AppStatsDjangoMiddleware',
+    'google.appengine.ext.ndb.django_middleware.NdbDjangoMiddleware',
 )
 
 INSTALLED_APPS = (
