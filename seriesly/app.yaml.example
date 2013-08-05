@@ -1,7 +1,7 @@
 ﻿application: yourappid
 version: 3-0
 runtime: python27
-threadsafe: false
+threadsafe: true
 api_version: 1
 
 libraries:
