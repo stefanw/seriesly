@@ -7,6 +7,7 @@ DEFAULT_FROM_EMAIL = 'mail@example.com'
 ADMIN_NAME = "John Doe"
 
 # Enter your app name here:
+APP_NAME = "Seriesly"
 DOMAIN_URL = "https://<appname>.appspot.com"
 SECURE_DOMAIN_URL = "https://<appname>.appspot.com"
 

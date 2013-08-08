@@ -6,11 +6,11 @@
 		<link>{{ DOMAIN_URL }}{% url seriesly-subscription-show subscription.subkey %}</link>
 		<atom:link href="{{ DOMAIN_URL }}{% url seriesly-subscription-rss subscription.subkey %}" rel="self" type="application/rss+xml" />
 		<image>
-			<title>Your Favorite TV Shows by Seriesly.com</title>
+			<title>Your Favorite TV Shows by {{ APP_NAME }}</title>
 			<url>{{ DOMAIN_URL }}{{ MEDIA_URL }}img/seriesly_feed.png</url>
 			<link>{{ DOMAIN_URL }}{% url seriesly-subscription-show subscription.subkey %}</link>
 		</image>
-		<description>Seriesly.com provides you with your favorite TV Shows</description>
+		<description>{{ APP_NAME }} provides you with your favorite TV Shows</description>
 		{% for item in items %}
 		<item>
 			<title>{{ item.show.name }} - {{ item.title }} ({{ item.season_number }}x{{ item.number }})</title>
