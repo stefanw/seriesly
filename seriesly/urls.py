@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from django.conf.urls.defaults import *
+from django.conf.urls.defaults import patterns, include
 from django.views.generic.simple import direct_to_template, redirect_to
 
 urlpatterns = patterns('',
@@ -22,7 +22,7 @@ urlpatterns = patterns('',
     (r'^public/([A-Za-z0-9]{32})/feed/$', 'subscription.views.feed_atom_public', {}, 'seriesly-subscription-atom_public'),
     (r'^public/([A-Za-z0-9]{32})/calendar/$', 'subscription.views.calendar_public', {}, 'seriesly-subscription-calendar_public'),
     (r'^public/([A-Za-z0-9]{32})/json/$', 'subscription.views.json_public', {}, 'seriesly-subscription-json_public'),
-    
+
     (r'^([A-Za-z0-9]{32})/$', 'subscription.views.show', {}, 'seriesly-subscription-show'),
     (r'^([A-Za-z0-9]{32})/confirm/([a-f0-9]{40})/$', 'subscription.views.confirm_mail', {}, 'seriesly-subscription-confirm_mail'),
     (r'^([A-Za-z0-9]{32})/edit/$', 'subscription.views.edit', {}, 'seriesly-subscription-edit'),

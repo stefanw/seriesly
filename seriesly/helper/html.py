@@ -1,6 +1,7 @@
 #-*-coding:utf-8-*-
-    
-import htmlentitydefs, re
+import htmlentitydefs
+import re
+
 
 def unescape(text):
     def fixup(m):
@@ -17,11 +18,11 @@ def unescape(text):
         else:
             # named entity
             try:
-                if text[1:-1]=="nbsp": 
+                if text[1:-1] == "nbsp":
                     text = " "
-                else: 
+                else:
                     text = unichr(htmlentitydefs.name2codepoint[text[1:-1]])
             except KeyError:
                 pass
-        return text # leave as is
+        return text  # leave as is
     return re.sub("&#?\w+;", fixup, text)

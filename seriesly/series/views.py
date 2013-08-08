@@ -3,7 +3,7 @@ import logging
 from google.appengine.api import users
 from google.appengine.api import taskqueue
 
-from django.http import HttpResponse,HttpResponseRedirect,Http404
+from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.core.urlresolvers import reverse
@@ -39,11 +39,12 @@ def import_shows(request):
                 t = taskqueue.Task(url=reverse('seriesly-shows-import'),
                         params={"show": str(show)})
                 t.add(queue_name='series')
-            return HttpResponseRedirect(this_url+"?status=Done")
+            return HttpResponseRedirect(this_url + "?status=Done")
     else:
         return render_to_response("import_show.html", RequestContext(request,
             {"logged_in": False, "nick": nick, "login_url": users.create_login_url(this_url),
             "logout_url": users.create_logout_url(this_url)}))
+
 
 @is_post
 def import_show_task(request):
@@ -61,12 +62,14 @@ def import_show_task(request):
     logging.debug("Done importing show %s" % (show_id))
     return HttpResponse("Done: %s" % (show_id))
 
+
 def update(request):
     shows = Show.get_all_ordered()
     for show in shows:
         show.add_update_task()
     Episode.add_clear_cache_task("series")
     return HttpResponse("Done: %d" % (len(shows)))
+
 
 @is_post
 def update_show(request):
@@ -84,17 +87,20 @@ def update_show(request):
         raise Http404
     except Exception, e:
         logging.error("Error Updating Show (%s)%s: %s" % (show, key, e))
-        return HttpResponse("Done (with errors, %s(%s))" % (show,key))
-    logging.debug("Done updating show %s(%s)" % (show,key))
-    return HttpResponse("Done: %s(%s)" % (show,key))
-    
+        return HttpResponse("Done (with errors, %s(%s))" % (show, key))
+    logging.debug("Done updating show %s(%s)" % (show, key))
+    return HttpResponse("Done: %s(%s)" % (show, key))
+
+
 def redirect_to_front(request, episode_id):
     return HttpResponseRedirect("/")
-    
+
+
 def clear_cache(request):
     Show.clear_cache()
     Episode.clear_cache()
     return HttpResponse("Done.")
+
 
 @is_get
 def redirect_to_amazon(request, show_id):

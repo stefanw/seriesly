@@ -1,7 +1,6 @@
 import random
 import hashlib
 import hmac
-import logging
 import datetime
 import vobject
 
@@ -17,6 +16,7 @@ from helper.http import post as http_post
 
 from series.models import Show, Episode
 
+
 class Subscription(db.Model):
     subkey = db.StringProperty()
     last_visited = db.DateTimeProperty()
@@ -28,7 +28,7 @@ class Subscription(db.Model):
     settings = db.TextProperty()
     webhook = db.StringProperty()
     public_id = db.StringProperty(default=None)
-    
+
     feed_cache = db.TextProperty()
     feed_stamp = db.DateTimeProperty()
     calendar_cache = db.TextProperty()
@@ -38,18 +38,18 @@ class Subscription(db.Model):
     feed_public_stamp = db.DateTimeProperty()
 
     show_cache = db.TextProperty()
-    
-    next_airtime = db.DateProperty(default=datetime.date(2010,1,1))
-        
+
+    next_airtime = db.DateProperty(default=datetime.date(2010, 1, 1))
+
     BEACON_TIME = datetime.timedelta(days=30)
-    
+
     @classmethod
     def kind(cls):
         return "subscription_subscription"
-    
+
     def get_absolute_url(self):
         return reverse("seriesly-subscription-show", args=(self.subkey,))
-        
+
     def get_domain_absolute_url(self):
         return settings.DOMAIN_URL + reverse("seriesly-subscription-show", args=(self.subkey,))
 
@@ -70,23 +70,28 @@ class Subscription(db.Model):
         normal_distance = datetime.timedelta(hours=3)
         if diff > max_distance:
             return True
-        if ((last_stamp.hour > 5 and last_stamp.hour <= 13) or\
-                (now.hour > 5 and now.hour <= 13)) and\
-                diff > busy_distance:
+        if (((last_stamp.hour > 5 and last_stamp.hour <= 13) or
+                (now.hour > 5 and now.hour <= 13)) and
+                diff > busy_distance):
             return True
         elif diff >= normal_distance:
             return True
         return False
-    
+
     def check_confirmation_key(self, confirmkey):
-        shouldbe = hmac.new(settings.SECRET_KEY, self.subkey, digestmod=hashlib.sha1).hexdigest()
+        shouldbe = hmac.new(
+            settings.SECRET_KEY,
+            self.subkey,
+            digestmod=hashlib.sha1
+        ).hexdigest()
+        # FIXME: constant time compare
         if confirmkey == shouldbe:
             return True
         return False
-        
+
     def send_confirmation_mail(self):
         return Subscription.add_task('seriesly-subscription-send_confirm_mail', "mail-queue", self.key())
-    
+
     def do_send_confirmation_mail(self):
         confirmation_key = hmac.new(settings.SECRET_KEY, self.subkey, digestmod=hashlib.sha1).hexdigest()
         confirmation_url = settings.DOMAIN_URL + reverse("seriesly-subscription-confirm_mail", args=(self.subkey, confirmation_key))
@@ -101,17 +106,17 @@ If you did not expect this mail, you should ignore it.
 By the way: your Seriesly subscription URL is: %s
 """ % (confirmation_url, sub_url)
         mail.send_mail(settings.DEFAULT_FROM_EMAIL, self.email, subject, body)
-        
+
     def send_invitation_xmpp(self):
         xmpp.send_invite(self.xmpp)
-    
+
     def set_settings(self, d):
         self._cached_settings = d
         l = []
         for k, v in d.items():
-            l.append("%s\t%s" % (k,v))
+            l.append("%s\t%s" % (k, v))
         self.settings = "\n".join(l)
-    
+
     def get_settings(self):
         if hasattr(self, "_cached_settings"):
             return self._cached_settings
@@ -123,8 +128,8 @@ By the way: your Seriesly subscription URL is: %s
                 self._cached_settings[k] = v.strip()
             except ValueError:
                 pass
-        # This is basically bad:
-        for k,v in self._cached_settings.items():
+        # FIXME: This is basically bad:
+        for k, v in self._cached_settings.items():
             if v == "False":
                 self._cached_settings[k] = False
             elif v == "True":
@@ -134,7 +139,7 @@ By the way: your Seriesly subscription URL is: %s
     @classmethod
     def generate_subkey(cls):
         return cls.generate_key("subkey")
-        
+
     @classmethod
     def generate_key(cls, field="subkey"):
         CHARS = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -145,24 +150,24 @@ By the way: your Seriesly subscription URL is: %s
                 key += random.choice(CHARS)
             wtf = Subscription.all(keys_only=True).filter("%s =" % field, key).get()
         return key
-        
+
     def get_shows(self):
         show_dict = Show.get_all_dict()
         return [show_dict[show_key] for show_key in self.get_show_cache() if show_key in show_dict]
-        
+
     def get_shows_old(self):
         show_dict = Show.get_all_dict()
         return [show_dict[str(sub_item._show)] for sub_item in self.subscriptionitem_set if str(sub_item._show) in show_dict]
-    
+
     def get_show_cache(self):
         if self.show_cache is None or not len(self.show_cache):
             self.set_show_cache([str(sub_item._show) for sub_item in self.subscriptionitem_set])
             self.put()
         return self.show_cache.split("|")
-        
+
     def set_show_cache(self, show_keys):
         self.show_cache = '|'.join(show_keys)
-        
+
     def set_shows(self, shows, old_shows=None):
         changes = False
         if old_shows is None:
@@ -176,19 +181,22 @@ By the way: your Seriesly subscription URL is: %s
                 changes = True
         for old_show in old_shows:
             if not old_show.key() in show_ids:
-                key = SubscriptionItem.all(keys_only=True).filter("subscription =",self).filter("show =", old_show).get()
+                key = SubscriptionItem.all(keys_only=True).filter(
+                        "subscription =", self).filter(
+                            "show =", old_show).get()
                 if key:
                     db.delete(key)
                 changes = True
         return changes
-        
+
     def reset_cache(self, show_list):
         self.set_show_cache([str(show.key()) for show in show_list])
-        self.next_airtime = datetime.date(2010,1,1) # don't know next airtime
+        # don't know next airtime
+        self.next_airtime = datetime.date(2010, 1, 1)
         self.feed_stamp = None
         self.calendar_stamp = None
         self.feed_public_stamp = None
-    
+
     @classmethod
     def add_email_task(cls, key):
         return cls.add_task('seriesly-subscription-mail', "mail-queue", key)
@@ -200,20 +208,20 @@ By the way: your Seriesly subscription URL is: %s
     @classmethod
     def add_webhook_task(cls, key):
         return cls.add_task('seriesly-subscription-webhook', "webhook-queue", key)
-    
+
     @classmethod
     def add_task(cls, url_name, queue_name, key):
         t = taskqueue.Task(url=reverse(url_name), params={"key": str(key)})
         t.add(queue_name=queue_name)
         return t
-        
+
     def post_to_callback(self, body):
         response = http_post(self.webhook, body)
         if str(response.status_code)[0] != "2":
-            raise IOError, "Return status %s" % response.status_code
+            raise IOError("Return status %s" % response.status_code)
         if len(response.content) > 0:
-            raise ValueError, "Returned content, is defined illegal"
-        
+            raise ValueError("Returned content, is defined illegal")
+
     def get_message_context(self):
         the_shows = self.get_shows()
         now = datetime.datetime.now()
@@ -230,24 +238,25 @@ By the way: your Seriesly subscription URL is: %s
         if not context["items"]:
             return None
         return context
-        
+
     def get_icalendar(self, public):
         """Nice hints from here: http://blog.thescoop.org/archives/2007/07/31/django-ical-and-vobject/"""
         the_shows = self.get_shows()
         # two_weeks_ago = now - datetime.timedelta(days=7)
         # five_hours = datetime.timedelta(hours=5)
-        sub_settings = self.get_settings()
+        # sub_settings = self.get_settings()
+        self.get_settings()
         episodes = Episode.get_for_shows(the_shows, order="date")
         cal = vobject.iCalendar()
         cal.add('method').value = 'PUBLISH'  # IE/Outlook needs this
         for episode in episodes:
-            vevent = episode.create_event_details(cal)
+            episode.create_event_details(cal)
         return cal.serialize()
 
 
 class SubscriptionItem(db.Model):
-    subscription =  db.ReferenceProperty(Subscription)
-    show =  db.ReferenceProperty(Show)
+    subscription = db.ReferenceProperty(Subscription)
+    show = db.ReferenceProperty(Show)
 
     @classmethod
     def kind(cls):

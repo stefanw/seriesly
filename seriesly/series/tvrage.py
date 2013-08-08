@@ -17,8 +17,9 @@ monthsToNumber = dict((v,k) for k,v in enumerate(calendar.month_abbr))
 
 class TVDataClass(object):
     def __init__(self, **kwargs):
-        for k,v in kwargs.items():
+        for k, v in kwargs.items():
             setattr(self, k, v)
+
 
 class TVShowInfo(TVDataClass):
     pass
@@ -97,7 +98,7 @@ class TVRage(object):
                     date = datetime.datetime(*map(int, date_str.split("-")))
                     date = date + delta
                     date = tz.localize(date)
-                except ValueError, e:
+                except ValueError:
                     date = None
                 if date is not None:
                     if last_show_date is None or last_show_date < date:
@@ -124,7 +125,6 @@ class TVRage(object):
             if genre and genre.firstChild and genre.firstChild.data:
                 genre_list.append(genre.firstChild.data)
         genre_str = "|".join(genre_list)
-        today = datetime.datetime.now(utc) - datetime.timedelta(hours=24)
         active = show_doc.getElementsByTagName("ended")[0].firstChild
         if active is None or active.data == "0":
             active = True
@@ -147,7 +147,7 @@ class TVRage(object):
             active = False
         logging.debug("Return TVShowInfo...")
         return TVShowInfo(name=name,
-                              seasons=season_list, 
+                              seasons=season_list,
                               tvrage_id=show_id,
                               country=country,
                               runtime=runtime,
