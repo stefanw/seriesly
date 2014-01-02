@@ -24,6 +24,18 @@ Getting Shows In
 
 Follow the [visual import guide!](http://www.seriesly.com/setup/#import)
 
+Summary : 
+
+1. Go to https://`yourappid`.appspot.com/shows/import_show/ and click *Login*. You should sign with your Google account specified at the bottom of `local_settings.py`
+2. Enter a list of comma-seperated TV Rage IDs.  
+One way to find these IDs is with their webservice : http://services.tvrage.com/feeds/search.php?show=The%20Blacklist  
+Replace the text after `show=` with the name of your TV show. Look for the `showid` value.
+3. Click on the button *Import these shows*.
+4. Wait for the background job to import your shows.  
+You can watch the status of the import job on your [Google AppEngine Dashboard](https://appengine.google.com/): click on *Task Queues* then choose the *series* task queue to see if it is empty.
+5. Visit https://`yourappid`.appspot.com/shows/clear/cache/ to clear the cache.
+6. Ultimately, redeploy the app and the shows should show up in the list.
+
 Contribution
 ------------
 
