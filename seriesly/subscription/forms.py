@@ -107,8 +107,8 @@ class SubscriptionForm(forms.Form):
         return subkey
 
     def clean_shows(self):
-        if len(self.cleaned_data["shows"]) > 90:
-            raise forms.ValidationError("You can select 90 shows maximum!")
+        if len(self.cleaned_data["shows"]) > 200:
+            raise forms.ValidationError("You can select 200 shows maximum!")
         return self.cleaned_data["shows"]
 
     def checkboxclean(self, key):
