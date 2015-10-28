@@ -1,14 +1,9 @@
-<!DOCTYPE html>
+{% load static %}<!DOCTYPE html>
 <html dir="ltr" lang="en-US">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
         <title>{% block title %}Seriesly!{% endblock %}</title>
-        <link rel="stylesheet" href="{{ MEDIA_URL }}css/seriesly.min.css?v=7" type="text/css"/>
-        <!--[if IE]><style type="text/css">
-          .clearfix {zoom: 1; display: block;}
-        </style>
-        <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-        <![endif]-->
+        <link rel="stylesheet" href="{% static 'css/seriesly.css' %}" type="text/css"/>
        {% block rss %}{% endblock %}
        <link rel="icon" type="image/png" href="{{ MEDIA_URL }}img/favicon.png" />
        <meta name="robots" content="index, follow" />
@@ -17,7 +12,7 @@
        <!-- // <script src="{{ MEDIA_URL }}js/jquery.js" type="text/javascript" charset="utf-8"></script> -->
        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript" charset="utf-8"></script>
     </head>
-    
+
     <body>
         <nav class="skipLink">
             <ul>
@@ -28,7 +23,7 @@
             <h1 class="logo"><a href="/">Seriesly</a></h1>
             <h2 class="strapline">Taking your addiction seriesly.</h2>
         </header>
-        
+
         <article id="content">
             {% block body %}
             {% endblock %}
@@ -38,10 +33,10 @@
         {% endif %}
         <footer id="footer">
             <ul>
-                <li><a href="{% url seriesly-about %}">About</a></li>
-                <li><a href="{% url seriesly-faq %}">FAQ</a></li>
-                <li><a href="{% url seriesly-terms %}">Terms</a></li>
-                <li><a href="{% url seriesly-privacy %}">Privacy</a></li>
+                <li><a href="{% url 'seriesly-about' %}">About</a></li>
+                <li><a href="{% url 'seriesly-faq' %}">FAQ</a></li>
+                <li><a href="{% url 'seriesly-terms' %}">Terms</a></li>
+                <li><a href="{% url 'seriesly-privacy' %}">Privacy</a></li>
                 <li><a href="http://stefanwehrmeyer.com">StefanWehrmeyer.com</a></li>
             </ul>
         </footer>

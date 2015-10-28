@@ -1,0 +1,6 @@
+Django<=1.9
+vobject==0.6.6
+dateutils==0.6.6
+requests==2.8.1
+pytz==2015.7
+dj-database-url==0.3.0

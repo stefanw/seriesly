@@ -1,1 +1,0 @@
--e svn+http://code.djangoproject.com/svn/django/tags/releases/1.1/#egg=django
