@@ -33,7 +33,7 @@
 <section class="step">
     <h3>Your Seriesly Subscription</h3>
     <p>The heart of your Seriesly subscription is this page with a private URL:<br/>
-        <input type="text" readonly="readonly" value="{{ DOMAIN_URL }}{% url seriesly-subscription-show subscription.subkey %}" style="width:75%"/></p>
+        <input type="text" readonly="readonly" value="{{ DOMAIN_URL }}{% url 'seriesly-subscription-show' subscription.subkey %}" style="width:75%"/></p>
     <p>You should store this URL <em>privately</em> (e.g. bookmark it). A link to this page is also provided in your feed, email notifications etc.</p>
 </section>
 
@@ -46,7 +46,7 @@
     <h3>Edit Your Shows<span class="right sprite-big sprite-edit_big"></span></h3>
     <p>You can <a href="{% url seriesly-subscription-edit subscription.subkey %}">edit your shows and subscription settings here</a>.</p>
     <p>You should not share your subscription links with anybody, because others will then be able to change your settings, too.<br/>You can <a href="#public-urls">share your subscription with special Public URLs though.</a></p>
-    <p>If you have questions, consult the <a href="{% url seriesly-faq %}">FAQ</a>.</p>
+    <p>If you have questions, consult the <a href="{% url 'seriesly-faq' %}">FAQ</a>.</p>
 </section>
 
 <section class="step" id="email">
@@ -64,7 +64,7 @@
     {% else %}
     <p>You don't have email notifications at the moment. You can change that by entering your email below. You will receive a confirmation email.</p>
     {% endif %}
-    <form action="{% url seriesly-subscription-edit_mail %}#email" method="post">
+    <form action="{% url 'seriesly-subscription-edit_mail' %}#email" method="post">
     {% if subscription.mail_form.email.errors %}
     <small class="error">{{ subscription.mail_form.email.errors.0 }}</small>
     {% endif %}
@@ -83,7 +83,7 @@
     <h3>iCalendar<span class="right sprite-big sprite-ical_big"></span></h3>
     <p>This is your personal iCalendar URL:<br/>
         <input type="text" readonly="readonly" value="{{ SECURE_DOMAIN_URL }}{% url seriesly-subscription-calendar subscription.subkey %}" style="width:75%"/></p>
-    <p>You can add it to <a href="{% url seriesly-faq %}#q-2">Google Calendar</a>, <a href="{% url seriesly-faq %}#q-1">iCal</a> and other calendar applications.</p>
+    <p>You can add it to <a href="{% url 'seriesly-faq' %}#q-2">Google Calendar</a>, <a href="{% url 'seriesly-faq' %}#q-1">iCal</a> and other calendar applications.</p>
 </section>
 
 <section class="step" id="xmpp">
@@ -100,7 +100,7 @@
     {% else %}
     <p>You don't have XMPP chat notifications at the moment. You can change that by entering your XMPP address below. You will receive an invitation from the Seriesly Subscription Bot.</p>
     {% endif %}
-    <form action="{% url seriesly-subscription-edit_xmpp %}#xmpp" method="post">
+    <form action="{% url 'seriesly-subscription-edit_xmpp' %}#xmpp" method="post">
     {% if subscription.xmpp_form.xmpp.errors %}
     <small class="error">{{ subscription.xmpp_form.xmpp.errors.0 }}</small>
     {% endif %}
@@ -122,12 +122,12 @@
     {% else %}
     <p>You don't have a Seriesly Web Hook callback at the moment.<br/>If you know what Web Hooks are, you can enter a callback URL below.</p>
     {% endif %}
-    <form action="{% url seriesly-subscription-edit_webhook %}#webhook" method="post">
+    <form action="{% url 'seriesly-subscription-edit_webhook' %}#webhook" method="post">
     {% if subscription.webhook_form.webhook.errors %}
         <small class="error">{{ subscription.webhook_form.webhook.errors.0 }}</small>
     {% endif %}
         <p>{{ subscription.webhook_form.subkey }}{{ subscription.webhook_form.webhook.label_tag }}: {{ subscription.webhook_form.webhook }} <input type="submit" value="Submit"/></p>
-        <p><small>You will get a POST request to your URL containing XML and need to answer correctly. Please read the <a href="{% url seriesly-webhook-xml %}">details page on the Seriesly Web Hook</a>.</small></p>
+        <p><small>You will get a POST request to your URL containing XML and need to answer correctly. Please read the <a href="{% url 'seriesly-webhook-xml' %}">details page on the Seriesly Web Hook</a>.</small></p>
     </form>
 </section>
 
@@ -136,20 +136,20 @@
     {% if subscription.public_id %}
         <p>You are currently sharing your shows through the following public URLs:</p>
         <ul class="normal-list">
-            <li><a href="{% url seriesly-subscription-show_public subscription.public_id %}">Public Subscription Page</a></li>
-            <li><a href="{% url seriesly-subscription-guide_public subscription.public_id %}">Public Episode Guide</a></li>
-            <li><a href="{% url seriesly-subscription-atom_public subscription.public_id %}">Public Feed URL</a></li>
-            <li><a href="{% url seriesly-subscription-calendar_public subscription.public_id %}">Public Calendar URL</a></li>
+            <li><a href="{% url 'seriesly-subscription-show_public' subscription.public_id %}">Public Subscription Page</a></li>
+            <li><a href="{% url 'seriesly-subscription-guide_public' subscription.public_id %}">Public Episode Guide</a></li>
+            <li><a href="{% url 'seriesly-subscription-atom_public' subscription.public_id %}">Public Feed URL</a></li>
+            <li><a href="{% url 'seriesly-subscription-calendar_public' subscription.public_id %}">Public Calendar URL</a></li>
         </ul>
         <br/>
         <p>You can always destroy these URLs and return to privacy.</p>
-        <form action="{% url seriesly-subscription-edit_public_id %}#subscription-public-urls" method="post">
+        <form action="{% url 'seriesly-subscription-edit_public_id' %}#subscription-public-urls" method="post">
             <p><input type="submit" value="Destroy Public URLs"/>{{ subscription.webhook_form.subkey }}</p>
             <p><strong>Warning:</strong> destroying the URLs cannot be undone.</p>
         </form>
     {% else %}
         <p>You can share public URLs with others.<br/>They will only see your shows and will not be able to change your subscriptions.</p>
-        <form action="{% url seriesly-subscription-edit_public_id %}#subscription-public-urls" method="post">
+        <form action="{% url 'seriesly-subscription-edit_public_id' %}#subscription-public-urls" method="post">
             <p><input type="submit" value="Generate public URLs"/>{{ subscription.webhook_form.subkey }}</p>
         </form>
     {% endif %}
@@ -160,12 +160,12 @@
     <h3>Secure URLs</h3>
     <p>The following secure URLs (HTTPS) are available:</p>
     <ul class="normal-list">
-        <li><a href="{{ SECURE_DOMAIN_URL }}{% url seriesly-subscription-show subscription.subkey %}">A secure version of this page</a></li>
-        <li><a href="{{ SECURE_DOMAIN_URL }}{% url seriesly-subscription-guide subscription.subkey %}">Secure Episode Guide</a></li>
-        <li><a href="{{ SECURE_DOMAIN_URL }}{% url seriesly-subscription-atom subscription.subkey %}">Secure Feed URL</a></li>
-        <li><a href="{{ SECURE_DOMAIN_URL }}{% url seriesly-subscription-calendar subscription.subkey %}">Secure Calendar URL</a></li>
+        <li><a href="{{ SECURE_DOMAIN_URL }}{% url 'seriesly-subscription-show' subscription.subkey %}">A secure version of this page</a></li>
+        <li><a href="{{ SECURE_DOMAIN_URL }}{% url 'seriesly-subscription-guide' subscription.subkey %}">Secure Episode Guide</a></li>
+        <li><a href="{{ SECURE_DOMAIN_URL }}{% url 'seriesly-subscription-atom' subscription.subkey %}">Secure Feed URL</a></li>
+        <li><a href="{{ SECURE_DOMAIN_URL }}{% url 'seriesly-subscription-calendar' subscription.subkey %}">Secure Calendar URL</a></li>
     </ul>
-    <p>See also this <a href="{% url seriesly-faq %}#q-7">FAQ entry</a>.</p>
+    <p>See also this <a href="{% url 'seriesly-faq' %}#q-7">FAQ entry</a>.</p>
 </section>
 {% endblock %}
 {% block extra_js %}{% endblock  %}

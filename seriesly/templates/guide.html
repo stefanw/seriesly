@@ -3,14 +3,14 @@
 {% block title %}Episode Guide - Seriesly!{% endblock %}
 
 {% block rss %}
-<link rel="alternate" type="application/atom+xml" title="Atom-Feed of your favourite shows" href="{{ DOMAIN_URL }}{% url seriesly-subscription-atom subscription.subkey %}" />
+<link rel="alternate" type="application/atom+xml" title="Atom-Feed of your favourite shows" href="{{ DOMAIN_URL }}{% url 'seriesly-subscription-atom' subscription.subkey %}" />
 <!-- Kind of: <link rel="profile" href="http://microformats.org/profile/hcalendar"> -->
 {% endblock %}
 
 {% block body %}
 {% include "announcement.html" %}
 <section class="step">
-    <small class="right"><a href="{% url seriesly-subscription-show subscription.subkey %}">your subscription page</a></small>
+    <small class="right"><a href="{% url 'seriesly-subscription-show' subscription.subkey %}">your subscription page</a></small>
     {% include "guide_list.html" %}
 </section>
 {% endblock %}

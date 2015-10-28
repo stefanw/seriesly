@@ -10,7 +10,7 @@
 {% block body %}
 {% include "announcement.html" %}
 <section class="step">
-    <small class="right"><a href="{% url seriesly-subscription-show_public subscription.public_id %}">to public subscription page</a></small>
+    <small class="right"><a href="{% url 'seriesly-subscription-show_public' subscription.public_id %}">to public subscription page</a></small>
     {% include "guide_list.html" %}
 </section>
 {% endblock %}
