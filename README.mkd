@@ -1,28 +1,7 @@
 Seriesly
 ========
 
-Seriesly is an easy TV schedule for your favorite shows. It can be run free of charge on Google's cloud platform App Engine.
 
-Setup
------
-
-[A nice guide with screenshots can be found here](http://www.seriesly.com/setup/)
-
-Summary:
-
-1. Download the code or fork the repository.
-2. Download the [Google App Engine SDK for Python](https://code.google.com/appengine/downloads.html#Google_App_Engine_SDK_for_Python).
-3. Create a [Google App Engine application](https://appengine.google.com/) (you need a Google account).
-4. Go to the seriesly folder and copy the `local_settings.py.example` to `local_settings.py`.
-5. Change the values in `local_settings.py`.
-6. Change `application` name in `app.yaml` (and possibly version number etc.) to your app name from step 3.
-7. Test your app locally (follow the [App Engine Getting Started Guide](https://code.google.com/appengine/docs/python/gettingstarted/)).
-8. Deploy the app to Google App Engine (see [Uploading your Application](https://code.google.com/appengine/docs/python/gettingstarted/uploading.html)).
-
-Getting Shows In
-----------------
-
-Follow the [visual import guide!](http://www.seriesly.com/setup/#import)
 
 Contribution
 ------------
@@ -37,13 +16,7 @@ Please be aware that Seriesly is released unter the GNU AGPL 3.0 (see LICENSE.tx
 Attribution
 -----------
 
-Seriesly is a Django project based on Django 1.1
-
-Seriesly ships with the following third party components:
-
- - [vobject](http://vobject.skyhouseconsulting.com/) (licensed under the [Apache 2.0 license](http://www.apache.org/licenses/LICENSE-2.0) )
- - [python-dateutil](http://labix.org/python-dateutil) (licensed under the [Simplified BSD license](http://en.wikipedia.org/wiki/BSD_licenses#2-clause_license_.28.22Simplified_BSD_License.22_or_.22FreeBSD_License.22.29))
- - [pytz](http://pytz.sourceforge.net/) (licensed under the [MIT License](http://www.opensource.org/licenses/mit-license.php))
+Seriesly is a Django project based on Django 1.8
 
 License
 -------

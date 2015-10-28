@@ -21,7 +21,7 @@
         <li><p><a href="#q-4" class="toggle">My XMPP subscription is not working, what can I do?</a></p>
         <div id="q-4" class="hide-me">Your subscription will be deactivated if an error occurs while delivering notifications to your XMPP address. You might have to reactivate your subscription by following the instructions in the XMPP section of your subscription page. If this doesn't work, remove the XMPP address, save, reenter it and save again.</div></li>
         <li><p><a href="#q-5" class="toggle">I want to do the Web Hook thing, but how?</a></p>
-        <div id="q-5" class="hide-me">Please refer to the <a href="{% url seriesly-webhook-xml %}">Seriesly Web Hook details page</a>.</div></li>
+        <div id="q-5" class="hide-me">Please refer to the <a href="{% url 'seriesly-webhook-xml' %}">Seriesly Web Hook details page</a>.</div></li>
         <li><p><a href="#q-9999" class="toggle">My question is not listed, what do I do?</a></p>
         <div id="q-9999" class="hide-me">Write an email with your question to <a href="mailto:{{ DEFAULT_FROM_EMAIL }}">{{ DEFAULT_FROM_EMAIL }}</a>.</div></li>
     </ul>
