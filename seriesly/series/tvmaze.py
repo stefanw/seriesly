@@ -1,10 +1,12 @@
 #-*-coding:utf-8-*-
-from xml.dom.minidom import parseString
 import logging
 import datetime
 import urllib
 import calendar
 
+import pytvmaze
+
+import dateutil.parser
 from pytz import utc
 
 from helper.http import get as http_get
@@ -33,9 +35,7 @@ class TVEpisodeInfo(TVDataClass):
     pass
 
 
-class TVRage(object):
-    show_info_url = "http://services.tvrage.com/feeds/full_show_info.php?sid=%d"
-    search_info_url = "http://services.tvrage.com/feeds/search.php?%s"
+class TVMaze(object):
 
     def get_info(self, show_id):
         """<Show>
@@ -65,93 +65,78 @@ class TVRage(object):
         <link>http://www.tvrage.com/Scrubs/episodes/149685</link>
         <title>My First Day</title>
         <screencap>http://images.tvrage.com/screencaps/26/5118/149685.jpg</screencap></episode>"""
-        logging.debug("Start downloading...")
-        show_xml = http_get(self.show_info_url % show_id)
-        logging.debug("Start parsing...")
-        dom = parseString(show_xml)
-        logging.debug("Start walking...")
-        show_doc = dom.getElementsByTagName("Show")[0]
-        seasons = show_doc.getElementsByTagName("Season")
-        special = show_doc.getElementsByTagName("Special")
-        seasons.extend(special)
-        timezone = show_doc.getElementsByTagName("timezone")[0].firstChild.data
-        tz = get_timezone_for_gmt_offset(timezone)
+        
+        show = pytvmaze.get_show(maze_id=show_id)
+        
+        # converts time to GMT?
+        # because tz is always time delta to GMT
+        # -> calc utc to gmt
+        
+        # airtime in tvmaze is defined by "airstamp" (ISO8601 formated timestamp) using UTC as reference
+        # see: https://en.wikipedia.org/wiki/ISO_8601
+        # info from blogpost (http://www.tvmaze.com/threads/4/api-changelog):
+        #
+        #    Timezone information was just added to the API. Each episode now has an "airstamp" property,
+        #    which is an ISO 8601 formatted timestamp of when the episode aired. For example,
+        #    for a Homeland episode which premieres in the America/New_York timezone the value is
+        #    "2014-12-19T21:00:00-05:00", while the UK's Graham Norton Show (Europe/London) has
+        #    "2014-12-19T22:35:00+00:00".
+        #
+        #    Please note the special case of episodes that air after midnight. For the airdate property,
+        #    such episodes are considered part of the previous day, but the new airstamp property will
+        #    display the technically correct date. For example, tonight's episode of the Late Late Show
+        #    has an airdate property of "2014-12-19", an airtime of "00:35", and an airstamp of
+        #    "2014-12-20T00:35:00-05:00".
+        
         last_show_date = None
-        delta_params = show_doc.getElementsByTagName("airtime")[0].firstChild.data.split(":")
-        delta = datetime.timedelta(hours=int(delta_params[0]), minutes=int(delta_params[1]))
         season_list = []
-        for season in seasons:
-            try:
-                season_nr = int(season.attributes["no"].value)
-            except Exception:
-                season_nr = False
+        for season in show.seasons:
             episode_list = []
-            for episode in season.getElementsByTagName("episode"):
-                if season_nr is False:
-                    season_nr = int(episode.getElementsByTagName("season")[0].firstChild.data)
+            for episode in show[season].episodes:
                 try:
-                    title = unescape(episode.getElementsByTagName("title")[0].firstChild.data)
-                except AttributeError:
-                    title = ""
-                date_str = episode.getElementsByTagName("airdate")[0].firstChild.data
-                try:
-                    date = datetime.datetime(*map(int, date_str.split("-")))
-                    date = date + delta
-                    date = tz.localize(date)
+                    date = dateutil.parser.parse(show[season][episode].airstamp)
                 except ValueError:
                     date = None
                 if date is not None:
                     if last_show_date is None or last_show_date < date:
                         last_show_date = date
-                try:
-                    epnum = int(episode.getElementsByTagName("seasonnum")[0].firstChild.data)
-                except IndexError:
-                    epnum = 0
-                ep_info = TVEpisodeInfo(date=date, title=title, nr=epnum, season_nr=season_nr)
+                ep_info = TVEpisodeInfo(date      = date,
+                                        title     = show[season][episode].title,
+                                        nr        = show[season][episode].episode_number,
+                                        season_nr = show[season][episode].season_number)
                 episode_list.append(ep_info)
-            season = TVSeasonInfo(season_nr=season_nr, episodes=episode_list)
+            season = TVSeasonInfo(season_nr= show[season].season_number, episodes=episode_list)
             season_list.append(season)
-        try:
-            runtime = int(show_doc.getElementsByTagName("runtime")[0].firstChild.data)
-        except IndexError:
-            runtime = 30
-        name = unescape(show_doc.getElementsByTagName("name")[0].firstChild.data)
-        country = show_doc.getElementsByTagName("origin_country")[0].firstChild.data
-        network = unescape(show_doc.getElementsByTagName("network")[0].firstChild.data)
-
-        genres = show_doc.getElementsByTagName("genre")
-        genre_list = []
-        for genre in genres:
-            if genre and genre.firstChild and genre.firstChild.data:
-                genre_list.append(genre.firstChild.data)
-        genre_str = "|".join(genre_list)
-        active = show_doc.getElementsByTagName("ended")[0].firstChild
-        if active is None or active.data == "0":
-            active = True
-        elif "/" in active.data:
-            parts = active.data.split('/')
-            if len(parts) == 3:
-                try:
-                    month = monthsToNumber[parts[0]]
-                    day = int(parts[1])
-                    year = int(parts[2])
-                    if datetime.datetime.now() > datetime.datetime(year, month, day):
-                        active = False
-                    else:
-                        active = True
-                except (ValueError, KeyError):
-                    active = True
-            else:
-                active = True
-        else:
+        
+        if show.status == "Ended":
             active = False
+        else:
+            active = True
+        
+        timezone = show.network["country"]["timezone"]
+        
+        genre_str = "|".join(show.genres)
+        
+        # test return output
+        # logging.info(" --- START TEST RETURN OUTPUT")
+        # logging.info(show.name)
+        # logging.info(season_list)
+        # logging.info(show.id)
+        # logging.info(show.network["country"]["code"])
+        # logging.info(show.runtime)
+        # logging.info(show.network["name"])
+        # logging.info(timezone)
+        # logging.info(active)
+        # logging.info(genre_str)
+        # logging.info(" --- END TEST RETURN OUTPUT")
+        
         logging.debug("Return TVShowInfo...")
-        return TVShowInfo(name=name,
+        return TVShowInfo(name=show.name,
                               seasons=season_list,
-                              tvrage_id=show_id,
-                              country=country,
-                              runtime=runtime,
-                              network=network,
+                              tvmaze_id=show.id,
+                              country=show.network["country"]["code"],
+                              runtime=show.runtime,
+                              network=show.network["name"],
                               timezone=timezone,
                               active=active,
                               genres=genre_str)
@@ -171,24 +156,13 @@ class TVRage(object):
         <genres><genre01>Action</genre01><genre02>Adventure</genre02><genre03>Drama</genre03></genres>
         </show>
         <show>"""
-        if show_name.endswith(", The"):
-            show_name = show_name.replace(", The", "")
-            show_name = "The " + show_name
-        show_xml = http_get(self.search_info_url % urllib.urlencode({"show": show_name}))
-        dom = parseString(show_xml)
-        shows = dom.getElementsByTagName("show")
-        show_id = None
-        for show in shows:
-            if normalize(unescape(show.getElementsByTagName("name")[0].firstChild.data)) == normalize(show_name):
-                show_id = int(show.getElementsByTagName("showid")[0].firstChild.data)
-                break
-        if show_id is None:
+        show = pytvmaze.show_single_search(show_name)
+        
+        if show.id is None:
             logging.warn("Did not really find %s" % show_name)
-            if len(shows):
-                logging.warn("Taking first")
-                return self.get_info(int(shows[0].getElementsByTagName("showid")[0].firstChild.data))
             return None
-        return self.get_info(show_id)
+        
+        return self.get_info(show.id)
 
 
 def main():
@@ -200,8 +174,8 @@ def main():
     date = tz.localize(date)
     today = datetime.datetime.now(utc)
     print date >= today
-    tvrage = TVRage()
-    print tvrage.get_info(15614).active
+    tvmaze = TVMaze()
+    print tvmaze.get_info(15614).active
 
 if __name__ == '__main__':
     main()
