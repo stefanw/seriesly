@@ -10,8 +10,8 @@
   <p>{{ status }}</p>
   {% endif %}
   <p>Logged in as {{ nick }}. <a href="{{ logout_url }}">Logout</a></p>
-  <p><a target="_blank" href="http://services.tvrage.com/feeds/search.php?show=">Search for shows on TVRage</a>
-    and enter TV Rage IDs comma separated below:</p>
+  <p><a target="_blank" href="http://api.tvmaze.com/search/shows?q=">Search for shows on TVMaze</a>
+    and enter TV Maze IDs comma separated below:</p>
   <form action="." method="post">
       <textarea cols="50" rows="5" name="show"></textarea><br/>
       <input type="submit" value="Import these shows!"/>

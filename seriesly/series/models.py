@@ -13,7 +13,7 @@ from django.core.urlresolvers import reverse
 from helper.string_utils import normalize
 from helper.dateutils import get_timezone_for_gmt_offset
 
-from series.tvrage import TVRage
+from series.tvmaze import TVMaze
 
 
 class Show(db.Model):
@@ -28,7 +28,7 @@ class Show(db.Model):
     country = db.StringProperty(indexed=False)
     runtime = db.IntegerProperty()
     timezone = db.StringProperty(indexed=False)
-    tvrage_id = db.IntegerProperty()
+    tvmaze_id = db.IntegerProperty()
     added = db.DateTimeProperty()
 
     _memkey_all_shows_ordered = "all_shows_ordered"
@@ -106,15 +106,15 @@ class Show(db.Model):
 
     def update(self, show_info=None, get_everything=False):
         if show_info is None:
-            tvrage = TVRage()
-            show_info = tvrage.get_info(self.tvrage_id)
+            tvmaze = TVMaze()
+            show_info = tvmaze.get_info(self.tvmaze_id)
             # Kill Tabatha\u2019s ... here
             show_info.name = show_info.name.replace(u"\u2019", "'")
             # Kill >>'Til Death<< here
             if show_info.name.startswith("'"):
                 show_info.name = show_info.name.replace("'", "", 1)
             attr_list = ["name", "network", "genres", "active",
-                "country", "runtime", "timezone", "tvrage_id"]
+                "country", "runtime", "timezone", "tvmaze_id"]
             if self.update_attrs(show_info, attr_list):
                 self.put()
         for season_info in show_info.seasons:
@@ -136,15 +136,15 @@ class Show(db.Model):
 
     @classmethod
     def update_or_create(cls, name, show_id=None):
-        tvrage = TVRage()
+        tvmaze = TVMaze()
         if name is not None:
-            show_info = tvrage.get_info_by_name(name)
+            show_info = tvmaze.get_info_by_name(name)
         else:
-            show_info = tvrage.get_info(show_id)
+            show_info = tvmaze.get_info(show_id)
         if show_info is None:
             return False
         logging.debug("Show exists..?")
-        show = Show.all().filter("tvrage_id =", show_info.tvrage_id).get()
+        show = Show.all().filter("tvmaze_id =", show_info.tvmaze_id).get()
         if show is None:
             logging.debug("Creating Show...")
             show = Show(name=show_info.name,
@@ -154,7 +154,7 @@ class Show(db.Model):
                         country=show_info.country,
                         runtime=show_info.runtime,
                         timezone=show_info.timezone,
-                        tvrage_id=show_info.tvrage_id,
+                        tvmaze_id=show_info.tvmaze_id,
                         added=datetime.datetime.now())
             show.put()
         show.update(show_info)
