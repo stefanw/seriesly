@@ -1,0 +1,3 @@
+[submodule "pytvmaze"]
+	path = pytvmaze
+	url = https://github.com/srob650/pytvmaze.git
