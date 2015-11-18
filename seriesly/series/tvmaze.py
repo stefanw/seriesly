@@ -4,6 +4,7 @@ import logging
 import datetime
 import urllib
 import calendar
+
 import pytvmaze
 
 from pytz import utc
@@ -12,8 +13,6 @@ from helper.http import get as http_get
 from helper.html import unescape
 from helper.string_utils import normalize
 from helper.dateutils import get_timezone_for_gmt_offset
-
-import pytvmaze
 
 
 monthsToNumber = dict((v,k) for k,v in enumerate(calendar.month_abbr))
@@ -66,32 +65,52 @@ class TVMaze(object):
         <link>http://www.tvrage.com/Scrubs/episodes/149685</link>
         <title>My First Day</title>
         <screencap>http://images.tvrage.com/screencaps/26/5118/149685.jpg</screencap></episode>"""
-        show_json = pytvmaze.show_main_info(show_id)
-        if show_json:
-            return show = pytvmaze.Show(show_json)
         
-        seasons = show_doc.getElementsByTagName("Season")
-        special = show_doc.getElementsByTagName("Special")
-        seasons.extend(special)
-        timezone = show_doc.getElementsByTagName("timezone")[0].firstChild.data
-            episode_list = []
-                ep_info = TVEpisodeInfo(date=date, title=title, nr=epnum, season_nr=season_nr)
-                episode_list.append(ep_info)
-            season = TVSeasonInfo(season_nr=season_nr, episodes=episode_list)
-            season_list.append(season)
+        #show_json = tvmaze.show_main_info(show_id)
+        show = pytvmaze.get_show(maze_id=show_id)
+        
+        # tvmaze includes specials in seasons, except if specifically specified
+        #seasons = show_doc.getElementsByTagName("Season")
+        #special = show_doc.getElementsByTagName("Special")
+        #seasons.extend(special)
+        
+        #timezone = show_doc.getElementsByTagName("timezone")[0].firstChild.data
+        # airtime in tvmaze is defined by "airstamp" (ISO8601 formated timestamp) using UTC as reference
+        # see: https://en.wikipedia.org/wiki/ISO_8601
+        # info from blogpost (http://www.tvmaze.com/threads/4/api-changelog):
+        #    david
+        #    wrote 10 months ago:
+        #    
+        #    December 19
+        #    
+        #    Timezone information was just added to the API. Each episode now has an "airstamp" property, which is an ISO 8601 formatted timestamp of when the episode aired. For example, for a Homeland episode which premieres in the America/New_York timezone the value is "2014-12-19T21:00:00-05:00", while the UK's Graham Norton Show (Europe/London) has "2014-12-19T22:35:00+00:00".
+        #    
+        #    Please note the special case of episodes that air after midnight. For the airdate property, such episodes are considered part of the previous day, but the new airstamp property will display the technically correct date. For example, tonight's episode of the Late Late Show has an airdate property of "2014-12-19", an airtime of "00:35", and an airstamp of "2014-12-20T00:35:00-05:00".
+        timezone = episode.airstamp
+        
+        # test output
+        logging.debug(show.episodes)
+        logging.debug(show.seasons)
+        
+        episode_list = []
+        for episode in show.episodes:
+            ep_info = TVEpisodeInfo(date=episode.airdate, title=episode.title, nr=episode.episode_number, season_nr=episode.season_number)
+        episode_list.append(ep_info)
+        season = TVSeasonInfo(season_nr=season_nr, episodes=episode_list)
+        season_list.append(season)
 
         country = show_doc.getElementsByTagName("origin_country")[0].firstChild.data
         
         if show.status == "Ended":
             active = False
-        elif:
+        else:
             active = True
         
         logging.debug("Return TVShowInfo...")
         return TVShowInfo(name=show.name,
                               seasons=season_list,
-                              tvmaze_id=show_id,
-                              country=country,
+                              tvmaze_id=show.id,
+                              country=show.country,
                               runtime=show.runtime,
                               network=show.network,
                               timezone=timezone,
