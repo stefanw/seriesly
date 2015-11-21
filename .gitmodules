@@ -1,0 +1,3 @@
+[submodule "seriesly/pytvmaze"]
+	path = seriesly/pytvmaze
+	url = https://github.com/srob650/pytvmaze.git
