@@ -2,7 +2,7 @@ from google.appengine.api.urlfetch import fetch
 import datetime
 
 
-class TVRageFetcher(object):
+class TVMazeFetcher(object):
     url = "http://www.tvrage.com/quickinfo.php?show=%(name)s&ep=%(season)dx%(episode)d"
 
     def __init__(self, show):
