@@ -14,7 +14,7 @@ def get_choices():
     shows = Show.get_all_ordered()
     return [(str(show.idnr),
             {"name": show.ordered_name, "new": show.is_new,
-            "tvrage_id": show.tvrage_id}) for show in shows]
+            "tvmaze_id": show.tvmaze_id}) for show in shows]
 
 
 class HTML5EmailInput(forms.TextInput):
@@ -70,7 +70,7 @@ class SerieslyCheckboxSelectMultiple(forms.CheckboxSelectMultiple):
         for i, (option_value, option_dict) in enumerate(chain(self.choices, choices)):
             option_label = option_dict['name']
             option_new = option_dict['new']
-            tvrage_id = option_dict['tvrage_id']
+            tvmaze_id = option_dict['tvmaze_id']
             # If an ID attribute was given, add a numeric index as a suffix,
             # so that the checkboxes don't all have the same ID attribute.
             if has_id:
@@ -84,7 +84,7 @@ class SerieslyCheckboxSelectMultiple(forms.CheckboxSelectMultiple):
                 label_new = ''
             cb = forms.CheckboxInput(final_attrs, check_test=lambda value: value in str_values)
             option_value = force_unicode(option_value)
-            rendered_cb = cb.render(name, option_value, attrs={"data-tvrage": str(tvrage_id)})
+            rendered_cb = cb.render(name, option_value, attrs={"data-tvmaze": str(tvmaze_id)})
             option_label = conditional_escape(force_unicode(option_label))
             output.append(u'<li%s><label%s>%s %s</label></li>' % (label_new, label_for,
                 rendered_cb, option_label))
