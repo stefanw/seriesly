@@ -38,39 +38,43 @@ class TVEpisodeInfo(TVDataClass):
 class TVMaze(object):
 
     def get_info(self, show_id):
-        """<Show>
-        <name>Scrubs</name>
-        <totalseasons>9</totalseasons>
-        <showid>5118</showid>
-        <showlink>http://tvrage.com/Scrubs</showlink>
-        <started>Oct/02/2001</started>
-        <ended></ended>
-        <image>http://images.tvrage.com/shows/6/5118.jpg</image>
-        <origin_country>US</origin_country>
-        <status>Returning Series</status>
-        <classification>Scripted</classification>
-        <genres><genre>Comedy</genre></genres>
-        <runtime>30</runtime>
-        <network country="US">ABC</network>
-        <airtime>21:00</airtime>
-        <airday>Tuesday</airday>
-        <timezone>GMT-5 -DST</timezone>
-        <akas><aka country="LV">Dakterīši</aka><aka country="HU">Dokik</aka><aka country="SE">Första hjälpen</aka><aka country="NO">Helt sykt</aka><aka country="PL">Hoży doktorzy</aka><aka attr="Second Season" country="RU">Klinika</aka><aka attr="First Season" country="RU">Meditsinskaya akademiya</aka><aka country="DE">Scrubs: Die Anfänger</aka><aka country="RO">Stagiarii</aka><aka attr="French Title" country="BE">Toubib or not toubib</aka><aka country="FI">Tuho Osasto</aka><aka country="IL">סקרבס</aka></akas>
-        <Episodelist>
-
-        <Season no="1">
-        <episode><epnum>1</epnum><seasonnum>01</seasonnum>
-        <prodnum>535G</prodnum>
-        <airdate>2001-10-02</airdate>
-        <link>http://www.tvrage.com/Scrubs/episodes/149685</link>
-        <title>My First Day</title>
-        <screencap>http://images.tvrage.com/screencaps/26/5118/149685.jpg</screencap></episode>"""
+        """http://api.tvmaze.com/shows/82:
+        
+        [{
+          "score":1.9266452,
+          "show":{
+                 "id":82,
+                 "url":"http://www.tvmaze.com/shows/82/game-of-thrones",
+                 "name":"Game of Thrones",
+                 "type":"Scripted",
+                 "language":"English",
+                 "genres":["Drama","Adventure","Fantasy"],
+                 "status":"Running",
+                 "runtime":60,
+                 "premiered":"2011-04-17",
+                 "schedule":{
+                             "time":"21:00",
+                             "days":["Sunday"]},
+                 "rating":{"average":9.4},
+                 "weight":27,
+                 "network":{"id":8,
+                            "name":"HBO",
+                            "country":{
+                                       "name":"United States",
+                                       "code":"US",
+                                       "timezone":"America/New_York"}},
+                 "webChannel":null,
+                 "externals":{"tvrage":24493,"thetvdb":121361},
+                 "image":{"medium":"http://tvmazecdn.com/uploads/images/medium_portrait/0/581.jpg",
+                          "original":"http://tvmazecdn.com/uploads/images/original_untouched/0/581.jpg"},
+                 "summary":"<p>Based on the bestselling book series A Song of Ice and Fire...</p>",
+                 "updated":1444833343,
+                 "_links":{"self":{"href":"http://api.tvmaze.com/shows/82"},
+                           "previousepisode":{"href":"http://api.tvmaze.com/episodes/162186"}}
+                 }
+        }]"""
         
         show = pytvmaze.get_show(maze_id=show_id)
-        
-        # converts time to GMT?
-        # because tz is always time delta to GMT
-        # -> calc utc to gmt
         
         # airtime in tvmaze is defined by "airstamp" (ISO8601 formated timestamp) using UTC as reference
         # see: https://en.wikipedia.org/wiki/ISO_8601
@@ -88,7 +92,6 @@ class TVMaze(object):
         #    has an airdate property of "2014-12-19", an airtime of "00:35", and an airstamp of
         #    "2014-12-20T00:35:00-05:00".
         
-        last_show_date = None
         season_list = []
         for season in show.seasons:
             episode_list = []
@@ -97,9 +100,6 @@ class TVMaze(object):
                     date = dateutil.parser.parse(show[season][episode].airstamp)
                 except ValueError:
                     date = None
-                if date is not None:
-                    if last_show_date is None or last_show_date < date:
-                        last_show_date = date
                 ep_info = TVEpisodeInfo(date      = date,
                                         title     = show[season][episode].title,
                                         nr        = show[season][episode].episode_number,
@@ -108,54 +108,68 @@ class TVMaze(object):
             season = TVSeasonInfo(season_nr= show[season].season_number, episodes=episode_list)
             season_list.append(season)
         
+        # show has eigther network or webChannel data, depending if tv- or web-series
+        if show.network == None:
+            timezone = show.webChannel["country"]["timezone"]
+            country  = show.webChannel["country"]["code"]
+            network  = show.webChannel["name"]
+        else:
+            timezone = show.network["country"]["timezone"]
+            country  = show.network["country"]["code"]
+            network  = show.network["name"]
+        
         if show.status == "Ended":
             active = False
         else:
             active = True
         
-        timezone = show.network["country"]["timezone"]
-        
         genre_str = "|".join(show.genres)
         
-        # test return output
-        # logging.info(" --- START TEST RETURN OUTPUT")
-        # logging.info(show.name)
-        # logging.info(season_list)
-        # logging.info(show.id)
-        # logging.info(show.network["country"]["code"])
-        # logging.info(show.runtime)
-        # logging.info(show.network["name"])
-        # logging.info(timezone)
-        # logging.info(active)
-        # logging.info(genre_str)
-        # logging.info(" --- END TEST RETURN OUTPUT")
+        logging.debug("Return TVShowInfo..." + show.name)
         
-        logging.debug("Return TVShowInfo...")
         return TVShowInfo(name=show.name,
-                              seasons=season_list,
-                              tvmaze_id=show.id,
-                              country=show.network["country"]["code"],
-                              runtime=show.runtime,
-                              network=show.network["name"],
-                              timezone=timezone,
-                              active=active,
-                              genres=genre_str)
+                          seasons=season_list,
+                          tvmaze_id=show.id,
+                          country=country,
+                          runtime=show.runtime,
+                          network=network,
+                          timezone=timezone,
+                          active=active,
+                          genres=genre_str)
 
     def get_info_by_name(self, show_name):
-        """<Results>
-        <show>
-        <showid>2445</showid>
-        <name>24</name>
-        <link>http://www.tvrage.com/24</link>
-        <country>US</country>
-        <started>2001</started>
-        <ended>0</ended>
-        <seasons>8</seasons>
-        <status>Returning Series</status>
-        <classification>Scripted</classification>
-        <genres><genre01>Action</genre01><genre02>Adventure</genre02><genre03>Drama</genre03></genres>
-        </show>
-        <show>"""
+        """http://api.tvmaze.com/singlesearch/shows?q=game%20of%20thrones:
+        
+        {
+         "id":82,
+         "url":"http://www.tvmaze.com/shows/82/game-of-thrones",
+         "name":"Game of Thrones",
+         "type":"Scripted",
+         "language":"English",
+         "genres":["Drama","Adventure","Fantasy"],
+         "status":"Running",
+         "runtime":60,
+         "premiered":"2011-04-17",
+         "schedule":{
+                     "time":"21:00",
+                     "days":["Sunday"]},
+         "rating":{"average":9.4},
+         "weight":27,
+         "network":{"id":8,
+                    "name":"HBO",
+                    "country":{
+                               "name":"United States",
+                               "code":"US",
+                               "timezone":"America/New_York"}},
+         "webChannel":null,
+         "externals":{"tvrage":24493,"thetvdb":121361},
+         "image":{"medium":"http://tvmazecdn.com/uploads/images/medium_portrait/0/581.jpg",
+                  "original":"http://tvmazecdn.com/uploads/images/original_untouched/0/581.jpg"},
+         "summary":"<p>Based on the bestselling book series A Song of Ice and Fire...</p>",
+         "updated":1444833343,
+         "_links":{"self":{"href":"http://api.tvmaze.com/shows/82"},
+                   "previousepisode":{"href":"http://api.tvmaze.com/episodes/162186"}}
+        }"""
         show = pytvmaze.show_single_search(show_name)
         
         if show.id is None:
