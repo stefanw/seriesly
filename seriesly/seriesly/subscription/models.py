@@ -4,6 +4,7 @@ import hmac
 import datetime
 
 from django.db import models
+from django.core import mail
 from django.core.urlresolvers import reverse
 from django.conf import settings
 from django.utils.encoding import python_2_unicode_compatible
@@ -102,7 +103,7 @@ You will only receive further emails from seriesly.com when you click the link.
 If you did not expect this mail, you should ignore it.
 By the way: your Seriesly subscription URL is: %s
 """ % (confirmation_url, sub_url)
-        mail.send_mail(settings.DEFAULT_FROM_EMAIL, self.email, subject, body)
+        mail.send_mail(subject, body, settings.DEFAULT_FROM_EMAIL, [self.email])
 
     def send_invitation_xmpp(self):
         xmpp.send_invite(self.xmpp)
