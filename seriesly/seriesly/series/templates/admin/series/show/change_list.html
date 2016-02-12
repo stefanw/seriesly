@@ -1,0 +1,16 @@
+{% extends "admin/change_list.html" %}
+{% load i18n %}
+
+{% block content %}
+  {{ block.super }}
+  <div>
+    <form method="post" action="{% url 'admin:series-import_show' %}">{% csrf_token %}
+      <p>
+        <label>
+          {% trans "Show name:" %} <input type="text" name="name"/>
+        </label>
+        <input type="submit" value="{% trans "Import show" %}"/>
+      </p>
+    </form>
+  </div>
+{% endblock %}

@@ -3,14 +3,13 @@
 {% block title %}Seriesly Subscription Page - Seriesly!{% endblock %}
 
 {% block rss %}
-<link rel="alternate" type="application/atom+xml" title="Seriesly Atom Feed of your favourite shows" href="{{ DOMAIN_URL }}{% url seriesly-subscription-atom subscription.subkey %}" />
+<link rel="alternate" type="application/atom+xml" title="Seriesly Atom Feed of your favourite shows" href="{{ DOMAIN_URL }}{% url 'seriesly-subscription-atom' subscription.subkey  %}" />
 {% endblock %}
 
 {% block skiplinks %}<li><a href="#guide">to episode guide</a></li>
 <li><a href="#email">to email subscription</a></li>
 <li><a href="#feed">to feed subscription</a></li>
 <li><a href="#ical">to iCalendar subscription</a></li>
-<li><a href="#xmpp">to XMPP chat subscription</a></li>
 <li><a href="#webhook">to Web Hook callback subscription</a></li>
 <li><a href="#settings">to subscription settings</a></li>
 {% endblock %}
@@ -21,12 +20,11 @@
 <section class="step">
     <h3>Quick Links</h3>
     <ul class="subscriptions">
-        <li><a href="{% url seriesly-subscription-guide subscription.subkey %}"><span class="sprite-guide sprite"></span>Episode Guide</a></li>
-        <li><a href="{% url seriesly-subscription-edit subscription.subkey %}"><span class="sprite-edit sprite"></span>Edit Your Shows</a></li>
+        <li><a href="{% url 'seriesly-subscription-guide' subscription.subkey  %}"><span class="sprite-guide sprite"></span>Episode Guide</a></li>
+        <li><a href="{% url 'seriesly-subscription-edit' subscription.subkey  %}"><span class="sprite-edit sprite"></span>Edit Your Shows</a></li>
         <li><a href="#email"><span class="sprite-mail sprite"></span>Email</a></li>
         <li><a href="#feed"><span class="sprite-feed sprite"></span>Feeds</a></li>
         <li><a href="#ical"><span class="sprite-ical sprite"></span>iCalendar</a></li>
-        <li><a href="#xmpp"><span class="sprite-xmpp sprite"></span>XMPP Chat</a></li>
     </ul>
 </section>
 
@@ -39,12 +37,12 @@
 
 <section class="step" id="guide">
     <h3>Episode Guide<span class="right sprite-big sprite-guide_big"></span></h3>
-    <p><a href="{% url seriesly-subscription-guide subscription.subkey %}">This is your personal Episode Guide</a>.<br/>It will always show you the episodes that aired recently or will air soon.</p>
+    <p><a href="{% url 'seriesly-subscription-guide' subscription.subkey  %}">This is your personal Episode Guide</a>.<br/>It will always show you the episodes that aired recently or will air soon.</p>
 </section>
 
 <section class="step" id="settings">
     <h3>Edit Your Shows<span class="right sprite-big sprite-edit_big"></span></h3>
-    <p>You can <a href="{% url seriesly-subscription-edit subscription.subkey %}">edit your shows and subscription settings here</a>.</p>
+    <p>You can <a href="{% url 'seriesly-subscription-edit' subscription.subkey  %}">edit your shows and subscription settings here</a>.</p>
     <p>You should not share your subscription links with anybody, because others will then be able to change your settings, too.<br/>You can <a href="#public-urls">share your subscription with special Public URLs though.</a></p>
     <p>If you have questions, consult the <a href="{% url 'seriesly-faq' %}">FAQ</a>.</p>
 </section>
@@ -74,38 +72,16 @@
 
 <section class="step" id="feed">
     <h3>Feeds<span class="right sprite-big sprite-feed_big"></span></h3>
-    <p>Get your personal <a href="{{ SECURE_DOMAIN_URL }}{% url seriesly-subscription-atom subscription.subkey %}">Episode Feed by clicking this link</a> or copying this URL to your feed reader:<br/>
-    <input type="text" readonly="readonly" value="{{ SECURE_DOMAIN_URL }}{% url seriesly-subscription-atom subscription.subkey %}" style="width:75%"/></p>
+    <p>Get your personal <a href="{{ SECURE_DOMAIN_URL }}{% url 'seriesly-subscription-atom' subscription.subkey  %}">Episode Feed by clicking this link</a> or copying this URL to your feed reader:<br/>
+    <input type="text" readonly="readonly" value="{{ SECURE_DOMAIN_URL }}{% url 'seriesly-subscription-atom' subscription.subkey  %}" style="width:75%"/></p>
 
 </section>
 
 <section class="step" id="ical">
     <h3>iCalendar<span class="right sprite-big sprite-ical_big"></span></h3>
     <p>This is your personal iCalendar URL:<br/>
-        <input type="text" readonly="readonly" value="{{ SECURE_DOMAIN_URL }}{% url seriesly-subscription-calendar subscription.subkey %}" style="width:75%"/></p>
+        <input type="text" readonly="readonly" value="{{ SECURE_DOMAIN_URL }}{% url 'seriesly-subscription-calendar' subscription.subkey  %}" style="width:75%"/></p>
     <p>You can add it to <a href="{% url 'seriesly-faq' %}#q-2">Google Calendar</a>, <a href="{% url 'seriesly-faq' %}#q-1">iCal</a> and other calendar applications.</p>
-</section>
-
-<section class="step" id="xmpp">
-    <h3>XMPP Chat Subscription<span class="right sprite-big sprite-xmpp_big"></span></h3>
-    {% if subscription.xmpp %}
-    {% if subscription.activated_xmpp %}
-    <p>You are currently getting chat notifications to:</p>
-    <p class="full centered"><strong>{{ subscription.xmpp }}</strong></p>
-    <p>You can always switch to another address or remove the address:</p>
-    {% else %}
-    <p>We send an invitation to <em>{{ subscription.xmpp }}</em></p>
-    <p>Please talk to the Seriesly bot and answer OK to activate your XMPP subscription. You cannot receive chat notifications prior to doing this.</p>
-    {% endif %}
-    {% else %}
-    <p>You don't have XMPP chat notifications at the moment. You can change that by entering your XMPP address below. You will receive an invitation from the Seriesly Subscription Bot.</p>
-    {% endif %}
-    <form action="{% url 'seriesly-subscription-edit_xmpp' %}#xmpp" method="post">
-    {% if subscription.xmpp_form.xmpp.errors %}
-    <small class="error">{{ subscription.xmpp_form.xmpp.errors.0 }}</small>
-    {% endif %}
-    <p>{{ subscription.xmpp_form.subkey }}{{ subscription.xmpp_form.xmpp.label_tag }}: {{ subscription.xmpp_form.xmpp }} <input type="submit" value="Submit"/></p>
-    </form>
 </section>
 
 <hr class="advanced-delimiter"/>
@@ -115,7 +91,7 @@
     {% if subscription.webhook %}
     <p>Your current callback URL is:</p>
     <p class="full centered"><strong>{{ subscription.webhook }}</strong></p>
-    <form action="{% url seriesly-subscription-test_webhook subscription.subkey %}" method="post">
+    <form action="{% url 'seriesly-subscription-test_webhook' subscription.subkey  %}" method="post">
       <p><input type="submit" value="Post to Web Hook now"/></p>
     </form>
     <p>You can always switch to another URL or remove this one:</p>
@@ -150,7 +126,7 @@
     {% else %}
         <p>You can share public URLs with others.<br/>They will only see your shows and will not be able to change your subscriptions.</p>
         <form action="{% url 'seriesly-subscription-edit_public_id' %}#subscription-public-urls" method="post">
-            <p><input type="submit" value="Generate public URLs"/>{{ subscription.webhook_form.subkey }}</p>
+            <p><input type="submit" value="Generate public URLs"/>{{ subscription.public_id_form.subkey }}</p>
         </form>
     {% endif %}
 

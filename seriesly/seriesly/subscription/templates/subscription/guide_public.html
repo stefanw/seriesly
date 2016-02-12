@@ -1,9 +1,9 @@
-{% extends "base.html" %}
+{% extends "subscription/base.html" %}
 
 {% block title %}Episode Guide - Seriesly!{% endblock %}
 
 {% block rss %}
-<link rel="alternate" type="application/atom+xml" title="Atom-Feed of these shared shows" href="{{ DOMAIN_URL }}{% url seriesly-subscription-atom_public subscription.public_id %}" />
+<link rel="alternate" type="application/atom+xml" title="Atom-Feed of these shared shows" href="{{ DOMAIN_URL }}{% url 'seriesly-subscription-atom_public' subscription.public_id  %}" />
 <!-- Kind of: <link rel="profile" href="http://microformats.org/profile/hcalendar"> -->
 {% endblock %}
 
@@ -11,7 +11,7 @@
 {% include "announcement.html" %}
 <section class="step">
     <small class="right"><a href="{% url 'seriesly-subscription-show_public' subscription.public_id %}">to public subscription page</a></small>
-    {% include "guide_list.html" %}
+    {% include "subscription/guide_list.html" %}
 </section>
 {% endblock %}
 {% block extra_js %}{% endblock  %}

@@ -12,4 +12,4 @@ The following episodes aired in the last 24 hours:
 
 -- 
 {{ DOMAIN_URL }}
-Your Subscription: {{ DOMAIN_URL }}{% url seriesly-subscription-show subscription.subkey %}{% endautoescape %}
+Your Subscription: {{ DOMAIN_URL }}{% url 'seriesly-subscription-show' subscription.subkey %}{% endautoescape  %}

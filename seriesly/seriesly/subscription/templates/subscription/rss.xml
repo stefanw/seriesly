@@ -3,22 +3,20 @@
 	<channel>
 		<title>Your Favorite TV Shows by Seriesly.com</title>
 		<ttl>30</ttl>
-		<link>{{ DOMAIN_URL }}{% url seriesly-subscription-show_public subscription.public_id %}</link>
-		<atom:link href="{{ DOMAIN_URL }}{% url seriesly-subscription-rss_public subscription.public_id %}" rel="self" type="application/rss+xml" />
+		<link>{{ DOMAIN_URL }}{% url 'seriesly-subscription-show' subscription.subkey  %}</link>
+		<atom:link href="{{ DOMAIN_URL }}{% url 'seriesly-subscription-rss' subscription.subkey  %}" rel="self" type="application/rss+xml" />
 		<image>
 			<title>Your Favorite TV Shows by {{ APP_NAME }}</title>
 			<url>{{ DOMAIN_URL }}{{ MEDIA_URL }}img/seriesly_feed.png</url>
-			<link>{{ DOMAIN_URL }}{% url seriesly-subscription-show_public subscription.public_id %}</link>
+			<link>{{ DOMAIN_URL }}{% url 'seriesly-subscription-show' subscription.subkey  %}</link>
 		</image>
 		<description>{{ APP_NAME }} provides you with your favorite TV Shows</description>
 		{% for item in items %}
 		<item>
 			<title>{{ item.show.name }} - {{ item.title }} ({{ item.season_number }}x{{ item.number }})</title>
 			<pubDate>{{ item.pub_date|date:"r" }}</pubDate>
-			<description>{% include "feed_content.html" %}
-				<a href="{{ DOMAIN_URL }}{% url seriesly-subscription-show_public subscription.public_id %}">Your Subscription on {{ APP_NAME }}</a></content>
-			</description>
-			<guid>{{ DOMAIN_URL }}{% url seriesly-shows-episode item.key.id %}</guid>
+			<description>{% include "feed_content.html" %}</description>
+			<guid>{{ DOMAIN_URL }}{% url 'seriesly-shows-episode' item.key.id  %}</guid>
 		</item>
 		{% endfor %}
 	</channel>

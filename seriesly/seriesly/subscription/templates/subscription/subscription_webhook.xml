@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <seriesly>
-    <link rel="source" href="{{ DOMAIN_URL }}{% url seriesly-subscription-show subscription.subkey %}"/>
+    <link rel="source" href="{{ DOMAIN_URL }}{% url 'seriesly-subscription-show' subscription.subkey  %}"/>
     <announcement></announcement>
     <episodes>{% for item in items %}
         <episode>
