@@ -143,10 +143,10 @@ class Show(db.Model):
             show_info = tvmaze.get_info(show_id)
         if show_info is None:
             return False
-        logging.debug("Show exists..?")
+        logging.debug("Does Show %s exist ...?" % show_info.tvmaze_id)
         show = Show.all().filter("tvmaze_id =", show_info.tvmaze_id).get()
         if show is None:
-            logging.debug("Creating Show...")
+            logging.debug("Creating new Show... %s" % show_info.name)
             show = Show(name=show_info.name,
                         network=show_info.network,
                         genres=show_info.genres,
@@ -183,7 +183,7 @@ class Season(db.Model):
     def update_or_create(cls, show, season_info, get_everything=False):
         season = Season.all().filter("show =", show).filter(
                 "number =", season_info.season_nr).get()
-        logging.debug("Found season? %s" % season)
+        logging.debug("Found season: S%s" % season.number)
         if season is None:
             season = Season(show=show, number=season_info.season_nr)
             season.put()
@@ -196,7 +196,7 @@ class Season(db.Model):
         now = utc.localize(datetime.datetime.now())
         fortyeight_hours_ago = now - datetime.timedelta(hours=48)
         for episode_info in season_info.episodes:
-            logging.debug("Update episode... %s" % episode_info)
+            logging.debug("Update episode... S%sE%s %s" % (episode_info.season_nr, episode_info.nr, episode_info.title))
             if first_date is None:
                 first_date = episode_info.date
             if get_everything or episode_info.date is None or episode_info.date >= fortyeight_hours_ago:
@@ -250,7 +250,7 @@ class Episode(db.Model):
     def update_or_create(cls, season, episode_info):
         episode = Episode.all().filter("show =", season.show).filter(
             "season =", season).filter("number =", episode_info.nr).get()
-        logging.debug("Found episode... %s" % episode)
+        logging.debug("Found episode... %s" % episode.number)
         if episode is None:
             episode = Episode.create(season, episode_info)
         else:
