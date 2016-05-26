@@ -86,10 +86,10 @@ def update_show(request):
     except Http404:
         raise Http404
     except Exception, e:
-        logging.error("Error Updating Show (%s)%s: %s" % (show, key, e))
-        return HttpResponse("Done (with errors, %s(%s))" % (show, key))
-    logging.debug("Done updating show %s(%s)" % (show, key))
-    return HttpResponse("Done: %s(%s)" % (show, key))
+        logging.error("Error Updating Show (TVMaze_ID: %s,Name: %s) Key: %s: %s" % (show.tvmaze_id,show.name, key, e))
+        return HttpResponse("Done (with errors, TVMaze_ID: %s,Name: %s (Key: %s))" % (show.tvmaze_id,show.name, key))
+    logging.debug("Done updating show TVMaze_ID: %s,Name: %s (Key: %s)" % (show.tvmaze_id,show.name, key))
+    return HttpResponse("Done: TVMaze_ID: %s,Name: %s (Key: %s)" % (show.tvmaze_id,show.name, key))
 
 
 def redirect_to_front(request, episode_id):

@@ -37,4 +37,6 @@ nosetests.xml
 .project
 .pydevproject
 
-
+# Personal Settings
+/seriesly/app.yaml
+/seriesly/local_settings.py
