@@ -1,0 +1,17 @@
+DEBUG = True
+
+DEFAULT_FROM_EMAIL = 'mail@example.com'
+
+# Enter your name here (displayed on about page):
+ADMIN_NAME = "John Doe"
+
+# Enter your app name here:
+SITE_NAME = "Seriesly"
+DOMAIN_URL = "http://localhost:8000"
+
+# enter your google account address here to access a simple admin interface
+ADMIN_USERS = ("yourname@example.com", "anothername@example.com",)
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+CELERY_ALWAYS_EAGER = True

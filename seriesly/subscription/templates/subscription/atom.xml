@@ -1,0 +1,7 @@
+{% load i18n %}{% spaceless %}
+{% url 'seriesly-subscription-atom' subscription.subkey as self_url %}
+{% url 'seriesly-subscription-show' subscription.subkey as sub_url %}
+{% trans "Your subscription on Seriesly.com" as sub_label %}
+
+{% include "subscription/_atom.xml" with self_url=self_url sub_url=sub_url sub_label=sub_label %}
+{% endspaceless %}

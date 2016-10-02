@@ -1,45 +1,43 @@
-{% load static %}<!DOCTYPE html>
+{% load static %}{% load flatpages %}<!DOCTYPE html>
 <html dir="ltr" lang="en-US">
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-        <title>{% block title %}Seriesly!{% endblock %}</title>
-        <link rel="stylesheet" href="{% static 'css/seriesly.css' %}" type="text/css"/>
-       {% block rss %}{% endblock %}
-       <link rel="icon" type="image/png" href="{{ MEDIA_URL }}img/favicon.png" />
-       <meta name="robots" content="index, follow" />
-       <meta name="keywords" content="tv show series episode guide calendar rss atom xml email" />
-       <meta name="description" content="Seriesly notifies you when your favorite TV shows comes out." />
-       <!-- // <script src="{{ MEDIA_URL }}js/jquery.js" type="text/javascript" charset="utf-8"></script> -->
-       <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript" charset="utf-8"></script>
-    </head>
+  <head>
+    <meta charset="charset=utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>{% block title %}Seriesly!{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'vendor/css/bootstrap.min.css' %}" type="text/css"/>
+    <link rel="stylesheet" href="{% static 'css/seriesly.css' %}" type="text/css"/>
+    {% block rss %}{% endblock %}
+    <link rel="icon" type="image/png" href="{{ MEDIA_URL }}img/favicon.png" />
+    <meta name="robots" content="index, follow" />
+    <meta name="keywords" content="tv show series episode guide calendar rss atom xml email" />
+    <meta name="description" content="Seriesly notifies you when your favorite TV shows comes out." />
+  </head>
+  <body>
+    <div class="container">
+      <header role="banner" id="header">
+          <h1>
+            <a href="/">{{ SITE_NAME }}</a>
+            <small class="strapline">Taking your addiction seriesly.</small>
+          </h1>
+      </header>
 
-    <body>
-        <nav class="skipLink">
-            <ul>
-                {% block skiplinks %}<li><a href="#content">to main content</a></li>{% endblock %}
-            </ul>
-        </nav>
-        <header role="banner" id="header">
-            <h1 class="logo"><a href="/">Seriesly</a></h1>
-            <h2 class="strapline">Taking your addiction seriesly.</h2>
-        </header>
-
-        <article id="content">
-            {% block body %}
-            {% endblock %}
-        </article>
-        {% if not subscription %}
-        <aside id="twitter"></aside>
-        {% endif %}
-        <footer id="footer">
-            <ul>
-                <li><a href="{% url 'seriesly-about' %}">About</a></li>
-                <li><a href="{% url 'seriesly-faq' %}">FAQ</a></li>
-                <li><a href="{% url 'seriesly-terms' %}">Terms</a></li>
-                <li><a href="{% url 'seriesly-privacy' %}">Privacy</a></li>
-                <li><a href="http://stefanwehrmeyer.com">StefanWehrmeyer.com</a></li>
-            </ul>
-        </footer>
-       {% block extra_js %}{% endblock %}
-    </body>
+      <section id="content">
+          {% block body %}
+          {% endblock %}
+      </section>
+      <footer id="footer">
+        {% load flatpages %}
+        {% get_flatpages as flatpages %}
+        <ul>
+          {% for page in flatpages %}
+            <li>
+              <a href="{{ page.url }}">{{ page.title }}</a>
+            </li>
+          {% endfor %}
+        </ul>
+      </footer>
+    </div>
+    <script src="{% static "js/jquery.min.js" %}" type="text/javascript" charset="utf-8"></script>
+   {% block extra_js %}{% endblock %}
+  </body>
 </html>

@@ -1,0 +1,74 @@
+{% extends "subscription/base.html" %}
+
+{% load static %}
+
+{% block body %}
+{% if not subscription %}
+<section class="step centered">
+    <p class="centered">Seriesly reminds you of new episodes of your selected TV shows via:</p>
+    <ul class="subscriptions">
+        <li>Email</li>
+        <li>Feeds</li>
+        <li>iCalendar</li>
+        <li>Episode Guide</li>
+        <li>Web Hook</li>
+    </ul>
+</section>
+{% endif %}
+<form action="{% url 'seriesly-subscribe' %}" method="post">
+    <fieldset class="step">
+      <legend class="step-label">
+        {% if subscription %}
+          1. Change the shows you watch:
+        {% else %}
+          1. Choose the shows you watch:
+        {% endif %}
+      </legend>
+      <div class="select-shows">
+          {% if form.shows.errors %}
+          {{ form.shows.errors }}
+          {% endif %}
+          <p id="search-fields" style="display:none">
+            <label class="smaller" for="search">Search: </label>
+            <input type="search" name="search" id="search" value="" autofocus="autofocus" autocomplete="off"/>
+            <input type="button" value="Clear" style="display:none" id="clear-search"/>
+          </p>
+          <div>
+              <ul class="show-list">
+                  {{ form.shows }}
+              </ul>
+          </div>
+          <div style="display:none" id="chosenshows">
+              <p id="chosenshows-label">You haven't chosen any shows yet.</p>
+              <ul id="chosenshows-list" class="show-list">
+              </ul>
+          </div>
+      </div>
+    </fieldset>
+    <fieldset class="step">
+        {% if subscription %}
+        <legend class="step-label">2. Save your changes.</legend>
+        {% else %}
+        <legend class="step-label">2. Get notified when new episodes come out!</legend>
+        {% endif %}
+        <div class="centered">
+            <p class="full centered">
+            {{ form.subkey }}
+            {% if subscription %}
+            <button class="btn btn-lg btn-primary" type="submit">Save!</button>
+            <a class="btn btn-default" href="{% url 'seriesly-subscription-show' subscription.subkey %}">Don't save, just go back</a>
+            {% else %}
+            <button class="btn btn-lg btn-primary" type="submit">Get notified. It's free.</button>
+            {% endif %}
+            </p>
+        </div>
+    </fieldset>
+</form>
+{% endblock %}
+{% block extra_js %}
+  {% if not subscription %}
+    <script type="text/javascript" charset="utf-8">
+        $(function(){checkSubscriptionCookie()});
+    </script>
+  {% endif %}
+{% endblock %}

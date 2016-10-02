@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+
+{% block title %}{{ SITE_NAME}} Subscription Page{% endblock %}
+
+{% block rss %}
+  <link rel="alternate" type="application/atom+xml" title="{{ SITE_NAME }} Atom Feed of your favourite shows" href="{{ DOMAIN_URL }}{% url 'seriesly-subscription-atom' subscription.subkey  %}" />
+{% endblock %}
+
+{% block skiplinks %}
+  <li><a href="#guide">to episode guide</a></li>
+  <li><a href="#email">to email subscription</a></li>
+  <li><a href="#feed">to feed subscription</a></li>
+  <li><a href="#ical">to iCalendar subscription</a></li>
+  <li><a href="#webhook">to Web Hook callback subscription</a></li>
+  <li><a href="#settings">to subscription settings</a></li>
+{% endblock %}
+
+{% block body %}
+
+{% include "announcement.html" %}
+
+<section>
+    <h3>Quick Links</h3>
+    <ul class="subscriptions">
+        <li><a href="{% url 'seriesly-subscription-guide' subscription.subkey  %}"><span class="sprite-guide sprite"></span>Episode Guide</a></li>
+        <li><a href="{% url 'seriesly-subscription-edit' subscription.subkey  %}"><span class="sprite-edit sprite"></span>Edit Your Shows</a></li>
+        <li><a href="#email"><span class="sprite-mail sprite"></span>Email</a></li>
+        <li><a href="#feed"><span class="sprite-feed sprite"></span>Feeds</a></li>
+        <li><a href="#ical"><span class="sprite-ical sprite"></span>iCalendar</a></li>
+    </ul>
+</section>
+
+<section>
+    <h3>Your Seriesly Subscription</h3>
+    <p>The heart of your Seriesly subscription is this page with a private URL:<br/>
+        <input type="text" readonly="readonly" value="{{ DOMAIN_URL }}{% url 'seriesly-subscription-show' subscription.subkey %}" style="width:75%"/></p>
+    <p>You should store this URL <em>privately</em> (e.g. bookmark it). A link to this page is also provided in your feed, email notifications etc.</p>
+</section>
+
+<section id="guide">
+    <h3>Episode Guide<span class="right sprite-big sprite-guide_big"></span></h3>
+    <p><a href="{% url 'seriesly-subscription-guide' subscription.subkey  %}">This is your personal Episode Guide</a>.<br/>It will always show you the episodes that aired recently or will air soon.</p>
+</section>
+
+<section id="settings">
+    <h3>Edit Your Shows<span class="right sprite-big sprite-edit_big"></span></h3>
+    <p>You can <a href="{% url 'seriesly-subscription-edit' subscription.subkey  %}">edit your shows and subscription settings here</a>.</p>
+    <p>You should not share your subscription links with anybody, because others will then be able to change your settings, too.<br/>You can <a href="#public-urls">share your subscription with special Public URLs though.</a></p>
+</section>
+
+<section id="email">
+    <h3>Email Subscription<span class="right sprite-big sprite-mail_big"></span></h3>
+    {% if subscription.email %}
+      {% if subscription.activated_mail %}
+        <p>You are currently getting email notifications to:</p>
+        <p class="full centered"><strong>{{ subscription.email }}</strong></p>
+        <p>You can always switch to another address or remove the address:</p>
+      {% else %}
+        <p>We send you a confirmation link to <em>{{ subscription.email }}</em></p>
+        <p>Please check your mail account for a mail from Seriesly and click the link you find in the mail. You cannot receive email notifications prior to confirming this mail address.</p>
+        <p>If you haven't received a mail, check your Spam Folder and the address you provided. If you mistyped your address, just change it and give it another go.</p>
+      {% endif %}
+    {% else %}
+      <p>You don't have email notifications at the moment. You can change that by entering your email below. You will receive a confirmation email.</p>
+    {% endif %}
+
+    <form action="{% url 'seriesly-subscription-edit_mail' %}#email" method="post">
+      {% if subscription.mail_form.email.errors %}
+        <small class="error">{{ email_form.email.errors.0 }}</small>
+      {% endif %}
+      {{ email_form.as_p }}
+      <p>
+        <button type="submit" class="btn btn-success">Submit</button>
+        <br/>
+        <small>No Spam. Seriously.</small>
+      </p>
+    </form>
+</section>
+
+<section id="feed">
+    <h3>Feeds<span class="right sprite-big sprite-feed_big"></span></h3>
+    <p>Get your personal <a href="{{ DOMAIN_URL }}{% url 'seriesly-subscription-atom' subscription.subkey  %}">Episode Feed by clicking this link</a> or copying this URL to your feed reader:<br/>
+    <input type="text" readonly="readonly" value="{{ DOMAIN_URL }}{% url 'seriesly-subscription-atom' subscription.subkey  %}" style="width:75%"/></p>
+
+</section>
+
+<section id="ical">
+    <h3>iCalendar<span class="right sprite-big sprite-ical_big"></span></h3>
+    <p>
+      This is your personal iCalendar URL:<br/>
+      <input type="text" readonly="readonly" value="{{ DOMAIN_URL }}{% url 'seriesly-subscription-calendar' subscription.subkey  %}" style="width:75%"/>
+    </p>
+</section>
+
+<hr class="advanced-delimiter"/>
+
+<section id="webhook">
+    <h3>Web Hook<span class="right sprite-big sprite-webhook_big"></span></h3>
+    {% if subscription.webhook %}
+      <p>Your current callback URL is:</p>
+      <p class="full centered"><strong>{{ subscription.webhook }}</strong></p>
+      <form action="{% url 'seriesly-subscription-test_webhook' subscription.subkey  %}" method="post">
+        <p><input type="submit" value="Post to Web Hook now"/></p>
+      </form>
+      <p>You can always switch to another URL or remove this one:</p>
+    {% else %}
+      <p>You don't have a Seriesly Web Hook callback at the moment.<br/>If you know what Web Hooks are, you can enter a callback URL below.</p>
+    {% endif %}
+
+    <form action="{% url 'seriesly-subscription-edit_webhook' %}#webhook" method="post">
+      {% if webhook_form.webhook.errors %}
+        <small class="error">{{ webhook_form.webhook.errors.0 }}</small>
+      {% endif %}
+
+      {{ webhook_form.as_p }}
+      <p>
+        <button type="submit" class="btn btn-success">Submit</button>
+      </p>
+    </form>
+</section>
+
+<section id="public-urls">
+  <h3>Public URLs</h3>
+  {% if subscription.public_id %}
+      <p>You are currently sharing your shows through the following public URLs:</p>
+      <ul class="normal-list">
+          <li><a href="{% url 'seriesly-subscription-show_public' subscription.public_id %}">Public Subscription Page</a></li>
+          <li><a href="{% url 'seriesly-subscription-guide_public' subscription.public_id %}">Public Episode Guide</a></li>
+          <li><a href="{% url 'seriesly-subscription-atom_public' subscription.public_id %}">Public Feed URL</a></li>
+          <li><a href="{% url 'seriesly-subscription-calendar_public' subscription.public_id %}">Public Calendar URL</a></li>
+      </ul>
+      <br/>
+      <p>You can always destroy these URLs and return to privacy.</p>
+      <form action="{% url 'seriesly-subscription-edit_public_id' %}#subscription-public-urls" method="post">
+          <p><input type="submit" value="Destroy Public URLs"/>{{ subscription.webhook_form.subkey }}</p>
+          <p><strong>Warning:</strong> destroying the URLs cannot be undone.</p>
+      </form>
+  {% else %}
+      <p>You can share public URLs with others.<br/>They will only see your shows and will not be able to change your subscriptions.</p>
+      <form action="{% url 'seriesly-subscription-edit_public_id' %}#subscription-public-urls" method="post">
+          <p>
+            <button class="btn btn-success" type="submit">Generate public URLs</button>
+            {{ subscription.public_id_form.subkey }}
+        </p>
+      </form>
+  {% endif %}
+</section>
+
+{% endblock %}
+{% block extra_js %}{% endblock  %}

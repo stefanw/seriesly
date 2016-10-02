@@ -38,3 +38,6 @@ nosetests.xml
 .pydevproject
 
 *.sqlite3
+
+node_modules/
+seriesly/local_settings.py

@@ -1,0 +1,22 @@
+{% load serieslytags %}<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:fa="http://purl.org/atompub/age/1.0">
+  <title>Seriesly</title>
+  <link rel="self" type="application/atom+xml" href="{{ DOMAIN_URL }}{{ self_url }}"/>
+  <updated>{{ subscription.updated }}</updated>
+  <id>{{ DOMAIN_URL }}{{ self_url }}</id>
+  <icon>{{ DOMAIN_URL }}/media/img/favicon.png</icon>
+  <author><name>Seriesly</name></author>
+  <fa:max-expires>{{ subscription.expires }}</fa:max-expires>
+  {% for item in items %}<entry>
+      <title>{{ item.show.name }} - {{ item.title }} ({{ item.season_number }}x{{ item.number }})</title>
+      <updated>{{ item.pub_date|rfc3339 }}</updated>
+      <content type="html"><![CDATA[<div>
+        {% include "subscription/feed_content.html" %}
+           <a href="{{ DOMAIN_URL }}{{ sub_url }}">
+             {{ sub_label }}
+           </a>
+        </div>
+      ]]></content>
+      <id>{{ DOMAIN_URL }}{% url 'seriesly-shows-episode' item.key_id  %}</id>
+  </entry>{% endfor %}
+</feed>

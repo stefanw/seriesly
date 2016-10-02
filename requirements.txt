@@ -1,6 +1,11 @@
-Django<=1.9
-vobject==0.6.6
+Django<1.11
+vobject==0.9.3
 dateutils==0.6.6
-requests==2.8.1
-pytz==2015.7
-dj-database-url==0.3.0
+requests==2.11.1
+pytz==2016.6.1
+dj-database-url==0.4.1
+celery==3.1.24
+pytvmaze==2.0.1
+
+gunicorn
+whitenoise
