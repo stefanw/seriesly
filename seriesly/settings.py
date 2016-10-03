@@ -84,7 +84,6 @@ INSTALLED_APPS = (
     'seriesly.series',
     'seriesly.subscription',
     'seriesly.helper',
-    'seriesly.statistics',
 )
 
 
