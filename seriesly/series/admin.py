@@ -5,6 +5,7 @@ from django.conf.urls import url
 from django.contrib import admin
 
 from .models import Show, Season, Episode
+from .tasks import update_show
 
 
 class ShowAdmin(admin.ModelAdmin):
@@ -35,7 +36,7 @@ class ShowAdmin(admin.ModelAdmin):
 
     def update(self, request, queryset):
         for show in queryset:
-            show.update()
+            update_show.delay(show.pk)
 
 
 admin.site.register(Show, ShowAdmin)

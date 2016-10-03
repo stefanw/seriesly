@@ -18,20 +18,20 @@ from .tasks import send_confirmation_mail_task
 WORD = re.compile("^\w+$")
 
 
-def index(request, form=None, extra_context=None):
+def index(request, form=None, extra_context=None, status=200):
     if form is None:
         form = SubscriptionForm()
     context = {"form": form}
     if extra_context is not None:
         context.update(extra_context)
-    return render(request, "subscription/index.html", context)
+    return render(request, "subscription/index.html", context, status=status)
 
 
 @is_post
 def subscribe(request):
     form = SubscriptionForm(request.POST)
     if not form.is_valid():
-        return index(request, form=form)
+        return index(request, form=form, status=400)
     editing = False
     if form.cleaned_data["subkey"] == "":
         subkey = Subscription.generate_subkey()
@@ -106,7 +106,6 @@ def edit(request, subkey):
     if request.method == "GET":
         subscription.get_settings()
         sub_dict = {
-            "email": subscription.email,
             "shows": map(lambda x: x.pk, subscription.get_shows()),
             "subkey": subkey
         }

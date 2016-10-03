@@ -1,0 +1,15 @@
+<div class="vevent-meta">
+  <time class="dtstart" datetime="{{ item.date|date:"Y-m-d\TH:i:s" }}" title="{{ item.date }}">
+  {% if item.has_aired %}
+    {{ item.date_local|timesince }} ago
+  {% else %}
+    in {{ item.date_local|timeuntil }}
+  {% endif %}
+  </time>
+  <time class="dtend" datetime="{{ item.date_end|date:"Y-m-d\TH:i:s" }}"></time>
+  <span class="location">on {{ item.show.network }}</span>, {{ item.season_number }}x{{ item.number }}
+</div>
+<h4 title="{{ item.show.name }} {{ item.season_episode }}">
+  {{ item.show.name }}
+  <small>&ldquo;{{ item.title }}&rdquo;</small>
+</h4>

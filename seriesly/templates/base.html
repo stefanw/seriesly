@@ -3,28 +3,28 @@
   <head>
     <meta charset="charset=utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>{% block title %}Seriesly!{% endblock %}</title>
+    <title>{% block title %}{{ SITE_NAME }}{% endblock %}</title>
     <link rel="stylesheet" href="{% static 'vendor/css/bootstrap.min.css' %}" type="text/css"/>
     <link rel="stylesheet" href="{% static 'css/seriesly.css' %}" type="text/css"/>
     {% block rss %}{% endblock %}
     <link rel="icon" type="image/png" href="{{ MEDIA_URL }}img/favicon.png" />
     <meta name="robots" content="index, follow" />
     <meta name="keywords" content="tv show series episode guide calendar rss atom xml email" />
-    <meta name="description" content="Seriesly notifies you when your favorite TV shows comes out." />
+    <meta name="description" content="{{ SITE_NAME }} notifies you when your favorite TV shows comes out." />
   </head>
   <body>
     <div class="container">
       <header role="banner" id="header">
           <h1>
             <a href="/">{{ SITE_NAME }}</a>
-            <small class="strapline">Taking your addiction seriesly.</small>
+            <small>Taking your addiction seriesly.</small>
           </h1>
       </header>
 
-      <section id="content">
+      <main id="content">
           {% block body %}
           {% endblock %}
-      </section>
+      </main>
       <footer id="footer">
         {% load flatpages %}
         {% get_flatpages as flatpages %}

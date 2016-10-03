@@ -7,7 +7,7 @@ from pytz import utc
 from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
 from django.core.cache import cache
-from django.utils import timezone
+from django.utils import timezone as tz
 
 from seriesly.helper.string_utils import normalize
 from seriesly.helper.dateutils import get_timezone_for_gmt_offset
@@ -39,7 +39,7 @@ class Show(models.Model):
     runtime = models.IntegerField()
     timezone = models.CharField(max_length=255)
     provider_id = models.IntegerField()
-    added = models.DateTimeField()
+    added = models.DateTimeField(default=tz.now)
 
     _memkey_all_shows_ordered = "all_shows_ordered"
     _memkey_shows_dict = "all_shows_dict"
@@ -136,7 +136,7 @@ class Show(models.Model):
                         runtime=show_info['runtime'],
                         timezone=show_info['timezone'],
                         provider_id=show_info['provider_id'],
-                        added=timezone.now())
+                        added=tz.now())
             show.save()
         show.update(show_info, everything=True)
         return show
@@ -146,7 +146,7 @@ class Show(models.Model):
         if self.added is None:
             return False
         new_time = datetime.timedelta(days=7)
-        if timezone.now() - self.added < new_time:
+        if tz.now() - self.added < new_time:
             return True
         return False
 
@@ -175,7 +175,7 @@ class Season(models.Model):
     def update(self, season_info, everything=False):
         first_date = None
         episode_info = None
-        now = timezone.now()
+        now = tz.now()
         fortyeight_hours_ago = now - datetime.timedelta(hours=48)
         for episode_info in season_info['episodes']:
             logging.debug("Update episode... %s" % episode_info)
@@ -219,6 +219,13 @@ class Episode(models.Model):
                 tz = utc
             self._date_local = self.date.astimezone(tz)
         return self._date_local
+
+    @property
+    def has_aired(self):
+        return self.date < tz.now()
+
+    def season_episode(self):
+        return 'S{:02d}E{:02d}'.format(self.season_number, self.number)
 
     @property
     def date_local_end(self):
@@ -327,7 +334,8 @@ class Episode(models.Model):
         date = utc.localize(self.date).astimezone(tz)
         vevent.add('dtstart').value = date
         vevent.add('dtend').value = date + datetime.timedelta(minutes=self.show.runtime)
-        vevent.add('summary').value = "%s - %s (%dx%d)" % (self.show.name, self.title,
-                                                                self.season_number, self.number)
+        vevent.add('summary').value = "%s - %s (%dx%d)" % (
+                self.show.name, self.title,
+                self.season_number, self.number)
         vevent.add('location').value = self.show.network
         return vevent

@@ -163,7 +163,7 @@ By the way: your Seriesly subscription URL is: %s
     def reset_cache(self, show_list):
         self.set_show_cache([str(show.pk) for show in show_list])
         # don't know next airtime
-        self.next_airtime = datetime.date(2010, 1, 1)
+        self.next_airtime = None
         self.feed_stamp = None
         self.calendar_stamp = None
         self.feed_public_stamp = None
@@ -179,12 +179,6 @@ By the way: your Seriesly subscription URL is: %s
     @classmethod
     def add_webhook_task(cls, key):
         return cls.add_task('seriesly-subscription-webhook', "webhook-queue", key)
-
-    @classmethod
-    def add_task(cls, url_name, queue_name, key):
-        t = taskqueue.Task(url=reverse(url_name), params={"key": str(key)})
-        t.add(queue_name=queue_name)
-        return t
 
     def post_to_callback(self, body):
         response = http_post(self.webhook, body)

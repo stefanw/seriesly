@@ -25,24 +25,24 @@
         {% endif %}
       </legend>
       <div class="select-shows">
-          {% if form.shows.errors %}
+        {% if form.shows.errors %}
           {{ form.shows.errors }}
-          {% endif %}
-          <p id="search-fields" style="display:none">
-            <label class="smaller" for="search">Search: </label>
-            <input type="search" name="search" id="search" value="" autofocus="autofocus" autocomplete="off"/>
-            <input type="button" value="Clear" style="display:none" id="clear-search"/>
-          </p>
-          <div>
-              <ul class="show-list">
-                  {{ form.shows }}
-              </ul>
-          </div>
-          <div style="display:none" id="chosenshows">
-              <p id="chosenshows-label">You haven't chosen any shows yet.</p>
-              <ul id="chosenshows-list" class="show-list">
-              </ul>
-          </div>
+        {% endif %}
+        <p id="search-fields" style="display:none">
+          <label class="smaller" for="search">Search: </label>
+          <input type="search" name="search" id="search" value="" autofocus="autofocus" autocomplete="off"/>
+          <input type="button" value="Clear search" style="display:none" id="clear-search"/>
+        </p>
+        <div>
+            <ul class="show-list">
+                {{ form.shows }}
+            </ul>
+        </div>
+        <div style="display:none" id="chosenshows">
+            <p id="chosenshows-label">You haven't chosen any shows yet.</p>
+            <ul id="chosenshows-list" class="show-list">
+            </ul>
+        </div>
       </div>
     </fieldset>
     <fieldset class="step">

@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+
+{% block title %}{{ flatpage.title }} – {{ block.super }}{% endblock %}
+
+{% block body %}
+  {{ flatpage.content }}
+{% endblock %}
