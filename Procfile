@@ -1,1 +1,1 @@
-web: gunicorn seriesly.wsgi:application
+web: gunicorn seriesly.wsgi:application --log-file -
