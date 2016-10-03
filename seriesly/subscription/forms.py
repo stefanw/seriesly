@@ -70,7 +70,7 @@ class SubscriptionKeyForm(SubKeyMixIn, forms.Form):
 
 class SubscriptionForm(SubKeyMixIn, forms.Form):
     subkey = forms.CharField(required=False, widget=forms.HiddenInput)
-    shows = forms.MultipleChoiceField(required=True, choices=get_choices(), widget=SerieslyCheckboxSelectMultiple,
+    shows = forms.MultipleChoiceField(required=True, choices=get_choices, widget=SerieslyCheckboxSelectMultiple,
         error_messages={'required': 'You need to select at least one show!'})
 
     def clean_shows(self):
