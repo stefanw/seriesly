@@ -34,10 +34,10 @@ SERVER_EMAIL = DEFAULT_FROM_EMAIL
 ADMIN_NAME = "Stefan Wehrmeyer"
 
 SITE_NAME = 'Seriesly'
-DOMAIN_URL = "https://serieslycom.appspot.com"
+DOMAIN_URL = os_env('DOMAIN_URL', "https://serieslynew.herokuapp.com")
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = '02ca0jaadlbjk;.93nfnvopm 40mu4w0daadlclm fniemcoia984<mHMImlkFUHA=")JRFP"Om'
+SECRET_KEY = os_env('DJANGO_SECRET_KEY', '02ca0jaadlbjk;.93nfnvopm 40mu4w0daadlclm fniemcoia984<mHMImlkFUHA=")JRFP"Om')
 
 SITE_ID = 1
 
