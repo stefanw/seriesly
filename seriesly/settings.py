@@ -37,7 +37,7 @@ SITE_NAME = 'Seriesly'
 DOMAIN_URL = os_env('DOMAIN_URL', "https://serieslynew.herokuapp.com")
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = os_env('DJANGO_SECRET_KEY', '02ca0jaadlbjk;.93nfnvopm 40mu4w0daadlclm fniemcoia984<mHMImlkFUHA=")JRFP"Om')
+SECRET_KEY = os_env('DJANGO_SECRET_KEY', 'not-so-secret')
 
 SITE_ID = 1
 
@@ -103,6 +103,17 @@ STATICFILES_FINDERS = (
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': ('%(asctime)s [%(process)d] [%(levelname)s] ' +
+                       'pathname=%(pathname)s lineno=%(lineno)s ' +
+                       'funcname=%(funcName)s %(message)s'),
+            'datefmt': '%Y-%m-%d %H:%M:%S'
+        },
+        'simple': {
+            'format': '%(levelname)s %(message)s'
+        }
+    },
     'handlers': {
         'console': {
             'class': 'logging.StreamHandler',
@@ -111,10 +122,12 @@ LOGGING = {
     'loggers': {
         'django': {
             'handlers': ['console'],
-            'level': os.getenv('DJANGO_LOG_LEVEL', 'ERROR'),
+            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
         },
     },
 }
+
+CELERY_ALWAYS_EAGER = bool(int(os_env('CELERY_ALWAYS_EAGER', '1')))
 
 
 EMAIL_HOST = os_env('POSTMARK_SMTP_SERVER')
