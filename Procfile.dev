@@ -1,0 +1,3 @@
+web: gunicorn seriesly.wsgi:application --log-level=info
+worker: celery worker -A seriesly -l INFO
+celery_beat: celery beat -A seriesly -l INFO

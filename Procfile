@@ -1,1 +1,1 @@
-web: gunicorn seriesly.wsgi:application --log-level=debug
+web: env > .env; env PYTHONUNBUFFERED=true honcho start -f Procfile.dev 2>&1
