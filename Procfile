@@ -1,1 +1,1 @@
-web: gunicorn seriesly.wsgi:application --log-file -
+web: gunicorn seriesly.wsgi:application --log-level=debug
