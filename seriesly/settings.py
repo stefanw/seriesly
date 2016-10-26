@@ -2,6 +2,7 @@
 import os
 
 import dj_database_url
+from celery.schedules import crontab
 
 
 def os_env(name, default=None):
@@ -70,7 +71,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware'
 )
 
-INSTALLED_APPS = (
+INSTALLED_APPS = [
     'django.contrib.auth',
     'django.contrib.sessions',
     'django.contrib.contenttypes',
@@ -84,7 +85,7 @@ INSTALLED_APPS = (
     'seriesly.series',
     'seriesly.subscription',
     'seriesly.helper',
-)
+]
 
 
 STATIC_URL = '/static/'
@@ -127,8 +128,34 @@ LOGGING = {
     },
 }
 
-CELERY_ALWAYS_EAGER = bool(int(os_env('CELERY_ALWAYS_EAGER', '1')))
+BROKER_URL = os.environ.get("CLOUDAMQP_URL", "django://")
+BROKER_POOL_LIMIT = 1
+BROKER_CONNECTION_MAX_RETRIES = None
+if BROKER_URL == "django://":
+    INSTALLED_APPS += ["kombu.transport.django"]
 
+
+CELERY_TASK_SERIALIZER = "json"
+CELERY_ALWAYS_EAGER = bool(int(os_env('CELERY_ALWAYS_EAGER', '1')))
+CELERY_ACCEPT_CONTENT = ['json']
+CELERYD_MAX_TASKS_PER_CHILD = 1
+CELERY_TIMEZONE = 'UTC'
+CELERY_ROUTES = {
+    'seriesly.series.tasks.update_all_shows': {'queue': 'update_show'},
+    'seriesly.series.tasks.update_show': {'queue': 'update_show'},
+}
+
+CELERYBEAT_SCHEDULE = {
+    'update-shows': {
+        'task': 'seriesly.series.tasks.update_all_shows',
+        'schedule': crontab(minute=0, hour=0),
+        'options': {
+            'expires': 60 * 60 * 12
+        }
+    },
+}
+
+CELERY_TIMEZONE = 'UTC'
 
 EMAIL_HOST = os_env('POSTMARK_SMTP_SERVER')
 EMAIL_PORT = 2525
