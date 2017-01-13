@@ -5,4 +5,4 @@ requests==2.11.1
 pytz==2016.6.1
 dj-database-url==0.4.1
 celery==3.1.24
-pytvmaze==2.0.1
+-e git://github.com/stefanw/pytvmaze.git@patch-1#egg=pytvmaze
