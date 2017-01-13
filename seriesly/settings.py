@@ -35,7 +35,7 @@ SERVER_EMAIL = DEFAULT_FROM_EMAIL
 ADMIN_NAME = "Stefan Wehrmeyer"
 
 SITE_NAME = 'Seriesly'
-DOMAIN_URL = os_env('DOMAIN_URL', "https://serieslynew.herokuapp.com")
+DOMAIN_URL = os_env('DOMAIN_URL', "http://localhost:8000")
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = os_env('DJANGO_SECRET_KEY', 'not-so-secret')
