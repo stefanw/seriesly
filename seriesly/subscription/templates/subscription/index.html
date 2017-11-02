@@ -7,11 +7,11 @@
 <section class="step centered">
     <p class="centered">Seriesly reminds you of new episodes of your selected TV shows via:</p>
     <ul class="subscriptions">
-        <li>Email</li>
-        <li>Feeds</li>
-        <li>iCalendar</li>
-        <li>Episode Guide</li>
-        <li>Web Hook</li>
+        {% if seriesly_features.email %}<li>Email</li>{% endif %}
+        {% if seriesly_features.feed %}<li>Feeds</li>{% endif %}
+        {% if seriesly_features.calendar %}<li>iCalendar</li>{% endif %}
+        {% if seriesly_features.guide %}<li>Episode Guide</li>{% endif %}
+        {% if seriesly_features.webhook %}<li>Web Hook</li>{% endif %}
     </ul>
 </section>
 {% endif %}

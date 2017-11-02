@@ -5,6 +5,7 @@ import re
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.utils import timezone
+from django.conf import settings
 
 from seriesly.helper import is_post
 from seriesly.series.models import Show, Episode
@@ -93,6 +94,17 @@ def show(request, subkey, extra_context=None):
     return response
 
 
+def has_feature(feature_name):
+    def _has_feature(func):
+        def inner(request, *args):
+            if not settings.SERIESLY_FEATURES[feature_name]:
+                raise Http404
+            return func(request, *args)
+        return inner
+    return _has_feature
+
+
+@has_feature('public')
 def show_public(request, public_id):
     subscription = get_object_or_404(Subscription, public_id=public_id)
     return render(request, 'subscription/subscription_public.html', {
@@ -140,6 +152,7 @@ def feed_atom(request, subkey, template="subscription/atom.xml"):
     return feed(request, subkey, template=template)
 
 
+@has_feature('feed')
 def feed(request, subkey, template):
     subscription = get_object_or_404(Subscription, subkey=subkey)
     mimetype = "application/atom+xml"
@@ -148,6 +161,7 @@ def feed(request, subkey, template):
     return _feed(request, subscription, template, mimetype=mimetype)
 
 
+@has_feature('public')
 def feed_atom_public(request, public_id, template="atom_public.xml"):
     subscription = get_object_or_404(Subscription, public_id=public_id)
     now = timezone.now()
@@ -163,6 +177,7 @@ def feed_atom_public(request, public_id, template="atom_public.xml"):
     return HttpResponse(subscription.feed_public_cache, mimetype="application/atom+xml")
 
 
+@has_feature('public')
 def feed_rss_public(request, public_id, template="subscription/rss_public.xml"):
     subscription = get_object_or_404(Subscription, public_id=public_id)
     return HttpResponse(_feed(request, subscription, template, public=True), mimetype="application/rss+xml")
@@ -190,11 +205,13 @@ def _feed(request, subscription, template, public=False, mimetype="application/a
     }, content_type=mimetype)
 
 
+@has_feature('calendar')
 def calendar(request, subkey):
     subscription = get_object_or_404(Subscription, subkey=subkey)
     return _calendar(request, subscription)
 
 
+@has_feature('public')
 def calendar_public(request, public_id):
     subscription = get_object_or_404(Subscription, public_id=public_id)
     return _calendar(request, subscription, public=True)
@@ -207,11 +224,13 @@ def _calendar(request, subscription, public=False):
     return response
 
 
+@has_feature('guide')
 def guide(request, subkey):
     subscription = get_object_or_404(Subscription, subkey=subkey)
     return _guide(request, subscription)
 
 
+@has_feature('public')
 def guide_public(request, public_id):
     subscription = get_object_or_404(Subscription, public_id=public_id)
     return _guide(request, subscription, template="subscription/guide_public.html", public=True)
@@ -250,6 +269,7 @@ def _guide(request, subscription, template="subscription/guide.html",
 
 
 @is_post
+@has_feature('email')
 def edit_mail(request):
     form = MailSubscriptionForm(request.POST)
 
@@ -270,6 +290,7 @@ def edit_mail(request):
     return redirect(subscription.get_absolute_url() + "#email")
 
 
+@has_feature('email')
 def confirm_mail(request, subkey, confirmkey):
     subscription = get_object_or_404(Subscription, subkey=subkey)
     if not subscription.check_signed_email(confirmkey):
@@ -287,6 +308,7 @@ def confirm_mail(request, subkey, confirmkey):
 
 
 @is_post
+@has_feature('webhook')
 def edit_webhook(request):
     form = WebHookSubscriptionForm(request.POST)
     if not form.is_valid():
@@ -303,6 +325,7 @@ def edit_webhook(request):
 
 
 @is_post
+@has_feature('webhook')
 def run_webhook_test(request, subkey):
     subscription = get_object_or_404(Subscription, subkey=subkey)
     if subscription.webhook is None:

@@ -163,6 +163,15 @@ EMAIL_HOST_USER = os_env('POSTMARK_API_TOKEN')
 EMAIL_HOST_PASSWORD = os_env('POSTMARK_API_TOKEN')
 EMAIL_USE_TLS = True
 
+SERIESLY_FEATURES = {
+    'feed': True,
+    'guide': True,
+    'email': False,
+    'calendar': True,
+    'webhook': False,
+    'public': True
+}
+
 
 try:
     from .local_settings import *  # noqa

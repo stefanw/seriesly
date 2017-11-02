@@ -7,11 +7,21 @@
 {% endblock %}
 
 {% block skiplinks %}
+{% if seriesly_features.guide %}
   <li><a href="#guide">to episode guide</a></li>
+{% endif %}
+{% if seriesly_features.email %}
   <li><a href="#email">to email subscription</a></li>
+{% endif %}
+{% if seriesly_features.feed %}
   <li><a href="#feed">to feed subscription</a></li>
+{% endif %}
+{% if seriesly_features.calendar %}
   <li><a href="#ical">to iCalendar subscription</a></li>
+{% endif %}
+{% if seriesly_features.webhook %}
   <li><a href="#webhook">to Web Hook callback subscription</a></li>
+{% endif %}
   <li><a href="#settings">to subscription settings</a></li>
 {% endblock %}
 
@@ -34,13 +44,15 @@
     <h3>Your Seriesly Subscription</h3>
     <p>The heart of your Seriesly subscription is this page with a private URL:<br/>
         <input type="text" readonly="readonly" value="{{ DOMAIN_URL }}{% url 'seriesly-subscription-show' subscription.subkey %}" style="width:75%"/></p>
-    <p>You should store this URL <em>privately</em> (e.g. bookmark it). A link to this page is also provided in your feed, email notifications etc.</p>
+    <p>You should store this URL <em>privately</em> (e.g. bookmark it). A link to this page is also provided in your notifications etc.</p>
 </section>
 
+{% if seriesly_features.email %}
 <section id="guide">
     <h3>Episode Guide<span class="right sprite-big sprite-guide_big"></span></h3>
     <p><a href="{% url 'seriesly-subscription-guide' subscription.subkey  %}">This is your personal Episode Guide</a>.<br/>It will always show you the episodes that aired recently or will air soon.</p>
 </section>
+{% endif %}
 
 <section id="settings">
     <h3>Edit Your Shows<span class="right sprite-big sprite-edit_big"></span></h3>
@@ -48,6 +60,7 @@
     <p>You should not share your subscription links with anybody, because others will then be able to change your settings, too.<br/>You can <a href="#public-urls">share your subscription with special Public URLs though.</a></p>
 </section>
 
+{% if seriesly_features.email %}
 <section id="email">
     <h3>Email Subscription<span class="right sprite-big sprite-mail_big"></span></h3>
     {% if subscription.email %}
@@ -76,14 +89,17 @@
       </p>
     </form>
 </section>
+{% endif %}
 
+{% if seriesly_features.feed %}
 <section id="feed">
     <h3>Feeds<span class="right sprite-big sprite-feed_big"></span></h3>
     <p>Get your personal <a href="{{ DOMAIN_URL }}{% url 'seriesly-subscription-atom' subscription.subkey  %}">Episode Feed by clicking this link</a> or copying this URL to your feed reader:<br/>
     <input type="text" readonly="readonly" value="{{ DOMAIN_URL }}{% url 'seriesly-subscription-atom' subscription.subkey  %}" style="width:75%"/></p>
-
 </section>
+{% endif %}
 
+{% if seriesly_features.calendar %}
 <section id="ical">
     <h3>iCalendar<span class="right sprite-big sprite-ical_big"></span></h3>
     <p>
@@ -91,9 +107,11 @@
       <input type="text" readonly="readonly" value="{{ DOMAIN_URL }}{% url 'seriesly-subscription-calendar' subscription.subkey  %}" style="width:75%"/>
     </p>
 </section>
+{% endif %}
 
 <hr class="advanced-delimiter"/>
 
+{% if seriesly_features.webhook %}
 <section id="webhook">
     <h3>Web Hook<span class="right sprite-big sprite-webhook_big"></span></h3>
     {% if subscription.webhook %}
@@ -118,7 +136,9 @@
       </p>
     </form>
 </section>
+{% endif %}
 
+{% if seriesly_features.public %}
 <section id="public-urls">
   <h3>Public URLs</h3>
   {% if subscription.public_id %}
@@ -145,6 +165,7 @@
       </form>
   {% endif %}
 </section>
+{% endif %}
 
 {% endblock %}
 {% block extra_js %}{% endblock  %}

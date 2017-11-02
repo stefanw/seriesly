@@ -7,5 +7,6 @@ def site_info(request):
         'DOMAIN_URL': settings.DOMAIN_URL,
         'DEFAULT_FROM_EMAIL': settings.DEFAULT_FROM_EMAIL,
         'ADMIN_NAME': settings.ADMIN_NAME,
-        'DEBUG': settings.DEBUG
+        'DEBUG': settings.DEBUG,
+        'seriesly_features': settings.SERIESLY_FEATURES
     }
