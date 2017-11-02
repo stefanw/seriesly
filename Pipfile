@@ -1,0 +1,24 @@
+[[source]]
+url = "https://pypi.python.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+
+django = "<1.12"
+vobject = "*"
+dateutils = "*"
+requests = "*"
+pytz = "*"
+"dj-database-url" = "*"
+celery = "*"
+pytvmaze = "*"
+"psycopg2" = "*"
+gunicorn = "*"
+whitenoise = "*"
+honcho = "*"
+"django-db-geventpool" = "*"
+gevent = "*"
+
+[requires]
+python_version = "3.6"
