@@ -23,6 +23,12 @@ DATABASES = {
     'default': dj_database_url.config(env='DATABASE_URL',
             default='sqlite:///' + os.path.join(BASE_DIR, 'db.sqlite3'))
 }
+if 'DATABASE_URL' in os.environ:
+    DATABASES['default']['ENGINE'] = 'django_db_geventpool.backends.postgresql_psycopg2'
+    DATABASES['default']['CONN_MAX_AGE'] = 0
+    DATABASES['default']['OPTIONS'] = {
+        'MAX_CONNS': 20
+    }
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
@@ -65,6 +71,7 @@ TEMPLATES = [
 ]
 
 MIDDLEWARE_CLASSES = (
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -100,6 +107,8 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 )
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 
 LOGGING = {
     'version': 1,
@@ -128,11 +137,9 @@ LOGGING = {
     },
 }
 
-BROKER_URL = os.environ.get("CLOUDAMQP_URL", "django://")
+BROKER_URL = os.environ.get("CLOUDAMQP_URL", "amqp://guest@localhost:5672")
 BROKER_POOL_LIMIT = 1
 BROKER_CONNECTION_MAX_RETRIES = None
-if BROKER_URL == "django://":
-    INSTALLED_APPS += ["kombu.transport.django"]
 
 
 CELERY_TASK_SERIALIZER = "json"
