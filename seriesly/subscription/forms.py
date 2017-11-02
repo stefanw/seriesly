@@ -23,7 +23,7 @@ class SerieslyCheckboxSelectMultiple(forms.CheckboxSelectMultiple):
         if value is None:
             value = []
         has_id = attrs and 'id' in attrs
-        final_attrs = self.build_attrs(attrs, name=name)
+        final_attrs = self.build_attrs(attrs)
         # Normalize to strings
         output = []
         str_values = set([force_text(v) for v in value])
