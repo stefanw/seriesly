@@ -18,7 +18,7 @@ def get_choices():
 
 
 class SerieslyCheckboxSelectMultiple(forms.CheckboxSelectMultiple):
-    def render(self, name, value, attrs=None, choices=()):
+    def render(self, name, value, attrs=None, choices=(), renderer=None):
         """From django.forms.widgets adapted to insert class"""
         if value is None:
             value = []
@@ -35,7 +35,7 @@ class SerieslyCheckboxSelectMultiple(forms.CheckboxSelectMultiple):
             # so that the checkboxes don't all have the same ID attribute.
             if has_id:
                 final_attrs = dict(final_attrs, id='%s_%s' % (attrs['id'], i))
-                label_for = u' for="%s"' % final_attrs['id']
+                label_for = ' for="%s"' % final_attrs['id']
             else:
                 label_for = ''
             if option_new:
@@ -46,9 +46,9 @@ class SerieslyCheckboxSelectMultiple(forms.CheckboxSelectMultiple):
             option_value = force_text(option_value)
             rendered_cb = cb.render(name, option_value, attrs={"data-tvrage": str(provider_id)})
             option_label = conditional_escape(force_text(option_label))
-            output.append(u'<li%s><label%s>%s %s</label></li>' % (label_new, label_for,
+            output.append('<li%s><label%s>%s %s</label></li>' % (label_new, label_for,
                 rendered_cb, option_label))
-        return mark_safe(u'\n'.join(output))
+        return mark_safe('\n'.join(output))
 
 
 class SubKeyMixIn(object):

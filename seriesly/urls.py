@@ -8,5 +8,5 @@ urlpatterns = [
     url(r'^', include('seriesly.subscription.subscription_urls')),
     url(r'^shows/', include('seriesly.series.urls')),
     url(r'^subscription/', include('seriesly.subscription.urls')),
-    url(r'^admin/', include(admin.site.urls)),
+    url(r'^admin/', admin.site.urls),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
