@@ -153,7 +153,7 @@ def feed_atom(request, subkey, template="subscription/atom.xml"):
 
 
 @has_feature('feed')
-def feed(request, subkey, template):
+def feed(request, subkey, template="subscription/rss.xml"):
     subscription = get_object_or_404(Subscription, subkey=subkey)
     mimetype = "application/atom+xml"
     if "rss" in template:
