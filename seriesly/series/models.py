@@ -97,7 +97,7 @@ class Show(models.Model):
         cache.delete(cls._memkey_all_shows_ordered)
         cache.delete(cls._memkey_shows_dict)
 
-    def update(self, show_info=None, everything=False):
+    def update(self, show_info=None, full=False):
         if show_info is None:
             show_info = get_show_info(self.name, show_id=self.provider_id)
 
@@ -107,7 +107,7 @@ class Show(models.Model):
                 self.save()
         for season_info in show_info['seasons']:
             logging.debug("Update or create Season...")
-            Season.update_or_create(self, season_info, everything=everything)
+            Season.update_or_create(self, season_info, full=full)
 
     def update_attrs(self, info_obj, attr_list):
         changed = False
@@ -138,7 +138,7 @@ class Show(models.Model):
                         provider_id=show_info['provider_id'],
                         added=tz.now())
             show.save()
-        show.update(show_info, everything=True)
+        show.update(show_info, full=True)
         return show
 
     @property
@@ -162,17 +162,17 @@ class Season(models.Model):
         return u'{} ({})'.format(self.show, self.number)
 
     @classmethod
-    def update_or_create(cls, show, season_info, everything=False):
+    def update_or_create(cls, show, season_info, full=False):
         try:
             season = Season.objects.get(show=show, number=season_info['season_nr'])
         except Season.DoesNotExist:
             season = Season(show=show, number=season_info['season_nr'])
             season.save()
-        season.update(season_info, everything=everything)
+        season.update(season_info, full=full)
         season.save()
         return season
 
-    def update(self, season_info, everything=False):
+    def update(self, season_info, full=False):
         first_date = None
         episode_info = None
         now = tz.now()
@@ -181,7 +181,7 @@ class Season(models.Model):
             logging.debug("Update episode... %s" % episode_info)
             if first_date is None:
                 first_date = episode_info['date']
-            if (everything or episode_info['date'] is None or
+            if (full or episode_info['date'] is None or
                     episode_info['date'] >= fortyeight_hours_ago):
                 Episode.update_or_create(self, episode_info)
         logging.debug("All episodes updated...")

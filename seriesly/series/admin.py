@@ -36,7 +36,7 @@ class ShowAdmin(admin.ModelAdmin):
 
     def update(self, request, queryset):
         for show in queryset:
-            update_show.delay(show.pk)
+            update_show.delay(show.pk, full=True)
 
 
 admin.site.register(Show, ShowAdmin)

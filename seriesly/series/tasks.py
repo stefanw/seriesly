@@ -11,9 +11,9 @@ def update_all_shows():
 
 
 @app.task
-def update_show(show_id):
+def update_show(show_id, full=False):
     try:
         show = Show.objects.get(pk=show_id)
     except Show.DoesNotExist:
         pass
-    show.update()
+    show.update(full=full)
