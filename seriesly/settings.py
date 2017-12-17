@@ -137,22 +137,22 @@ LOGGING = {
     },
 }
 
-BROKER_URL = os.environ.get("CLOUDAMQP_URL", "amqp://guest@localhost:5672")
-BROKER_POOL_LIMIT = 1
-BROKER_CONNECTION_MAX_RETRIES = None
+CELERY_BROKER_URL = os.environ.get("CLOUDAMQP_URL", "amqp://guest@localhost:5672")
+CELERY_BROKER_POOL_LIMIT = 1
+CELERY_BROKER_CONNECTION_MAX_RETRIES = None
 
 
 CELERY_TASK_SERIALIZER = "json"
 CELERY_ALWAYS_EAGER = bool(int(os_env('CELERY_ALWAYS_EAGER', '1')))
 CELERY_ACCEPT_CONTENT = ['json']
-CELERYD_MAX_TASKS_PER_CHILD = 1
+CELERY_WORKER_MAX_TASKS_PER_CHILD = 1
 CELERY_TIMEZONE = 'UTC'
 CELERY_ROUTES = {
     'seriesly.series.tasks.update_all_shows': {'queue': 'update_show'},
     'seriesly.series.tasks.update_show': {'queue': 'update_show'},
 }
 
-CELERYBEAT_SCHEDULE = {
+CELERY_BEAT_SCHEDULE = {
     'update-shows': {
         'task': 'seriesly.series.tasks.update_all_shows',
         'schedule': crontab(minute=0, hour=0),
