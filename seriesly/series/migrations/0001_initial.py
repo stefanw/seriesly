@@ -53,16 +53,16 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='season',
             name='show',
-            field=models.ForeignKey(to='series.Show'),
+            field=models.ForeignKey(to='series.Show', on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='episode',
             name='season',
-            field=models.ForeignKey(to='series.Season', null=True),
+            field=models.ForeignKey(to='series.Season', null=True, on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='episode',
             name='show',
-            field=models.ForeignKey(to='series.Show'),
+            field=models.ForeignKey(to='series.Show', on_delete=models.CASCADE),
         ),
     ]

@@ -221,8 +221,8 @@ By the way: your Seriesly subscription URL is: %s
 
 @python_2_unicode_compatible
 class SubscriptionItem(models.Model):
-    subscription = models.ForeignKey(Subscription)
-    show = models.ForeignKey(Show)
+    subscription = models.ForeignKey(Subscription, on_delete=models.CASCADE)
+    show = models.ForeignKey(Show, on_delete=models.CASCADE)
 
     def __str__(self):
         return '%s -> %s' % (self.subscription, self.show)

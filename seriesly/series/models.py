@@ -153,7 +153,7 @@ class Show(models.Model):
 
 @python_2_unicode_compatible
 class Season(models.Model):
-    show = models.ForeignKey(Show)
+    show = models.ForeignKey(Show, on_delete=models.CASCADE)
     number = models.IntegerField()
     start = models.DateTimeField(null=True)
     end = models.DateTimeField(null=True)
@@ -192,8 +192,8 @@ class Season(models.Model):
 
 @python_2_unicode_compatible
 class Episode(models.Model):
-    show = models.ForeignKey(Show)
-    season = models.ForeignKey(Season, null=True)
+    show = models.ForeignKey(Show, on_delete=models.CASCADE)
+    season = models.ForeignKey(Season, null=True, on_delete=models.CASCADE)
     season_number = models.IntegerField(default=0)
     number = models.IntegerField(default=0)
     title = models.CharField(max_length=255)

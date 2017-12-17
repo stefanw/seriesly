@@ -39,8 +39,8 @@ class Migration(migrations.Migration):
             name='SubscriptionItem',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('show', models.ForeignKey(to='series.Show')),
-                ('subscription', models.ForeignKey(to='subscription.Subscription')),
+                ('show', models.ForeignKey(to='series.Show', on_delete=models.CASCADE)),
+                ('subscription', models.ForeignKey(to='subscription.Subscription', on_delete=models.CASCADE)),
             ],
         ),
     ]
