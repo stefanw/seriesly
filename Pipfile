@@ -5,7 +5,7 @@ name = "pypi"
 
 [packages]
 
-django = "<1.12"
+django = "<2.1"
 vobject = "*"
 dateutils = "*"
 requests = "*"

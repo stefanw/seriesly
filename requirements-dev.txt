@@ -1,4 +1,4 @@
-Django<1.11
+Django<2.1
 vobject==0.9.3
 dateutils==0.6.6
 requests==2.11.1
