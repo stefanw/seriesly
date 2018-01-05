@@ -92,17 +92,18 @@ class TVMaze(BaseSeriesInfoProvider):
             season_list.append(season)
 
         # show has eigther network or webChannel data, depending if tv- or web-series
+        network = ''
         extra_data = None
-        if hasattr(show, 'web_channel') and hasattr(show.web_channel, 'country'):
+        if hasattr(show, 'web_channel'):
             extra_data = show.web_channel
             network = extra_data.name
-        elif hasattr(show, 'network') and hasattr(show.network, 'country'):
+        elif hasattr(show, 'network'):
             extra_data = show.network
             network = extra_data.name
 
-        timezone = None
-        country = None
-        if extra_data is not None:
+        timezone = ''
+        country = ''
+        if extra_data is not None and hasattr(extra_data, 'timezone'):
             timezone = extra_data.timezone
             country = extra_data.code
 
