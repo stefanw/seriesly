@@ -91,13 +91,13 @@ class TVMaze(BaseSeriesInfoProvider):
                           episodes=episode_list)
             season_list.append(season)
 
-        # show has eigther network or webChannel data, depending if tv- or web-series
+        # show has either network or webChannel data, depending if tv- or web-series
         network = ''
         extra_data = None
-        if hasattr(show, 'web_channel'):
+        if hasattr(show, 'web_channel') and show.web_channel is not None:
             extra_data = show.web_channel
             network = extra_data.name
-        elif hasattr(show, 'network'):
+        elif hasattr(show, 'network') and show.network is not None:
             extra_data = show.network
             network = extra_data.name
 
