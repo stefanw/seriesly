@@ -59,10 +59,10 @@
         },
         "certifi": {
             "hashes": [
-                "sha256:244be0d93b71e93fc0a0a479862051414d0e00e16435707e5bf5000f92e04694",
-                "sha256:5ec74291ca1136b40f0379e1128ff80e866597e4e2c1e755739a913bbc3613c0"
+                "sha256:14131608ad2fd56836d33a71ee60fa1c82bc9d2c8d98b7bdbc631fe1b3cd1296",
+                "sha256:edbc3f203427eef571f79a7692bb160a2b0f7ccaa31953e99bd17e307cf63f7d"
             ],
-            "version": "==2017.11.5"
+            "version": "==2018.1.18"
         },
         "chardet": {
             "hashes": [
@@ -86,16 +86,16 @@
         },
         "django": {
             "hashes": [
-                "sha256:af18618ce3291be5092893d8522fe3919661bf3a1fb60e3858ae74865a4f07c2",
-                "sha256:9614851d4a7ff8cbd32b73c6076441f377c45a5bbff7e771798fb02c43c31f47"
+                "sha256:52475f607c92035d4ac8fee284f56213065a4a6b25ed43f7e39df0e576e69e9f",
+                "sha256:d96b804be412a5125a594023ec524a2010a6ffa4d408e5482ab6ff3cb97ec12f"
             ],
-            "version": "==2.0"
+            "version": "==2.0.1"
         },
         "django-db-geventpool": {
             "hashes": [
-                "sha256:8e9ae21115fab3283a0da32517d7dbdd39c7948b6233c03bda1b2bd66f5a12cc"
+                "sha256:054a690c7c5af87ab42fa95d7bbb4c43cfb2d17522f7c546e1dc7f6bd1bc53ab"
             ],
-            "version": "==1.21"
+            "version": "==2"
         },
         "gevent": {
             "hashes": [
