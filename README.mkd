@@ -16,7 +16,7 @@ Please be aware that Seriesly is released unter the GNU AGPL 3.0 (see LICENSE.tx
 Attribution
 -----------
 
-Seriesly is a Django project based on Django 1.8
+Seriesly is a Django project based on Django 2.0.
 
 License
 -------
