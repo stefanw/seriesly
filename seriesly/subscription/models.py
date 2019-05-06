@@ -19,7 +19,7 @@ from seriesly.series.models import Show, Episode
 @python_2_unicode_compatible
 class Subscription(models.Model):
     subkey = models.CharField(max_length=255)
-    last_visited = models.DateTimeField(null=True)
+    last_visited = models.DateTimeField(null=True, blank=True)
     last_changed = models.DateTimeField(null=True)
     activated_mail = models.BooleanField(default=False)
     email = models.CharField(max_length=255, blank=True)
