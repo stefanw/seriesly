@@ -36,6 +36,6 @@ nosetests.xml
 
 node_modules/
 seriesly/local_settings.py
-seriesly/public
+public
 venv
 data
