@@ -1,0 +1,22 @@
+version: '3'
+
+services:
+  db:
+    image: postgres:13
+    volumes:
+      - ./data/postgres_data:/var/lib/postgresql/data/
+    environment:
+      POSTGRES_USER: seriesly
+      POSTGRES_DB: seriesly
+      POSTGRES_PASSWORD: seriesly
+  web:
+    build: .
+    command: honcho start
+    links:
+      - db
+    environment:
+        - DJANGO_SETTINGS_MODULE=seriesly.settings
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db

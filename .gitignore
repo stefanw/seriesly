@@ -1,6 +1,6 @@
 ### /home/moschlar/.gitignore-boilerplates/Python.gitignore
 
-*.py[cod]
+*.pyc
 
 # C extensions
 *.so
@@ -32,12 +32,10 @@ nosetests.xml
 # Translations
 *.mo
 
-# Mr Developer
-.mr.developer.cfg
-.project
-.pydevproject
-
 *.sqlite3
 
 node_modules/
 seriesly/local_settings.py
+seriesly/public
+venv
+data
