@@ -1,5 +1,3 @@
-
-
 class BaseSeriesInfoProvider(object):
     def get_show(self, show_id):
         raise NotImplementedError

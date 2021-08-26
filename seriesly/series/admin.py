@@ -10,29 +10,31 @@ from .tasks import update_show
 
 class ShowAdmin(admin.ModelAdmin):
 
-    actions = ['update']
+    actions = ["update"]
 
     def get_urls(self):
         urls = super(ShowAdmin, self).get_urls()
         my_urls = [
-            url(r'^import/$',
+            url(
+                r"^import/$",
                 self.admin_site.admin_view(self.import_show),
-                name='series-import_show'),
+                name="series-import_show",
+            ),
         ]
         return my_urls + urls
 
     def import_show(self, request):
-        if not request.method == 'POST':
+        if not request.method == "POST":
             raise PermissionDenied
         if not self.has_change_permission(request):
             raise PermissionDenied
 
-        show = Show.update_or_create(request.POST.get('name', ''))
+        show = Show.update_or_create(request.POST.get("name", ""))
         self.message_user(request, _("Import succeeded: %s") % show)
 
         Show.clear_cache()
 
-        return redirect('admin:series_show_changelist')
+        return redirect("admin:series_show_changelist")
 
     def update(self, request, queryset):
         for show in queryset:

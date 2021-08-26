@@ -25,8 +25,9 @@ def send_confirmation_mail_task(subkey):
 @app.task
 def email_task(request):
     filter_date = timezone.now().date() + timedelta(days=1)
-    subscriptions = Subscription.objects.filter(activated_mail=True,
-                                                next_airtime__lte=filter_date)
+    subscriptions = Subscription.objects.filter(
+        activated_mail=True, next_airtime__lte=filter_date
+    )
     counter = 0
     for sub in subscriptions:
         Subscription.add_email_task(sub.pk)

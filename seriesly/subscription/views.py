@@ -10,9 +10,12 @@ from django.conf import settings
 from seriesly.helper import is_post
 from seriesly.series.models import Show, Episode
 
-from .forms import (SubscriptionForm, MailSubscriptionForm,
-                    WebHookSubscriptionForm,
-                    SubscriptionKeyForm)
+from .forms import (
+    SubscriptionForm,
+    MailSubscriptionForm,
+    WebHookSubscriptionForm,
+    SubscriptionKeyForm,
+)
 from .models import Subscription
 from .tasks import send_confirmation_mail_task
 
@@ -45,7 +48,9 @@ def subscribe(request):
     subscription.set_settings(sub_settings)
 
     try:
-        selected_shows = Show.objects.filter(pk__in=map(int, form.cleaned_data["shows"]))
+        selected_shows = Show.objects.filter(
+            pk__in=map(int, form.cleaned_data["shows"])
+        )
     except ValueError:
         return index(request, form=form)
 
@@ -72,21 +77,23 @@ def show(request, subkey, extra_context=None):
         extra_context = {}
 
     context_forms = {
-        'email': MailSubscriptionForm,
-        'webhook': WebHookSubscriptionForm,
-        'public_id': SubscriptionKeyForm
+        "email": MailSubscriptionForm,
+        "webhook": WebHookSubscriptionForm,
+        "public_id": SubscriptionKeyForm,
     }
     for key, form_class in context_forms.items():
-        form_key = '{}_form'.format(key)
+        form_key = "{}_form".format(key)
         if form_key not in extra_context:
             val = getattr(subscription, key)
             extra_context[form_key] = form_class(initial={key: val, "subkey": subkey})
 
-    extra_context.update({
-        'sub_settings': subscription.get_settings(),
-        'shows': subscription.get_shows(),
-        'subscription': subscription
-    })
+    extra_context.update(
+        {
+            "sub_settings": subscription.get_settings(),
+            "shows": subscription.get_shows(),
+            "subscription": subscription,
+        }
+    )
 
     response = render(request, "subscription/subscription.html", extra_context)
     response.set_cookie("subkey", subkey, max_age=31536000)
@@ -100,17 +107,20 @@ def has_feature(feature_name):
             if not settings.SERIESLY_FEATURES[feature_name]:
                 raise Http404
             return func(request, *args)
+
         return inner
+
     return _has_feature
 
 
-@has_feature('public')
+@has_feature("public")
 def show_public(request, public_id):
     subscription = get_object_or_404(Subscription, public_id=public_id)
-    return render(request, 'subscription/subscription_public.html', {
-        "shows": subscription.get_shows(),
-        "subscription": subscription
-    })
+    return render(
+        request,
+        "subscription/subscription_public.html",
+        {"shows": subscription.get_shows(), "subscription": subscription},
+    )
 
 
 def edit(request, subkey):
@@ -119,7 +129,7 @@ def edit(request, subkey):
         subscription.get_settings()
         sub_dict = {
             "shows": map(lambda x: x.pk, subscription.get_shows()),
-            "subkey": subkey
+            "subkey": subkey,
         }
         form = SubscriptionForm(sub_dict)
         return index(request, form=form, extra_context={"subscription": subscription})
@@ -133,7 +143,7 @@ def edit_public_id(request):
         return show(
             request,
             request.POST.get("subkey", ""),
-            extra_context={"public_id_form": form}
+            extra_context={"public_id_form": form},
         )
     subscription = form._subscription
     if subscription.public_id is None:
@@ -152,7 +162,7 @@ def feed_atom(request, subkey, template="subscription/atom.xml"):
     return feed(request, subkey, template=template)
 
 
-@has_feature('feed')
+@has_feature("feed")
 def feed(request, subkey, template="subscription/rss.xml"):
     subscription = get_object_or_404(Subscription, subkey=subkey)
     mimetype = "application/atom+xml"
@@ -161,7 +171,7 @@ def feed(request, subkey, template="subscription/rss.xml"):
     return _feed(request, subscription, template, mimetype=mimetype)
 
 
-@has_feature('public')
+@has_feature("public")
 def feed_atom_public(request, public_id, template="atom_public.xml"):
     subscription = get_object_or_404(Subscription, public_id=public_id)
     now = timezone.now()
@@ -177,18 +187,23 @@ def feed_atom_public(request, public_id, template="atom_public.xml"):
     return HttpResponse(subscription.feed_public_cache, mimetype="application/atom+xml")
 
 
-@has_feature('public')
+@has_feature("public")
 def feed_rss_public(request, public_id, template="subscription/rss_public.xml"):
     subscription = get_object_or_404(Subscription, public_id=public_id)
-    return HttpResponse(_feed(request, subscription, template, public=True), mimetype="application/rss+xml")
+    return HttpResponse(
+        _feed(request, subscription, template, public=True),
+        mimetype="application/rss+xml",
+    )
 
 
-def _feed(request, subscription, template, public=False, mimetype="application/atom+xml"):
+def _feed(
+    request, subscription, template, public=False, mimetype="application/atom+xml"
+):
     now = timezone.now()
     subscription.get_settings()
 
-    subscription.updated = now.strftime('%Y-%m-%dT%H:%M:%SZ')
-    subscription.expires = (now + timedelta(days=1)).strftime('%Y-%m-%dT%H:%M:%SZ')
+    subscription.updated = now.strftime("%Y-%m-%dT%H:%M:%SZ")
+    subscription.expires = (now + timedelta(days=1)).strftime("%Y-%m-%dT%H:%M:%SZ")
 
     the_shows = subscription.get_shows()
     wait_time = timedelta(hours=6)
@@ -199,45 +214,56 @@ def _feed(request, subscription, template, public=False, mimetype="application/a
             pub_date = episode.date_local
             episode.pub_date = pub_date
             items.append(episode)
-    return render(request, template, {
-        "subscription": subscription,
-        "items": items
-    }, content_type=mimetype)
+    return render(
+        request,
+        template,
+        {"subscription": subscription, "items": items},
+        content_type=mimetype,
+    )
 
 
-@has_feature('calendar')
+@has_feature("calendar")
 def calendar(request, subkey):
     subscription = get_object_or_404(Subscription, subkey=subkey)
     return _calendar(request, subscription)
 
 
-@has_feature('public')
+@has_feature("public")
 def calendar_public(request, public_id):
     subscription = get_object_or_404(Subscription, public_id=public_id)
     return _calendar(request, subscription, public=True)
 
 
 def _calendar(request, subscription, public=False):
-    response = HttpResponse(subscription.get_icalendar(public), content_type='text/calendar')
-    response['Filename'] = 'seriesly-calendar.ics'  # IE needs this
-    response['Content-Disposition'] = 'attachment; filename=seriesly-calendar.ics'
+    response = HttpResponse(
+        subscription.get_icalendar(public), content_type="text/calendar"
+    )
+    response["Filename"] = "seriesly-calendar.ics"  # IE needs this
+    response["Content-Disposition"] = "attachment; filename=seriesly-calendar.ics"
     return response
 
 
-@has_feature('guide')
+@has_feature("guide")
 def guide(request, subkey):
     subscription = get_object_or_404(Subscription, subkey=subkey)
     return _guide(request, subscription)
 
 
-@has_feature('public')
+@has_feature("public")
 def guide_public(request, public_id):
     subscription = get_object_or_404(Subscription, public_id=public_id)
-    return _guide(request, subscription, template="subscription/guide_public.html", public=True)
+    return _guide(
+        request, subscription, template="subscription/guide_public.html", public=True
+    )
 
 
-def _guide(request, subscription, template="subscription/guide.html",
-           public=False, extra_context=None):
+def _guide(
+    request,
+    subscription,
+    template="subscription/guide.html",
+    public=False,
+    extra_context=None,
+):
     subscription.is_public = public
     subscription.get_settings()
     now = timezone.now()
@@ -258,7 +284,7 @@ def _guide(request, subscription, template="subscription/guide.html",
         "subscription": subscription,
         "recently": recently,
         "upcoming": upcoming,
-        "last_week": last_week
+        "last_week": last_week,
     }
     if extra_context is not None:
         context.update(extra_context)
@@ -269,15 +295,13 @@ def _guide(request, subscription, template="subscription/guide.html",
 
 
 @is_post
-@has_feature('email')
+@has_feature("email")
 def edit_mail(request):
     form = MailSubscriptionForm(request.POST)
 
     if not form.is_valid():
         return show(
-            request,
-            request.POST.get("subkey", ""),
-            extra_context={"mail_form": form}
+            request, request.POST.get("subkey", ""), extra_context={"mail_form": form}
         )
     subscription = form._subscription
     if subscription.email != form.cleaned_data["email"]:
@@ -290,7 +314,7 @@ def edit_mail(request):
     return redirect(subscription.get_absolute_url() + "#email")
 
 
-@has_feature('email')
+@has_feature("email")
 def confirm_mail(request, subkey, confirmkey):
     subscription = get_object_or_404(Subscription, subkey=subkey)
     if not subscription.check_signed_email(confirmkey):
@@ -302,20 +326,18 @@ def confirm_mail(request, subkey, confirmkey):
 
     # FIXME: add messages
 
-    return redirect(
-        subscription.get_absolute_url() + "#email"
-    )
+    return redirect(subscription.get_absolute_url() + "#email")
 
 
 @is_post
-@has_feature('webhook')
+@has_feature("webhook")
 def edit_webhook(request):
     form = WebHookSubscriptionForm(request.POST)
     if not form.is_valid():
         return show(
             request,
             request.POST.get("subkey", ""),
-            extra_context={"webhook_form": form}
+            extra_context={"webhook_form": form},
         )
     subscription = form._subscription
     subscription.webhook = form.cleaned_data["webhook"]
@@ -325,13 +347,16 @@ def edit_webhook(request):
 
 
 @is_post
-@has_feature('webhook')
+@has_feature("webhook")
 def run_webhook_test(request, subkey):
     subscription = get_object_or_404(Subscription, subkey=subkey)
     if subscription.webhook is None:
         raise Http404
     Subscription.add_webhook_task(subscription.key())
-    return HttpResponse("Task for posting to %s added. Will run in some seconds. Be reminded of The Rules on http://www.seriesly.com/webhook-xml/#the-rules" % subscription.webhook)
+    return HttpResponse(
+        "Task for posting to %s added. Will run in some seconds. Be reminded of The Rules on http://www.seriesly.com/webhook-xml/#the-rules"
+        % subscription.webhook
+    )
 
 
 def get_extra_json_context(request):
@@ -344,15 +369,24 @@ def get_extra_json_context(request):
 
 def get_json(request, subkey):
     subscription = get_object_or_404(Subscription, subkey=subkey)
-    response = _guide(request, subscription, template="widget.json",
-        extra_context=get_extra_json_context(request))
-    response["Content-Type"] = 'application/json'
+    response = _guide(
+        request,
+        subscription,
+        template="widget.json",
+        extra_context=get_extra_json_context(request),
+    )
+    response["Content-Type"] = "application/json"
     return response
 
 
 def get_json_public(request, public_id):
     subscription = get_object_or_404(Subscription, public_id=public_id)
-    response = _guide(request, subscription, template="widget.json",
-        public=True, extra_context=get_extra_json_context(request))
-    response["Content-Type"] = 'application/json'
+    response = _guide(
+        request,
+        subscription,
+        template="widget.json",
+        public=True,
+        extra_context=get_extra_json_context(request),
+    )
+    response["Content-Type"] = "application/json"
     return response

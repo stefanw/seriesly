@@ -7,4 +7,4 @@ register = template.Library()
 def rfc3339(date):
     if date is None:
         return ""
-    return date.strftime('%Y-%m-%dT%H:%M:%SZ')
+    return date.strftime("%Y-%m-%dT%H:%M:%SZ")

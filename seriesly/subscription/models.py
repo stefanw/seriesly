@@ -1,13 +1,10 @@
 import random
-import hashlib
-import hmac
 import datetime
 
 from django.db import models
 from django.core import mail
 from django.urls import reverse
 from django.conf import settings
-from django.utils.encoding import python_2_unicode_compatible
 from django.core.signing import Signer, BadSignature
 
 import vobject
@@ -16,7 +13,6 @@ from seriesly.helper.http import post as http_post
 from seriesly.series.models import Show, Episode
 
 
-@python_2_unicode_compatible
 class Subscription(models.Model):
     subkey = models.CharField(max_length=255)
     last_visited = models.DateTimeField(null=True, blank=True)
@@ -48,10 +44,12 @@ class Subscription(models.Model):
         return reverse("seriesly-subscription-show", args=(self.subkey,))
 
     def get_domain_absolute_url(self):
-        return settings.DOMAIN_URL + reverse("seriesly-subscription-show", args=(self.subkey,))
+        return settings.DOMAIN_URL + reverse(
+            "seriesly-subscription-show", args=(self.subkey,)
+        )
 
     def get_email_signer(self):
-        return Signer(salt='emailconfirmation|%s' % self.subkey)
+        return Signer(salt="emailconfirmation|%s" % self.subkey)
 
     def check_signed_email(self, value):
         signer = self.get_email_signer()
@@ -67,9 +65,13 @@ class Subscription(models.Model):
 
     def send_confirmation_mail(self):
         confirmation_key = self.get_signed_email()
-        confirmation_url = settings.DOMAIN_URL + reverse("seriesly-subscription-confirm_mail", args=(self.subkey, confirmation_key))
+        confirmation_url = settings.DOMAIN_URL + reverse(
+            "seriesly-subscription-confirm_mail", args=(self.subkey, confirmation_key)
+        )
 
-        sub_url = settings.DOMAIN_URL + reverse("seriesly-subscription-show", args=(self.subkey,))
+        sub_url = settings.DOMAIN_URL + reverse(
+            "seriesly-subscription-show", args=(self.subkey,)
+        )
 
         subject = "Confirm your seriesly.com email notifications"
         body = """Please confirm your email notifications for your favorite TV-Shows by clicking the link below:
@@ -79,7 +81,10 @@ class Subscription(models.Model):
 You will only receive further emails when you click the link.
 If you did not expect this mail, you should ignore it.
 By the way: your Seriesly subscription URL is: %s
-    """ % (confirmation_url, sub_url)
+    """ % (
+            confirmation_url,
+            sub_url,
+        )
         mail.send_mail(subject, body, settings.DEFAULT_FROM_EMAIL, [self.email])
 
     def set_settings(self, d):
@@ -117,7 +122,7 @@ By the way: your Seriesly subscription URL is: %s
         CHARS = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
         wtf = False
         while wtf is not None:
-            key = ''.join(random.choice(CHARS) for _ in range(32))
+            key = "".join(random.choice(CHARS) for _ in range(32))
             try:
                 wtf = Subscription.objects.get(**{field: key})
             except Subscription.DoesNotExist:
@@ -126,20 +131,30 @@ By the way: your Seriesly subscription URL is: %s
 
     def get_shows(self):
         show_dict = Show.get_all_dict()
-        return [show_dict[show_key] for show_key in self.get_show_cache() if show_key in show_dict]
+        return [
+            show_dict[show_key]
+            for show_key in self.get_show_cache()
+            if show_key in show_dict
+        ]
 
     def get_shows_old(self):
         show_dict = Show.get_all_dict()
-        return [show_dict[str(sub_item.show_id)] for sub_item in self.subscriptionitem_set if str(sub_item.show_id) in show_dict]
+        return [
+            show_dict[str(sub_item.show_id)]
+            for sub_item in self.subscriptionitem_set
+            if str(sub_item.show_id) in show_dict
+        ]
 
     def get_show_cache(self):
         if self.show_cache is None or not len(self.show_cache):
-            self.set_show_cache([str(sub_item.show_id) for sub_item in self.subscriptionitem_set])
+            self.set_show_cache(
+                [str(sub_item.show_id) for sub_item in self.subscriptionitem_set]
+            )
             self.save()
         return self.show_cache.split("|")
 
     def set_show_cache(self, show_keys):
-        self.show_cache = '|'.join(show_keys)
+        self.show_cache = "|".join(show_keys)
 
     def set_shows(self, shows, old_shows=None):
         changes = False
@@ -155,7 +170,8 @@ By the way: your Seriesly subscription URL is: %s
         for old_show in old_shows:
             if old_show.pk not in show_ids:
                 num, _ = SubscriptionItem.objects.filter(
-                        subscription=self, show=old_show).delete()
+                    subscription=self, show=old_show
+                ).delete()
                 if num:
                     changes = True
         return changes
@@ -170,15 +186,15 @@ By the way: your Seriesly subscription URL is: %s
 
     @classmethod
     def add_email_task(cls, key):
-        return cls.add_task('seriesly-subscription-mail', "mail-queue", key)
+        return cls.add_task("seriesly-subscription-mail", "mail-queue", key)
 
     @classmethod
     def add_xmpp_task(cls, key):
-        return cls.add_task('seriesly-subscription-xmpp', "xmpp-queue", key)
+        return cls.add_task("seriesly-subscription-xmpp", "xmpp-queue", key)
 
     @classmethod
     def add_webhook_task(cls, key):
-        return cls.add_task('seriesly-subscription-webhook', "webhook-queue", key)
+        return cls.add_task("seriesly-subscription-webhook", "webhook-queue", key)
 
     def post_to_callback(self, body):
         response = http_post(self.webhook, body)
@@ -191,7 +207,9 @@ By the way: your Seriesly subscription URL is: %s
         the_shows = self.get_shows()
         now = datetime.datetime.now()
         twentyfour_hours_ago = now - datetime.timedelta(hours=24)
-        episodes = Episode.get_for_shows(the_shows, after=twentyfour_hours_ago, order="date")
+        episodes = Episode.get_for_shows(
+            the_shows, after=twentyfour_hours_ago, order="date"
+        )
         if not len(episodes):
             return None
         context = {"subscription": self, "items": []}
@@ -213,16 +231,15 @@ By the way: your Seriesly subscription URL is: %s
         self.get_settings()
         episodes = Episode.get_for_shows(the_shows, order="date")
         cal = vobject.iCalendar()
-        cal.add('method').value = 'PUBLISH'  # IE/Outlook needs this
+        cal.add("method").value = "PUBLISH"  # IE/Outlook needs this
         for episode in episodes:
             episode.create_event_details(cal)
         return cal.serialize()
 
 
-@python_2_unicode_compatible
 class SubscriptionItem(models.Model):
     subscription = models.ForeignKey(Subscription, on_delete=models.CASCADE)
     show = models.ForeignKey(Show, on_delete=models.CASCADE)
 
     def __str__(self):
-        return '%s -> %s' % (self.subscription, self.show)
+        return "%s -> %s" % (self.subscription, self.show)

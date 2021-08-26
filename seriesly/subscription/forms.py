@@ -12,9 +12,17 @@ from seriesly.subscription.models import Subscription
 
 def get_choices():
     shows = Show.get_all_ordered()
-    return [(show.pk,
-            {"name": show.ordered_name, "new": show.is_new,
-            "provider_id": show.provider_id}) for show in shows]
+    return [
+        (
+            show.pk,
+            {
+                "name": show.ordered_name,
+                "new": show.is_new,
+                "provider_id": show.provider_id,
+            },
+        )
+        for show in shows
+    ]
 
 
 class SerieslyCheckboxSelectMultiple(forms.CheckboxSelectMultiple):
@@ -22,33 +30,39 @@ class SerieslyCheckboxSelectMultiple(forms.CheckboxSelectMultiple):
         """From django.forms.widgets adapted to insert class"""
         if value is None:
             value = []
-        has_id = attrs and 'id' in attrs
+        has_id = attrs and "id" in attrs
         final_attrs = self.build_attrs(attrs)
         # Normalize to strings
         output = []
         str_values = set([force_text(v) for v in value])
         for i, (option_value, option_dict) in enumerate(chain(self.choices, choices)):
-            option_label = option_dict['name']
-            option_new = option_dict['new']
-            provider_id = option_dict['provider_id']
+            option_label = option_dict["name"]
+            option_new = option_dict["new"]
+            provider_id = option_dict["provider_id"]
             # If an ID attribute was given, add a numeric index as a suffix,
             # so that the checkboxes don't all have the same ID attribute.
             if has_id:
-                final_attrs = dict(final_attrs, id='%s_%s' % (attrs['id'], i))
-                label_for = ' for="%s"' % final_attrs['id']
+                final_attrs = dict(final_attrs, id="%s_%s" % (attrs["id"], i))
+                label_for = ' for="%s"' % final_attrs["id"]
             else:
-                label_for = ''
+                label_for = ""
             if option_new:
                 label_new = ' class="is-new"'
             else:
-                label_new = ''
-            cb = forms.CheckboxInput(final_attrs, check_test=lambda value: value in str_values)
+                label_new = ""
+            cb = forms.CheckboxInput(
+                final_attrs, check_test=lambda value: value in str_values
+            )
             option_value = force_text(option_value)
-            rendered_cb = cb.render(name, option_value, attrs={"data-tvrage": str(provider_id)})
+            rendered_cb = cb.render(
+                name, option_value, attrs={"data-tvrage": str(provider_id)}
+            )
             option_label = conditional_escape(force_text(option_label))
-            output.append('<li%s><label%s>%s %s</label></li>' % (label_new, label_for,
-                rendered_cb, option_label))
-        return mark_safe('\n'.join(output))
+            output.append(
+                "<li%s><label%s>%s %s</label></li>"
+                % (label_new, label_for, rendered_cb, option_label)
+            )
+        return mark_safe("\n".join(output))
 
 
 class SubKeyMixIn(object):
@@ -58,7 +72,9 @@ class SubKeyMixIn(object):
             try:
                 subscription = Subscription.objects.get(subkey=subkey)
             except Subscription.DoesNotExist:
-                raise forms.ValidationError("You don't have a valid Seriesly Subscription")
+                raise forms.ValidationError(
+                    "You don't have a valid Seriesly Subscription"
+                )
             else:
                 self._subscription = subscription
         return subkey
@@ -70,8 +86,12 @@ class SubscriptionKeyForm(SubKeyMixIn, forms.Form):
 
 class SubscriptionForm(SubKeyMixIn, forms.Form):
     subkey = forms.CharField(required=False, widget=forms.HiddenInput)
-    shows = forms.MultipleChoiceField(required=True, choices=get_choices, widget=SerieslyCheckboxSelectMultiple,
-        error_messages={'required': 'You need to select at least one show!'})
+    shows = forms.MultipleChoiceField(
+        required=True,
+        choices=get_choices,
+        widget=SerieslyCheckboxSelectMultiple,
+        error_messages={"required": "You need to select at least one show!"},
+    )
 
     def clean_shows(self):
         if len(self.cleaned_data["shows"]) > 200:
@@ -87,8 +107,11 @@ class SubscriptionForm(SubKeyMixIn, forms.Form):
 
 
 class MailSubscriptionForm(SubscriptionKeyForm):
-    email = forms.EmailField(required=False, label="Email",
-            error_messages={'invalid': "This isn't a valid email address."})
+    email = forms.EmailField(
+        required=False,
+        label="Email",
+        error_messages={"invalid": "This isn't a valid email address."},
+    )
 
     def clean_email(self):
         email = self.cleaned_data["email"]
@@ -98,14 +121,17 @@ class MailSubscriptionForm(SubscriptionKeyForm):
 
 
 class WebHookSubscriptionForm(SubscriptionKeyForm):
-    webhook = forms.URLField(required=False, label="Callback URL",
-            error_messages={'invalid': "This isn't a valid HTTP URL."}, initial="http://")
+    webhook = forms.URLField(
+        required=False,
+        label="Callback URL",
+        error_messages={"invalid": "This isn't a valid HTTP URL."},
+        initial="http://",
+    )
 
     def clean_webhook(self):
         webhook = self.cleaned_data["webhook"]
         if len(webhook):
-            if (not webhook.startswith("http://") and
-                    not webhook.startswith("https://")):
+            if not webhook.startswith("http://") and not webhook.startswith("https://"):
                 webhook = "http://" + webhook
             match = re.match("^https?://.+?$", webhook)
             if match is None:

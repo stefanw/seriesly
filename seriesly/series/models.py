@@ -5,7 +5,6 @@ import datetime
 from pytz import utc
 
 from django.db import models
-from django.utils.encoding import python_2_unicode_compatible
 from django.core.cache import cache
 from django.utils import timezone as tz
 
@@ -24,7 +23,6 @@ def get_show_info(name, show_id=None):
     return show_info
 
 
-@python_2_unicode_compatible
 class Show(models.Model):
     name = models.CharField(max_length=255)
     ordered_name = models.CharField(max_length=255)
@@ -63,7 +61,8 @@ class Show(models.Model):
         for show in shows:
             if len(show.name) > 33:
                 show.ordered_name = cls.re_find_the.sub(
-                    "\\1, The", show.name[:33] + "...")
+                    "\\1, The", show.name[:33] + "..."
+                )
             else:
                 show.ordered_name = cls.re_find_the.sub("\\1, The", show.name)
             show_list.append(show)
@@ -78,8 +77,11 @@ class Show(models.Model):
         norm_name = normalize(show_name)
         shows = Show.objects.get_all_ordered()
         for show in shows:
-            if (show_name == show.name or norm_name == show.normalized_name or
-                    any(norm_name == alt_name for alt_name in show.alternative_names())):
+            if (
+                show_name == show.name
+                or norm_name == show.normalized_name
+                or any(norm_name == alt_name for alt_name in show.alternative_names())
+            ):
                 return show
 
     @classmethod
@@ -101,11 +103,19 @@ class Show(models.Model):
         if show_info is None:
             show_info = get_show_info(self.name, show_id=self.provider_id)
 
-            attr_list = ["name", "network", "genres", "active",
-                "country", "runtime", "timezone", "provider_id"]
+            attr_list = [
+                "name",
+                "network",
+                "genres",
+                "active",
+                "country",
+                "runtime",
+                "timezone",
+                "provider_id",
+            ]
             if self.update_attrs(show_info, attr_list):
                 self.save()
-        for season_info in show_info['seasons']:
+        for season_info in show_info["seasons"]:
             logging.debug("Update or create Season...")
             Season.update_or_create(self, season_info, full=full)
 
@@ -125,18 +135,20 @@ class Show(models.Model):
             return False
         logging.debug("Show exists..?")
         try:
-            show = Show.objects.get(provider_id=show_info['provider_id'])
+            show = Show.objects.get(provider_id=show_info["provider_id"])
         except Show.DoesNotExist:
             logging.debug("Creating Show...")
-            show = Show(name=show_info['name'],
-                        network=show_info['network'],
-                        genres=show_info['genres'],
-                        active=show_info['active'],
-                        country=show_info['country'],
-                        runtime=show_info['runtime'],
-                        timezone=show_info['timezone'],
-                        provider_id=show_info['provider_id'],
-                        added=tz.now())
+            show = Show(
+                name=show_info["name"],
+                network=show_info["network"],
+                genres=show_info["genres"],
+                active=show_info["active"],
+                country=show_info["country"],
+                runtime=show_info["runtime"],
+                timezone=show_info["timezone"],
+                provider_id=show_info["provider_id"],
+                added=tz.now(),
+            )
             show.save()
         show.update(show_info, full=True)
         return show
@@ -151,7 +163,6 @@ class Show(models.Model):
         return False
 
 
-@python_2_unicode_compatible
 class Season(models.Model):
     show = models.ForeignKey(Show, on_delete=models.CASCADE)
     number = models.IntegerField()
@@ -159,14 +170,14 @@ class Season(models.Model):
     end = models.DateTimeField(null=True)
 
     def __str__(self):
-        return u'{} ({})'.format(self.show, self.number)
+        return u"{} ({})".format(self.show, self.number)
 
     @classmethod
     def update_or_create(cls, show, season_info, full=False):
         try:
-            season = Season.objects.get(show=show, number=season_info['season_nr'])
+            season = Season.objects.get(show=show, number=season_info["season_nr"])
         except Season.DoesNotExist:
-            season = Season(show=show, number=season_info['season_nr'])
+            season = Season(show=show, number=season_info["season_nr"])
             season.save()
         season.update(season_info, full=full)
         season.save()
@@ -177,20 +188,22 @@ class Season(models.Model):
         episode_info = None
         now = tz.now()
         fortyeight_hours_ago = now - datetime.timedelta(hours=48)
-        for episode_info in season_info['episodes']:
+        for episode_info in season_info["episodes"]:
             logging.debug("Update episode... %s" % episode_info)
             if first_date is None:
-                first_date = episode_info['date']
-            if (full or episode_info['date'] is None or
-                    episode_info['date'] >= fortyeight_hours_ago):
+                first_date = episode_info["date"]
+            if (
+                full
+                or episode_info["date"] is None
+                or episode_info["date"] >= fortyeight_hours_ago
+            ):
                 Episode.update_or_create(self, episode_info)
         logging.debug("All episodes updated...")
         self.start = first_date
         if episode_info is not None:
-            self.end = episode_info['date']
+            self.end = episode_info["date"]
 
 
-@python_2_unicode_compatible
 class Episode(models.Model):
     show = models.ForeignKey(Show, on_delete=models.CASCADE)
     season = models.ForeignKey(Season, null=True, on_delete=models.CASCADE)
@@ -203,8 +216,7 @@ class Episode(models.Model):
     _memkey_episode_dict = "all_episodes_dict"
 
     def __str__(self):
-        return u'{} S{:02d}E{:02d}'.format(self.show,
-                                           self.season_number, self.number)
+        return u"{} S{:02d}E{:02d}".format(self.show, self.season_number, self.number)
 
     @property
     def date_end(self):
@@ -225,7 +237,7 @@ class Episode(models.Model):
         return self.date < tz.now()
 
     def season_episode(self):
-        return 'S{:02d}E{:02d}'.format(self.season_number, self.number)
+        return "S{:02d}E{:02d}".format(self.season_number, self.number)
 
     @property
     def date_local_end(self):
@@ -240,9 +252,9 @@ class Episode(models.Model):
     @classmethod
     def update_or_create(cls, season, episode_info):
         try:
-            episode = Episode.objects.get(show=season.show,
-                                          season=season,
-                                          number=episode_info['nr'])
+            episode = Episode.objects.get(
+                show=season.show, season=season, number=episode_info["nr"]
+            )
         except Episode.DoesNotExist:
             episode = Episode.create(season, episode_info)
         else:
@@ -252,11 +264,14 @@ class Episode(models.Model):
 
     @classmethod
     def create(cls, season, episode_info):
-        return Episode(show=season.show, season=season,
-                        season_number=season.number,
-                        number=episode_info['nr'],
-                        title=episode_info['title'],
-                        date=episode_info['date'])
+        return Episode(
+            show=season.show,
+            season=season,
+            season_number=season.number,
+            number=episode_info["nr"],
+            title=episode_info["title"],
+            date=episode_info["date"],
+        )
 
     @classmethod
     def get_all_dict(cls):
@@ -315,8 +330,8 @@ class Episode(models.Model):
         return episode_list
 
     def update(self, episode_info):
-        self.title = episode_info['title']
-        self.date = episode_info['date']
+        self.title = episode_info["title"]
+        self.date = episode_info["date"]
 
     def get_next(self):
         episodes = Episode.objects.filter(date__gt=self.date)
@@ -325,13 +340,16 @@ class Episode(models.Model):
         return None
 
     def create_event_details(self, cal):
-        vevent = cal.add('vevent')
-        vevent.add('uid').value = "seriesly-episode-%s" % self.pk
+        vevent = cal.add("vevent")
+        vevent.add("uid").value = "seriesly-episode-%s" % self.pk
         date = self.date
-        vevent.add('dtstart').value = date
-        vevent.add('dtend').value = date + datetime.timedelta(minutes=self.show.runtime)
-        vevent.add('summary').value = "%s - %s (%dx%d)" % (
-                self.show.name, self.title,
-                self.season_number, self.number)
-        vevent.add('location').value = self.show.network
+        vevent.add("dtstart").value = date
+        vevent.add("dtend").value = date + datetime.timedelta(minutes=self.show.runtime)
+        vevent.add("summary").value = "%s - %s (%dx%d)" % (
+            self.show.name,
+            self.title,
+            self.season_number,
+            self.number,
+        )
+        vevent.add("location").value = self.show.network
         return vevent

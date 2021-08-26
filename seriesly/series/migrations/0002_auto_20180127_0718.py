@@ -7,28 +7,28 @@ import django.utils.timezone
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('series', '0001_initial'),
+        ("series", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='show',
-            name='added',
+            model_name="show",
+            name="added",
             field=models.DateTimeField(default=django.utils.timezone.now),
         ),
         migrations.AlterField(
-            model_name='show',
-            name='country',
+            model_name="show",
+            name="country",
             field=models.CharField(blank=True, max_length=255),
         ),
         migrations.AlterField(
-            model_name='show',
-            name='network',
+            model_name="show",
+            name="network",
             field=models.CharField(blank=True, max_length=255),
         ),
         migrations.AlterField(
-            model_name='show',
-            name='timezone',
+            model_name="show",
+            name="timezone",
             field=models.CharField(blank=True, max_length=255),
         ),
     ]

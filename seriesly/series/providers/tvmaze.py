@@ -49,7 +49,7 @@ class TVMaze(BaseSeriesInfoProvider):
                  }
         }]"""
         tvm = pytvmaze.TVMaze()
-        show = tvm.get_show(maze_id=show_id, embed='episodes')
+        show = tvm.get_show(maze_id=show_id, embed="episodes")
 
         # airtime in tvmaze is defined by "airstamp" (ISO8601 formated timestamp) using UTC as reference
         # see: https://en.wikipedia.org/wiki/ISO_8601
@@ -84,26 +84,25 @@ class TVMaze(BaseSeriesInfoProvider):
                     date=date,
                     title=show[season][episode].title,
                     nr=show[season][episode].episode_number,
-                    season_nr=show[season][episode].season_number
+                    season_nr=show[season][episode].season_number,
                 )
                 episode_list.append(ep_info)
-            season = dict(season_nr=show[season].season_number,
-                          episodes=episode_list)
+            season = dict(season_nr=show[season].season_number, episodes=episode_list)
             season_list.append(season)
 
         # show has either network or webChannel data, depending if tv- or web-series
-        network = ''
+        network = ""
         extra_data = None
-        if hasattr(show, 'web_channel') and show.web_channel is not None:
+        if hasattr(show, "web_channel") and show.web_channel is not None:
             extra_data = show.web_channel
             network = extra_data.name
-        elif hasattr(show, 'network') and show.network is not None:
+        elif hasattr(show, "network") and show.network is not None:
             extra_data = show.network
             network = extra_data.name
 
-        timezone = ''
-        country = ''
-        if extra_data is not None and hasattr(extra_data, 'timezone'):
+        timezone = ""
+        country = ""
+        if extra_data is not None and hasattr(extra_data, "timezone"):
             timezone = extra_data.timezone
             country = extra_data.code
 
@@ -116,15 +115,17 @@ class TVMaze(BaseSeriesInfoProvider):
 
         logging.debug("Return TVShowInfo..." + show.name)
 
-        return dict(name=show.name,
-                  seasons=season_list,
-                  provider_id=show.id,
-                  country=country,
-                  runtime=show.runtime,
-                  network=network,
-                  timezone=timezone,
-                  active=active,
-                  genres=genre_str)
+        return dict(
+            name=show.name,
+            seasons=season_list,
+            provider_id=show.id,
+            country=country,
+            runtime=show.runtime,
+            network=network,
+            timezone=timezone,
+            active=active,
+            genres=genre_str,
+        )
 
     def get_show_by_name(self, show_name):
         """http://api.tvmaze.com/singlesearch/shows?q=game%20of%20thrones:
