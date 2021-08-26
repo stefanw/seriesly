@@ -1,0 +1,13 @@
+celery
+dateutils
+dj-database-url
+django
+gunicorn
+honcho
+psycopg2-binary
+python-dateutil
+pytvmaze
+pytz
+requests
+vobject
+whitenoise
