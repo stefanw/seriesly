@@ -220,7 +220,9 @@ class Episode(models.Model):
 
     @property
     def date_end(self):
-        return self.date + datetime.timedelta(minutes=self.show.runtime)
+        if self.show.runtime:
+            return self.date + datetime.timedelta(minutes=self.show.runtime)
+        return self.date
 
     @property
     def date_local(self):
@@ -342,9 +344,8 @@ class Episode(models.Model):
     def create_event_details(self, cal):
         vevent = cal.add("vevent")
         vevent.add("uid").value = "seriesly-episode-%s" % self.pk
-        date = self.date
-        vevent.add("dtstart").value = date
-        vevent.add("dtend").value = date + datetime.timedelta(minutes=self.show.runtime)
+        vevent.add("dtstart").value = self.date
+        vevent.add("dtend").value = self.date_end
         vevent.add("summary").value = "%s - %s (%dx%d)" % (
             self.show.name,
             self.title,
