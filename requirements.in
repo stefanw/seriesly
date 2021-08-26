@@ -1,4 +1,4 @@
-celery
+celery[redis]
 dateutils
 dj-database-url
 django

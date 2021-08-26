@@ -10,7 +10,7 @@ asgiref==3.4.1
     # via django
 billiard==3.6.4.0
     # via celery
-celery==5.1.2
+celery[redis]==5.1.2
     # via -r requirements.in
 certifi==2021.5.30
     # via requests
@@ -59,6 +59,8 @@ pytz==2021.1
     #   celery
     #   dateutils
     #   django
+redis==3.5.3
+    # via celery
 requests==2.26.0
     # via
     #   -r requirements.in

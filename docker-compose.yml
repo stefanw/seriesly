@@ -1,22 +1,19 @@
 version: '3'
 
 services:
-  db:
-    image: postgres:13
-    volumes:
-      - ./data/postgres_data:/var/lib/postgresql/data/
-    environment:
-      POSTGRES_USER: seriesly
-      POSTGRES_DB: seriesly
-      POSTGRES_PASSWORD: seriesly
   web:
     build: .
     command: honcho start
-    links:
-      - db
     environment:
-        - DJANGO_SETTINGS_MODULE=seriesly.settings
+      - DJANGO_SETTINGS_MODULE=seriesly.settings
+      - REDIS_URL=redis://redis:6379/0
     ports:
-      - "8000:8000"
+      - "127.0.0.1:5023:5000"
+    volumes:
+      - ./db.sqlite3:/code/db.sqlite3
     depends_on:
-      - db
+      - redis
+    links:
+      - redis
+  redis:
+    image: "redis:alpine"

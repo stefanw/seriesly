@@ -22,16 +22,12 @@ ALLOWED_HOSTS = ["*"]
 
 DATABASES = {
     "default": dj_database_url.config(
-        env="DATABASE_URL", default="sqlite:///" + os.path.join(BASE_DIR, "db.sqlite3")
+        env="DATABASE_URL", default="sqlite:///" + os.path.join(BASE_DIR, "..", "db.sqlite3")
     )
 }
-if "DATABASE_URL" in os.environ:
-    DATABASES["default"]["ENGINE"] = "django_db_geventpool.backends.postgresql_psycopg2"
-    DATABASES["default"]["CONN_MAX_AGE"] = 0
-    DATABASES["default"]["OPTIONS"] = {"MAX_CONNS": 20}
 
 MEDIA_URL = "/media/"
-MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+MEDIA_ROOT = os.path.join(BASE_DIR, "..", "media")
 # 'project' refers to the name of the module created with django-admin.py
 ROOT_URLCONF = "seriesly.urls"
 
@@ -134,7 +130,7 @@ LOGGING = {
     },
 }
 
-CELERY_BROKER_URL = os.environ.get("CLOUDAMQP_URL", "amqp://guest@localhost:5672")
+CELERY_BROKER_URL = os.environ.get("REDIS_URL", "redis://localhost:6379/0")
 CELERY_BROKER_POOL_LIMIT = 1
 CELERY_BROKER_CONNECTION_MAX_RETRIES = None
 
@@ -158,6 +154,8 @@ CELERY_BEAT_SCHEDULE = {
 }
 
 CELERY_TIMEZONE = "UTC"
+
+DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 EMAIL_HOST = os_env("POSTMARK_SMTP_SERVER")
 EMAIL_PORT = 2525
