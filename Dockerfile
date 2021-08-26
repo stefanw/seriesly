@@ -19,5 +19,9 @@ ENV GIT_HASH=${GIT_HASH:-dev}
 
 USER seriesly
 
+RUN python /code/manage.py collectstatic
+
 WORKDIR /code/
-EXPOSE 8000
+EXPOSE 5000
+
+CMD ["honcho", "start"]
