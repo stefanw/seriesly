@@ -65,10 +65,6 @@
     </fieldset>
 </form>
 {% endblock %}
+
 {% block extra_js %}
-  {% if not subscription %}
-    <script type="text/javascript" charset="utf-8">
-        $(function(){checkSubscriptionCookie()});
-    </script>
-  {% endif %}
 {% endblock %}
