@@ -34,7 +34,7 @@ class Show(models.Model):
     network = models.CharField(max_length=255, blank=True)
     active = models.BooleanField(default=True)
     country = models.CharField(max_length=255, blank=True)
-    runtime = models.IntegerField()
+    runtime = models.IntegerField(null=True, blank=True)
     timezone = models.CharField(max_length=255, blank=True)
     provider_id = models.IntegerField()
     added = models.DateTimeField(default=tz.now)
