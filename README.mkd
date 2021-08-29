@@ -1,22 +1,7 @@
 Seriesly
 ========
 
-
-
-Contribution
-------------
-
-Please contribute. I probably don't have time to improve this further.
-
-This is free software and you are encouraged to implement additional features like linking to streaming sites etc.
-
-Please be aware that Seriesly is released unter the GNU AGPL 3.0 (see LICENSE.txt). If you deploy a version of Seriesly, you must make the code available to your users.
-
-
-Attribution
------------
-
-Seriesly is a Django project based on Django 1.8
+A show episode guide written in Django.
 
 License
 -------
