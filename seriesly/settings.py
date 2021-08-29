@@ -136,11 +136,11 @@ CELERY_BROKER_CONNECTION_MAX_RETRIES = None
 
 
 CELERY_TASK_SERIALIZER = "json"
-CELERY_ALWAYS_EAGER = bool(int(os_env("CELERY_ALWAYS_EAGER", "1")))
+CELERY_TASK_ALWAYS_EAGER = bool(int(os_env("CELERY_TASK_ALWAYS_EAGER", "1")))
 CELERY_ACCEPT_CONTENT = ["json"]
 CELERY_WORKER_MAX_TASKS_PER_CHILD = 1
 CELERY_TIMEZONE = "UTC"
-CELERY_ROUTES = {
+CELERY_TASK_ROUTES = {
     "seriesly.series.tasks.update_all_shows": {"queue": "update_show"},
     "seriesly.series.tasks.update_show": {"queue": "update_show"},
 }
