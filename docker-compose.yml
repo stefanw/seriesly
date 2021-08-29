@@ -4,8 +4,10 @@ services:
   web:
     build: .
     command: honcho start
+    restart: unless-stopped
     environment:
       - DJANGO_SETTINGS_MODULE=seriesly.settings
+      - CELERY_TASK_ALWAYS_EAGER=0
       - REDIS_URL=redis://redis:6379/0
     ports:
       - "127.0.0.1:5023:5000"
