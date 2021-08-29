@@ -9,7 +9,9 @@ from .tasks import update_show
 
 
 class ShowAdmin(admin.ModelAdmin):
-
+    list_display = ('name', 'network', 'active')
+    list_filter = ('active', 'country')
+    search_fields = ('name', 'alt_names')
     actions = ["update"]
 
     def get_urls(self):
