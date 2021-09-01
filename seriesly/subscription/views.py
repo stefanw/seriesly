@@ -19,7 +19,7 @@ from .forms import (
 from .models import Subscription
 from .tasks import send_confirmation_mail_task
 
-WORD = re.compile("^\w+$")
+WORD = re.compile(r"^\w+$")
 
 
 def index(request, form=None, extra_context=None, status=200):
@@ -103,10 +103,10 @@ def show(request, subkey, extra_context=None):
 
 def has_feature(feature_name):
     def _has_feature(func):
-        def inner(request, *args):
+        def inner(request, *args, **kwargs):
             if not settings.SERIESLY_FEATURES[feature_name]:
                 raise Http404
-            return func(request, *args)
+            return func(request, *args, **kwargs)
 
         return inner
 
