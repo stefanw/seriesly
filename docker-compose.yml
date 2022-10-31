@@ -19,3 +19,4 @@ services:
       - redis
   redis:
     image: "redis:alpine"
+    restart: unless-stopped
